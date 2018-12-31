@@ -56,7 +56,7 @@ while true do
 			
 			-- Map is stored at the very beggining of EWRAM (0x02000000). The 2 first dwords contain the size of the map.
 			local tile_addr = (x_pos_floor %map_x_size)*2 +(y_pos_floor %map_y_size)*map_x_size*2 + 4
-			local tile_type = memory.read_u16_be(0x02000000 +tile_addr) -- EWRAM = 0x02000000
+			local tile_type = memory.read_u16_be(tile_addr, "EWRAM") -- EWRAM = 0x02000000
 			local x_tile = x*tile_size -x_mod
 			local y_tile = y*tile_size -y_mod
 			-- We draw the tile depending on its type
