@@ -1,7 +1,7 @@
--- Kuru Kuru Kururin - OoB view v1.2 by ThunderAxe31 & E-Sh4rk
+-- Kuru Kuru Kururin - OoB view v1.3 by ThunderAxe31 & E-Sh4rk
 -- TODO:
 -- Find all wall tile types OR find a cleaner way to do draw it (game graphics, pixels with collision, ...)
--- Find why it does not work in some levels and why ending zone are offset from walls when we go far
+-- Find why ending zone are offset from walls in OOB (left: from 1px, top: not even here?)
 
 local addr_map_x_size = 0x313C -- Can also be found at EWRAM+0x0
 local addr_map_y_size = 0x313E -- Can also be found at EWRAM+0x2
@@ -13,27 +13,49 @@ local x_end = 32
 local y_end = 32
 local tile_size = 8
 local helirin_radius = 32
+local helirin_x_screen = 128 -- Should be between 127 and 128, seems to be ceiled in the game
+local helirin_y_screen = 128 -- Should be between 127 and 128, seems to be ceiled in the game
 
-local view_win = gui.createcanvas(255, 255)
+local view_win = gui.createcanvas(256, 256)
 view_win.SetTitle("Out of Bounds Viewer") 
 
 while true do
 	local map_x_size = memory.read_u16_le(addr_map_x_size, "IWRAM")
 	local map_y_size = memory.read_u16_le(addr_map_y_size, "IWRAM")
-	local x_pos = memory.read_s16_le(addr_x_pos, "IWRAM")
-	local y_pos = memory.read_s16_le(addr_y_pos, "IWRAM")
+	-- Position seems to be considered unsigned by the game: effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
+	local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
+	local y_pos = memory.read_u16_le(addr_y_pos, "IWRAM")
+	-- Position for the top left corner of the screen
+	x_pos = x_pos - (x_end*tile_size/2)
+	y_pos = y_pos - (y_end*tile_size/2)
+
 	local x_mod = x_pos%tile_size
 	local y_mod = y_pos%tile_size
-	local x_pos_floor = math.floor(x_pos/tile_size)-(x_end/2)
-	local y_pos_floor = math.floor(y_pos/tile_size)-(y_end/2)
-	local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
 	
 	view_win.Clear(0xFFFFFFFF)
 	
 	for y=0, y_end do
 		for x=0, x_end do
+			-- Adjusted x position, with simulation of overflow when needed
+			local x_pos2 = x_pos + x*tile_size
+			if x_pos2 < 0 then
+				x_pos2 = x_pos2 + 2^16
+			elseif x_pos2 >= 2^16 then
+				x_pos2 = x_pos2 - 2^16
+			end
+			-- Adjusted y position, with simulation of overflow when needed
+			local y_pos2 = y_pos + y*tile_size
+			if y_pos2 < 0 then
+				y_pos2 = y_pos2 + 2^16
+			elseif y_pos2 >= 2^16 then
+				y_pos2 = y_pos2 - 2^16
+			end
+			
+			local x_pos_floor = math.floor(x_pos2/tile_size)
+			local y_pos_floor = math.floor(y_pos2/tile_size)
+			
 			-- Map is stored at the very beggining of EWRAM (0x02000000). The 2 first dwords contain the size of the map.
-			local tile_addr = ((x_pos_floor +x) %map_x_size)*2 +((y_pos_floor +y) %map_y_size)*map_x_size*2 + 4
+			local tile_addr = (x_pos_floor %map_x_size)*2 +(y_pos_floor %map_y_size)*map_x_size*2 + 4
 			local tile_type = memory.read_u16_be(0x02000000 +tile_addr) -- EWRAM = 0x02000000
 			local x_tile = x*tile_size -x_mod
 			local y_tile = y*tile_size -y_mod
@@ -133,13 +155,14 @@ while true do
 	end
 	
 	-- We draw the helirin
-	view_win.DrawAxis(127,127,6)
-	view_win.DrawEllipse(127-helirin_radius,127-helirin_radius,helirin_radius*2,helirin_radius*2)
+	local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
+	view_win.DrawAxis(helirin_x_screen,helirin_y_screen,6)
+	view_win.DrawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
 	local angle = helirin_rot * 2*math.pi / (2^16) -- Rotation in game is stored using the full range of the 16bits variable (from 0 to 2^16-1)
-	local x1 = 127+math.sin(angle)*helirin_radius
-	local y1 = 127-math.cos(angle)*helirin_radius
-	local x2 = 127-math.sin(angle)*helirin_radius
-	local y2 = 127+math.cos(angle)*helirin_radius
+	local x1 = helirin_x_screen+math.sin(angle)*helirin_radius
+	local y1 = helirin_y_screen-math.cos(angle)*helirin_radius
+	local x2 = helirin_x_screen-math.sin(angle)*helirin_radius
+	local y2 = helirin_y_screen+math.cos(angle)*helirin_radius
 	view_win.DrawLine(x1,y1,x2,y2)
 	
 	view_win.Refresh()
