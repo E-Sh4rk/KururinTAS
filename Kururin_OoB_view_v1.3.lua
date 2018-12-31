@@ -38,12 +38,13 @@ while true do
 
 		local x_mod = x_pos%tile_size
 		local y_mod = y_pos%tile_size
+		local uint16_max = 2^16
 		
 		for y=0, y_end do
 			for x=0, x_end do
 				-- Adjusted position, the modulo simulates overflow
-				local x_pos2 = (x_pos + x*tile_size) % 2^16
-				local y_pos2 = (y_pos + y*tile_size) % 2^16
+				local x_pos2 = (x_pos + x*tile_size) % uint16_max
+				local y_pos2 = (y_pos + y*tile_size) % uint16_max
 				
 				local x_pos_floor = math.floor(x_pos2/tile_size)
 				local y_pos_floor = math.floor(y_pos2/tile_size)
@@ -152,7 +153,7 @@ while true do
 		local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
 		view_win.DrawAxis(helirin_x_screen,helirin_y_screen,6)
 		view_win.DrawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
-		local angle = helirin_rot * 2*math.pi / (2^16) -- Rotation in game is stored using the full range of the 16bits variable (from 0 to 2^16-1)
+		local angle = helirin_rot * 2*math.pi / uint16_max -- Rotation in game is stored using the full range of the 16bits variable (from 0 to 2^16-1)
 		local x1 = helirin_x_screen+math.sin(angle)*helirin_radius
 		local y1 = helirin_y_screen-math.cos(angle)*helirin_radius
 		local x2 = helirin_x_screen-math.sin(angle)*helirin_radius
