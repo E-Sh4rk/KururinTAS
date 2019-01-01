@@ -1,7 +1,6 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.4 by ThunderAxe31 & E-Sh4rk
 -- TODO:
--- Find all wall tile types OR find a cleaner way to do draw it (game graphics, pixels with collision, ...)
--- Find why ending zone are offset from walls in OOB (left: from 1px, top: not even here?)
+-- Add ending zones and find why they are offset from walls in OOB (left: from 1px, top: not even here?)
 
 local addr_map_x_size = 0x313C -- Can also be found at EWRAM+0x0
 local addr_map_y_size = 0x313E -- Can also be found at EWRAM+0x2
