@@ -54,6 +54,7 @@ while true do
 				local tile_type = memory.read_u16_be(tile_addr, "EWRAM") -- EWRAM = 0x02000000
 				local x_tile = x*tile_size -x_mod
 				local y_tile = y*tile_size -y_mod
+				
 				-- We draw the tile depending on its type
 				if (tile_type == 0x0300) or (tile_type == 0x0304) or (tile_type == 0x0308) or (tile_type == 0x030C) or (tile_type == 0x0400) or (tile_type == 0x0404) or (tile_type == 0x0408) or (tile_type == 0x040C) or (tile_type == 0x2100) or (tile_type == 0x2104) or (tile_type == 0x2108) or (tile_type == 0x210C) or (tile_type == 0x3300) or (tile_type == 0x3304) or (tile_type == 0x3308) or (tile_type == 0x330C) or (tile_type == 0x4100) or (tile_type == 0x4104) or (tile_type == 0x4108) or (tile_type == 0x410C) or (tile_type == 0x3500) or (tile_type == 0x3504) or (tile_type == 0x3508) or (tile_type == 0x350C) or (tile_type == 0x3000) or (tile_type == 0x3004) or (tile_type == 0x3008) or (tile_type == 0x300C) or (tile_type == 0x2400) or (tile_type == 0x2404) or (tile_type == 0x2408) or (tile_type == 0x240C) or (tile_type == 0x0500) or (tile_type == 0x0504) or (tile_type == 0x0508) or (tile_type == 0x050C) then
 					view_win.DrawRectangle(x_tile, y_tile, 7, 7, 0xFFFF0000)
