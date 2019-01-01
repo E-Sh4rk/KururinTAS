@@ -1,7 +1,7 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.3 by ThunderAxe31 & E-Sh4rk
 -- TODO:
 -- Find all wall tile types
--- Implement checkpoint detection in a more accurate way
+-- Implement zones detection in a more accurate way
 
 -- Script parameters
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false

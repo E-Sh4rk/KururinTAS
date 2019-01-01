@@ -1,6 +1,6 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.4 by ThunderAxe31 & E-Sh4rk
 -- TODO:
--- Check and improve checkpoint detection
+-- Check and improve zones detection
 
 -- Script parameters
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
@@ -110,14 +110,14 @@ while true do
 						view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
 					end
 					
-					-- Now we check collision with checkpoints. For that, the same calculus are performed except that position is considered signed and modulus act like C modulus.
+					-- Now we check collision with healing/ending zones. For that, the same calculus are performed except that position is considered signed and modulus act like C modulus.
 					-- If it results in tile_addr offset being negative, we ignore this case.
 					
 					-- If the following condition is not satisfied, y_pos_tile could be negative and so the resulting tile_addr offset could be negative...
 					-- Actually, it would not always be the case but I believe this simplification will not affect the final result.
 					if y_pos2 < 0x8000 and y_pos_tile > 0 then
 
-						-- Adjusted position, for checkpoints. For checkpoints, the collision check seems to consider position as a signed variable.
+						-- Adjusted position, for zones. For zones, the collision check seems to consider position as a signed variable.
 						if x_pos2 >= 0x8000 then x_pos2 = x_pos2-0x10000 end
 						
 						-- The following simulates C modulus on negative numbers. If x_pos2 is not negative, we don't need to redo the calculus (it would be equal to the computation done for walls)
@@ -127,7 +127,7 @@ while true do
 							tile_type = memory.read_u16_le(tile_addr, "EWRAM")
 						end
 						
-						-- We draw the checkpoint if there is any
+						-- We draw the healing/ending zone if there is any
 						if (tile_type == 0x00FB) or (tile_type == 0x04FB) or (tile_type == 0x08FB) or (tile_type == 0x0CFB) or (tile_type == 0x00FD) or (tile_type == 0x04FD) or (tile_type == 0x08FD) or (tile_type == 0x0CFD) or (tile_type == 0x00EA) or (tile_type == 0x04EA) or (tile_type == 0x08EA) or (tile_type == 0x0CEA) or (tile_type == 0x00ED) or (tile_type == 0x04ED) or (tile_type == 0x08ED) or (tile_type == 0x0CED) then
 							view.DrawRectangle(x_tile, y_tile, 7, 7, 0xFF4040FF)
 						elseif (tile_type == 0x00FE) or (tile_type == 0x04FE) or (tile_type == 0x08FE) or (tile_type == 0x0CFE) or (tile_type == 0x00FF) or (tile_type == 0x04FF) or (tile_type == 0x08FF) or (tile_type == 0x0CFF) then
