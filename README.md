@@ -22,6 +22,5 @@ Installation note:
 
 Changelog:
  - Use real game tiles for walls rendering
+ - Show checkpoints and ending zones more accurately
  
-Known issues:
- - Ending zones are not shown

@@ -1,7 +1,7 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.3 by ThunderAxe31 & E-Sh4rk
 -- TODO:
--- Find all wall tile types OR find a cleaner way to do draw it (game graphics, pixels with collision, ...)
--- Find why ending zone are offset from walls in OOB (left: from 1px, top: not even here?)
+-- Find all wall tile types
+-- Implement checkpoint detection in a more accurate way
 
 -- Script parameters
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
@@ -93,12 +93,11 @@ while true do
 					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF).
 					local x_pos2 = (x_pos + x*tile_size) % 0x10000
 					local y_pos2 = (y_pos + y*tile_size) % 0x10000
-					
 					local x_pos_floor = math.floor(x_pos2/tile_size)
 					local y_pos_floor = math.floor(y_pos2/tile_size)
 					
 					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
-					local tile_addr = (x_pos_floor %map_x_size)*2 +(y_pos_floor %map_y_size)*map_x_size*2 + 4
+					local tile_addr = (x_pos_floor %map_x_size)*2 + (y_pos_floor %map_y_size)*map_x_size*2 + 4
 					local tile_type = memory.read_u16_be(tile_addr, "EWRAM") -- EWRAM = 0x02000000
 					local x_tile = x*tile_size -x_mod
 					local y_tile = y*tile_size -y_mod
