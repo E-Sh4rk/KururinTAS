@@ -6,6 +6,7 @@ Changelog:
  - Code refactored
  - Display of the helirin added
  - Position of walls fixed in some levels (e.g. Machine Land 1)
+ - You can set some parameters at the beginning of the script
  
 Known issues:
  - Position of ending zones is inacurate

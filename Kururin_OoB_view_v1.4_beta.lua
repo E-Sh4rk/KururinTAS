@@ -3,8 +3,8 @@
 -- Add ending zones and find why they are offset from walls in OOB (left: from 1px, top: not even here?)
 
 -- Script parameters
-local x_end = 30 -- Must be 30 if draw_in_separate_window is set to false
-local y_end = 20 -- Must be 20 if draw_in_separate_window is set to false
+local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
+local y_nb_tiles = 20 -- Must be 20 if draw_in_separate_window is set to false
 local draw_in_separate_window = true
 
 -- Do not touch that
@@ -16,12 +16,12 @@ local addr_rotate     = 0x4572
 
 local tile_size = 8
 local helirin_radius = 32
-local helirin_x_screen = math.ceil (x_end*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
-local helirin_y_screen = math.ceil (y_end*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
+local helirin_x_screen = math.ceil (x_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
+local helirin_y_screen = math.ceil (y_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
 
 local view = nil
 if draw_in_separate_window then
-	view = gui.createcanvas(x_end*tile_size, y_end*tile_size)
+	view = gui.createcanvas(x_nb_tiles*tile_size, y_nb_tiles*tile_size)
 	view.SetTitle("Out of Bounds Viewer")
 else
 	view = gui
@@ -45,20 +45,20 @@ while true do
 	-- If we are not in a level, we do nothing
 	if map_x_size <= 32 and map_y_size <= 32
 	then
-		view.DrawText(x_end*tile_size/2 - 68, y_end*tile_size/2 - 8, "Not in a level...")
+		view.DrawText(x_nb_tiles*tile_size/2 - 68, y_nb_tiles*tile_size/2 - 8, "Not in a level...")
 	else
 		-- Position seems to be considered unsigned by the game: effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
 		local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
 		local y_pos = memory.read_u16_le(addr_y_pos, "IWRAM")
 		-- Position for the top left corner of the screen
-		x_pos = x_pos - (x_end*tile_size/2)
-		y_pos = y_pos - (y_end*tile_size/2)
+		x_pos = x_pos - (x_nb_tiles*tile_size/2)
+		y_pos = y_pos - (y_nb_tiles*tile_size/2)
 
 		local x_mod = x_pos%tile_size
 		local y_mod = y_pos%tile_size
 		
-		for y=0, y_end do
-			for x=0, x_end do
+		for y=0, y_nb_tiles do
+			for x=0, x_nb_tiles do
 				-- Adjusted position, the bitwise AND simulates overflow. It is equivalent to % 0x10000.
 				local x_pos2 = bit.band(x_pos + x*tile_size, 0xFFFF)
 				local y_pos2 = bit.band(y_pos + y*tile_size, 0xFFFF)
