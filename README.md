@@ -1,5 +1,7 @@
 # KururinTAS
 
+NOTE: If you want the script to be faster, you can change the LUA interpreter in the settings of Bizhawks: `Config -> Customize... -> Advanced`, check `Lua+LuaInterface`, then restart Bizhawks.
+
 ## v1.3
 
 Changelog:

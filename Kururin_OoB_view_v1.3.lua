@@ -90,9 +90,9 @@ while true do
 			
 			for y=0, y_nb_tiles do
 				for x=0, x_nb_tiles do
-					-- Adjusted position, the bitwise AND simulates overflow. It is equivalent to % 0x10000.
-					local x_pos2 = bit.band(x_pos + x*tile_size, 0xFFFF)
-					local y_pos2 = bit.band(y_pos + y*tile_size, 0xFFFF)
+					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF).
+					local x_pos2 = (x_pos + x*tile_size) % 0x10000
+					local y_pos2 = (y_pos + y*tile_size) % 0x10000
 					
 					local x_pos_floor = math.floor(x_pos2/tile_size)
 					local y_pos_floor = math.floor(y_pos2/tile_size)

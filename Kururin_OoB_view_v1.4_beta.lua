@@ -89,9 +89,9 @@ while true do
 			
 			for y=0, y_nb_tiles do
 				for x=0, x_nb_tiles do
-					-- Adjusted position, the bitwise AND simulates overflow. It is equivalent to % 0x10000.
-					local x_pos2 = bit.band(x_pos + x*tile_size, 0xFFFF)
-					local y_pos2 = bit.band(y_pos + y*tile_size, 0xFFFF)
+					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF).
+					local x_pos2 = (x_pos + x*tile_size) % 0x10000
+					local y_pos2 = (y_pos + y*tile_size) % 0x10000
 					
 					local x_pos_floor = math.floor(x_pos2/tile_size)
 					local y_pos_floor = math.floor(y_pos2/tile_size)
@@ -103,8 +103,8 @@ while true do
 					local y_tile = y*tile_size -y_mod
 					
 					-- We draw the tile depending on its type
-					local tile_index = bit.band(tile_type, 0xFFF) -- Alternatively: tile_type % 0x1000
-					local tile_id = bit.band(tile_index, 0x3FF) -- Alternatively: tile_type % 0x400
+					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
+					local tile_id = tile_type % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
 					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
 						view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
 					end
