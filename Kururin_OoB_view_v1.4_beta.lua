@@ -6,6 +6,9 @@
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
 local y_nb_tiles = 20 -- Must be 20 if draw_in_separate_window is set to false
 local draw_in_separate_window = true
+local keys_activate = {"LeftShift", "V"}
+local keys_deactivate = {"LeftControl", "V"}
+local activated = true -- Automatically activate the viewer when the script is started?
 
 -- Do not touch that
 local addr_map_x_size = 0x313C -- Can also be found at EWRAM+0x0
@@ -23,6 +26,7 @@ local view = nil
 if draw_in_separate_window then
 	view = gui.createcanvas(x_nb_tiles*tile_size, y_nb_tiles*tile_size)
 	view.SetTitle("Out of Bounds Viewer")
+	view.clearGraphics = function () end
 else
 	view = gui
 	view.Clear = function (x) end
@@ -34,65 +38,92 @@ else
 	view.DrawEllipse = view.drawEllipse
 	view.DrawPolygon = view.drawPolygon
 	view.DrawRectangle = view.drawRectangle
+	view.ClearImageCache = view.clearImageCache
 end
-	
+
 while true do
-	view.Clear(0xFFFFFFFF)
+	-- Activation?
+	local ok = true
+	local keys = input.get()
+	for i, v in ipairs(keys_activate) do
+		if keys[v] == nil then
+			ok = false
+		end
+	end
+	if ok then activated = true end
+	-- Deactivation?
+	ok = true
+	for i, v in ipairs(keys_deactivate) do
+		if keys[v] == nil then
+			ok = false
+		end
+	end
+	if ok then
+		if activated then
+			activated = false
+			view.ClearImageCache()
+			view.clearGraphics()
+		end
+	end
+	-- Go!
+	if activated then
+		view.Clear(0xFFFFFFFF)
 
-	local map_x_size = memory.read_u16_le(addr_map_x_size, "IWRAM") -- IWRAM = 0x03000000
-	local map_y_size = memory.read_u16_le(addr_map_y_size, "IWRAM")
-		
-	-- If we are not in a level, we do nothing
-	if map_x_size <= 32 and map_y_size <= 32
-	then
-		view.DrawText(x_nb_tiles*tile_size/2 - 68, y_nb_tiles*tile_size/2 - 8, "Not in a level...")
-	else
-		-- Position seems to be considered unsigned by the game: effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
-		local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
-		local y_pos = memory.read_u16_le(addr_y_pos, "IWRAM")
-		-- Position for the top left corner of the screen
-		x_pos = x_pos - (x_nb_tiles*tile_size/2)
-		y_pos = y_pos - (y_nb_tiles*tile_size/2)
+		local map_x_size = memory.read_u16_le(addr_map_x_size, "IWRAM") -- IWRAM = 0x03000000
+		local map_y_size = memory.read_u16_le(addr_map_y_size, "IWRAM")
+			
+		-- If we are not in a level, we do nothing
+		if map_x_size <= 32 and map_y_size <= 32
+		then
+			view.DrawText(x_nb_tiles*tile_size/2 - 68, y_nb_tiles*tile_size/2 - 8, "Not in a level...")
+		else
+			-- Position seems to be considered unsigned by the game: effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
+			local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
+			local y_pos = memory.read_u16_le(addr_y_pos, "IWRAM")
+			-- Position for the top left corner of the screen
+			x_pos = x_pos - (x_nb_tiles*tile_size/2)
+			y_pos = y_pos - (y_nb_tiles*tile_size/2)
 
-		local x_mod = x_pos%tile_size
-		local y_mod = y_pos%tile_size
-		
-		for y=0, y_nb_tiles do
-			for x=0, x_nb_tiles do
-				-- Adjusted position, the bitwise AND simulates overflow. It is equivalent to % 0x10000.
-				local x_pos2 = bit.band(x_pos + x*tile_size, 0xFFFF)
-				local y_pos2 = bit.band(y_pos + y*tile_size, 0xFFFF)
-				
-				local x_pos_floor = math.floor(x_pos2/tile_size)
-				local y_pos_floor = math.floor(y_pos2/tile_size)
-				
-				-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
-				local tile_addr = (x_pos_floor %map_x_size)*2 +(y_pos_floor %map_y_size)*map_x_size*2 + 4
-				local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
-				local x_tile = x*tile_size -x_mod
-				local y_tile = y*tile_size -y_mod
-				
-				-- We draw the tile depending on its type
-				local tile_index = bit.band(tile_type, 0xFFF) -- Alternatively: tile_type % 0x1000
-				local tile_id = bit.band(tile_index, 0x3FF) -- Alternatively: tile_type % 0x400
-				if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
-					view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
+			local x_mod = x_pos%tile_size
+			local y_mod = y_pos%tile_size
+			
+			for y=0, y_nb_tiles do
+				for x=0, x_nb_tiles do
+					-- Adjusted position, the bitwise AND simulates overflow. It is equivalent to % 0x10000.
+					local x_pos2 = bit.band(x_pos + x*tile_size, 0xFFFF)
+					local y_pos2 = bit.band(y_pos + y*tile_size, 0xFFFF)
+					
+					local x_pos_floor = math.floor(x_pos2/tile_size)
+					local y_pos_floor = math.floor(y_pos2/tile_size)
+					
+					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
+					local tile_addr = (x_pos_floor %map_x_size)*2 +(y_pos_floor %map_y_size)*map_x_size*2 + 4
+					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
+					local x_tile = x*tile_size -x_mod
+					local y_tile = y*tile_size -y_mod
+					
+					-- We draw the tile depending on its type
+					local tile_index = bit.band(tile_type, 0xFFF) -- Alternatively: tile_type % 0x1000
+					local tile_id = bit.band(tile_index, 0x3FF) -- Alternatively: tile_type % 0x400
+					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
+						view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
+					end
 				end
 			end
+			
+			-- We draw the helirin
+			local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
+			view.DrawAxis(helirin_x_screen,helirin_y_screen,6)
+			view.DrawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
+			local angle = helirin_rot * 2*math.pi / 0x10000 -- Rotation in game is stored using the full range of the 16bits variable
+			local x1 = helirin_x_screen+math.sin(angle)*helirin_radius
+			local y1 = helirin_y_screen-math.cos(angle)*helirin_radius
+			local x2 = helirin_x_screen-math.sin(angle)*helirin_radius
+			local y2 = helirin_y_screen+math.cos(angle)*helirin_radius
+			view.DrawLine(x1,y1,x2,y2)
 		end
 		
-		-- We draw the helirin
-		local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
-		view.DrawAxis(helirin_x_screen,helirin_y_screen,6)
-		view.DrawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
-		local angle = helirin_rot * 2*math.pi / 0x10000 -- Rotation in game is stored using the full range of the 16bits variable
-		local x1 = helirin_x_screen+math.sin(angle)*helirin_radius
-		local y1 = helirin_y_screen-math.cos(angle)*helirin_radius
-		local x2 = helirin_x_screen-math.sin(angle)*helirin_radius
-		local y2 = helirin_y_screen+math.cos(angle)*helirin_radius
-		view.DrawLine(x1,y1,x2,y2)
+		view.Refresh()
 	end
-	
-	view.Refresh()
 	emu.frameadvance()
 end
