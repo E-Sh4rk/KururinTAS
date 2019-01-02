@@ -1,10 +1,10 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.4 by ThunderAxe31 & E-Sh4rk
 
 -- Script parameters
-local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
-local y_nb_tiles = 20 -- Must be 20 if draw_in_separate_window is set to false
+local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false. Default: 30
+local y_nb_tiles = 20 -- Must be 20 if draw_in_separate_window is set to false. Default: 20
 local draw_in_separate_window = true
-local window_zoom = nil -- You can specify a scale factor for the separate window (e.g. 2)
+local window_zoom = nil -- You can specify a scale factor for the separate window (e.g. 2). Default: nil
 local keys_activate = {"LeftShift", "V"}
 local keys_deactivate = {"LeftControl", "V"}
 local activated = true -- Automatically activate the viewer when the script is started?
@@ -119,6 +119,7 @@ while true do
 					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
 					local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
 					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
+					-- if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
 					
 					-- We draw the wall tile depending on its type
 					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
@@ -157,10 +158,10 @@ while true do
 						end
 						
 						-- We draw the healing/ending zone if there is any
-						if tile_id == 0xFB or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xED then
-							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
-						elseif tile_id == 0xFE or tile_id == 0xFF then
+						if tile_id == 0xFE or tile_id == 0xFF then
 							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x77D0D000)
+						elseif tile_id == 0xFB or tile_id == 0xFC or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xED then
+							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
 						end
 					end
 				end
