@@ -142,9 +142,9 @@ while true do
 						end
 						
 						-- We draw the healing/ending zone if there is any
-						if tile_id == 0xFB or tile_type == 0xFD or tile_type == 0xEA or tile_type == 0xED then
+						if tile_id == 0xFB or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xED then
 							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFF4040FF)
-						elseif tile_type == 0xFE or tile_type == 0xFF then
+						elseif tile_id == 0xFE or tile_id == 0xFF then
 							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFFD0D000)
 						end
 					end
