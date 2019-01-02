@@ -89,49 +89,65 @@ while true do
 			
 			for y=0, y_nb_tiles do
 				for x=0, x_nb_tiles do
-					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF). 
-					-- For walls, the collision check seems to consider position as an unsigned variable:
-					-- effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
-					local x_pos2 = (x_pos + x*tile_size) % 0x10000
-					local y_pos2 = (y_pos + y*tile_size) % 0x10000
-					local x_pos_tile = math.floor(x_pos2/tile_size) % map_x_size
-					local y_pos_tile = math.floor(y_pos2/tile_size) % map_y_size
-					
-					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
-					local tile_addr = x_pos_tile*2 + y_pos_tile*map_x_size*2 + 4
-					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
+				
 					local x_tile = x*tile_size -x_mod
 					local y_tile = y*tile_size -y_mod
 					
+					-- For walls, the collision check seems to consider position as an unsigned variable:
+					-- effects of the overflow are visible on some maps around position 0. (e.g. MachineLand1, or other maps such that the width is not a power of 2) 
+					-- The modulo simulates overflow of the position variables. It seems faster than bit.band(..., 0xFFFF). 
+					local x_pos_var = (x_pos + x*tile_size) % 0x10000
+					local y_pos_var = (y_pos + y*tile_size) % 0x10000
+					local x_pos_tile = math.floor(x_pos_var/tile_size)
+					local y_pos_tile = math.floor(y_pos_var/tile_size)
+					local x_pos_tile_mod = x_pos_tile % map_x_size
+					local y_pos_tile_mod = y_pos_tile % map_y_size
+					
+					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
+					local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
+					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
+					
 					-- We draw the wall tile depending on its type
 					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
-					local tile_id = tile_type % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
+					local tile_id = tile_index % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
 					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
 						view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
 					end
 					
-					-- Now we check collision with healing/ending zones. For that, the same calculus are performed except that position is considered signed and modulus act like C modulus.
-					-- If it results in tile_addr offset being negative, we ignore this case.
+					-- Now we check collision with healing/ending zones. For that, the same calculus is performed except that position is considered signed and:
+					-- Modulus of signed integers act like the C one
+					-- Floor act like truncate
+					-- If it results in tile_addr offset being negative, no collision is reported
 					
-					-- If the following condition is not satisfied, y_pos_tile could be negative and so the resulting tile_addr offset could be negative...
-					-- Actually, it would not always be the case but I believe this simplification will not affect the final result.
-					if y_pos2 < 0x8000 and y_pos_tile > 0 then
-
-						-- Adjusted position, for zones. For zones, the collision check seems to consider position as a signed variable.
-						if x_pos2 >= 0x8000 then x_pos2 = x_pos2-0x10000 end
+					-- The following computation does not really match the method described above, but it should gives the same results in the situations found in the game.
+					
+					-- We convert position variables to signed one.
+					if x_pos_var >= 0x8000 then x_pos_var = x_pos_var-0x10000 end
+					if y_pos_var >= 0x8000 then y_pos_var = y_pos_var-0x10000 end
+					
+					if y_pos_var >= 0 then -- In the top OOB, no healing/ending zone
+						if x_pos_var < 0 then -- There is mismatch between walls and zones only in the left OOB
 						
-						-- The following simulates C modulus on negative numbers. If x_pos2 is not negative, we don't need to redo the calculus (it would be equal to the computation done for walls)
-						if x_pos2 < 0 then
-							x_pos_tile = -((-math.floor(x_pos2/tile_size)) % map_x_size)
-							tile_addr = x_pos_tile*2 + y_pos_tile*map_x_size*2 + 4
-							tile_type = memory.read_u16_le(tile_addr, "EWRAM")
+							x_pos_tile = math.floor(x_pos_var/tile_size)+1 -- Note: it is different from truncate (=ceiling here). We use floor instead for stability reasons in the rendering.
+							x_tile = x_tile + 1 --  This line is here to compensate the approximation above.
+							x_pos_tile_mod = -((-x_pos_tile) % map_x_size) -- Simulates the C modulus for negative numbers
+							
+							tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
+							if tile_addr >= 4 then
+								tile_type = memory.read_u16_le(tile_addr, "EWRAM")
+							else
+								tile_type = 0
+							end
+							
+							tile_index = tile_type % 0x1000
+							tile_id = tile_index % 0x400
 						end
 						
 						-- We draw the healing/ending zone if there is any
-						if (tile_type == 0x00FB) or (tile_type == 0x04FB) or (tile_type == 0x08FB) or (tile_type == 0x0CFB) or (tile_type == 0x00FD) or (tile_type == 0x04FD) or (tile_type == 0x08FD) or (tile_type == 0x0CFD) or (tile_type == 0x00EA) or (tile_type == 0x04EA) or (tile_type == 0x08EA) or (tile_type == 0x0CEA) or (tile_type == 0x00ED) or (tile_type == 0x04ED) or (tile_type == 0x08ED) or (tile_type == 0x0CED) then
-							view.DrawRectangle(x_tile, y_tile, 7, 7, 0xFF4040FF)
-						elseif (tile_type == 0x00FE) or (tile_type == 0x04FE) or (tile_type == 0x08FE) or (tile_type == 0x0CFE) or (tile_type == 0x00FF) or (tile_type == 0x04FF) or (tile_type == 0x08FF) or (tile_type == 0x0CFF) then
-							view.DrawRectangle(x_tile, y_tile, 7, 7, 0xFFD0D000)
+						if tile_id == 0xFB or tile_type == 0xFD or tile_type == 0xEA or tile_type == 0xED then
+							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFF4040FF)
+						elseif tile_type == 0xFE or tile_type == 0xFF then
+							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFFD0D000)
 						end
 					end
 				end

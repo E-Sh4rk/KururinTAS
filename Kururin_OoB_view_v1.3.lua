@@ -90,17 +90,21 @@ while true do
 			
 			for y=0, y_nb_tiles do
 				for x=0, x_nb_tiles do
-					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF).
-					local x_pos2 = (x_pos + x*tile_size) % 0x10000
-					local y_pos2 = (y_pos + y*tile_size) % 0x10000
-					local x_pos_floor = math.floor(x_pos2/tile_size)
-					local y_pos_floor = math.floor(y_pos2/tile_size)
-					
-					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
-					local tile_addr = (x_pos_floor %map_x_size)*2 + (y_pos_floor %map_y_size)*map_x_size*2 + 4
-					local tile_type = memory.read_u16_be(tile_addr, "EWRAM") -- EWRAM = 0x02000000
+				
 					local x_tile = x*tile_size -x_mod
 					local y_tile = y*tile_size -y_mod
+					
+					-- Adjusted position, the modulo simulates overflow. It seems faster than bit.band(..., 0xFFFF).
+					local x_pos_var = (x_pos + x*tile_size) % 0x10000
+					local y_pos_var = (y_pos + y*tile_size) % 0x10000
+					local x_pos_tile = math.floor(x_pos_var/tile_size)
+					local y_pos_tile = math.floor(y_pos_var/tile_size)
+					local x_pos_tile_mod = x_pos_tile % map_x_size
+					local y_pos_tile_mod = y_pos_tile % map_y_size
+					
+					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
+					local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
+					local tile_type = memory.read_u16_be(tile_addr, "EWRAM") -- EWRAM = 0x02000000
 					
 					-- We draw the tile depending on its type
 					if (tile_type == 0x0300) or (tile_type == 0x0304) or (tile_type == 0x0308) or (tile_type == 0x030C) or (tile_type == 0x0400) or (tile_type == 0x0404) or (tile_type == 0x0408) or (tile_type == 0x040C) or (tile_type == 0x2100) or (tile_type == 0x2104) or (tile_type == 0x2108) or (tile_type == 0x210C) or (tile_type == 0x3300) or (tile_type == 0x3304) or (tile_type == 0x3308) or (tile_type == 0x330C) or (tile_type == 0x4100) or (tile_type == 0x4104) or (tile_type == 0x4108) or (tile_type == 0x410C) or (tile_type == 0x3500) or (tile_type == 0x3504) or (tile_type == 0x3508) or (tile_type == 0x350C) or (tile_type == 0x3000) or (tile_type == 0x3004) or (tile_type == 0x3008) or (tile_type == 0x300C) or (tile_type == 0x2400) or (tile_type == 0x2404) or (tile_type == 0x2408) or (tile_type == 0x240C) or (tile_type == 0x0500) or (tile_type == 0x0504) or (tile_type == 0x0508) or (tile_type == 0x050C) then
