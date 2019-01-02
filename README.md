@@ -23,4 +23,5 @@ Installation note:
 Changelog:
  - Use real game tiles for walls rendering
  - Show healing/ending zones more accurately
+ - Add a window zoom parameter
  

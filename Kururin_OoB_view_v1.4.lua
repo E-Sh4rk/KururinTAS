@@ -4,6 +4,7 @@
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
 local y_nb_tiles = 20 -- Must be 20 if draw_in_separate_window is set to false
 local draw_in_separate_window = true
+local window_zoom = nil -- You can specify a scale factor for the separate window (e.g. 2)
 local keys_activate = {"LeftShift", "V"}
 local keys_deactivate = {"LeftControl", "V"}
 local activated = true -- Automatically activate the viewer when the script is started?
@@ -20,23 +21,37 @@ local helirin_radius = 32
 local helirin_x_screen = math.ceil (x_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
 local helirin_y_screen = math.ceil (y_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
 
+-- Initialize the view
 local view = nil
-if draw_in_separate_window then
-	view = gui.createcanvas(x_nb_tiles*tile_size, y_nb_tiles*tile_size)
-	view.SetTitle("Out of Bounds Viewer")
+if draw_in_separate_window
+then
+	if window_zoom == nil then
+		view = gui.createcanvas(x_nb_tiles*tile_size, y_nb_tiles*tile_size)
+		view.drawText = view.DrawText
+		view.drawImage = view.DrawImage
+		view.drawLine = view.DrawLine
+		view.drawAxis = view.DrawAxis
+		view.drawEllipse = view.DrawEllipse
+		view.drawRectangle = view.DrawRectangle
+	else
+		view = gui.createcanvas(x_nb_tiles*tile_size*window_zoom, y_nb_tiles*tile_size*window_zoom)
+		view.drawText = function (a,b,c,d,e,f,g,h,i,j) view.DrawText(a*window_zoom,b*window_zoom,c,d,e,f*window_zoom,g,h,i,j) end
+		view.drawImage = function (a,b,c) view.DrawImage(a,b*window_zoom,c*window_zoom,tile_size*window_zoom,tile_size*window_zoom) end
+		view.drawLine = function (a,b,c,d) view.DrawLine(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom) end
+		view.drawAxis = function (a,b,c) view.DrawAxis(a*window_zoom,b*window_zoom,c*window_zoom) end
+		view.drawEllipse = function (a,b,c,d) view.DrawEllipse(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom) end
+		view.drawRectangle = function (a,b,c,d,e,f) view.DrawRectangle(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom,e,f) end
+	end
+	view.clearImageCache = view.ClearImageCache
+	view.clear = view.Clear
+	view.refresh = view.Refresh
 	view.clearGraphics = function () end
+	view.SetTitle("Out of Bounds Viewer")
+	
 else
 	view = gui
-	view.Clear = function (x) end
-	view.Refresh = function () end
-	view.DrawText = view.drawText
-	view.DrawImage = view.drawImage
-	view.DrawLine = view.drawLine
-	view.DrawAxis = view.drawAxis
-	view.DrawEllipse = view.drawEllipse
-	view.DrawPolygon = view.drawPolygon
-	view.DrawRectangle = view.drawRectangle
-	view.ClearImageCache = view.clearImageCache
+	view.clear = function (x) end
+	view.refresh = function () end
 end
 
 while true do
@@ -59,13 +74,13 @@ while true do
 	if ok then
 		if activated then
 			activated = false
-			view.ClearImageCache()
+			view.clearImageCache()
 			view.clearGraphics()
 		end
 	end
 	-- Go!
 	if activated then
-		view.Clear(0xFFFFFFFF)
+		view.clear(0xFFFFFFFF)
 
 		local map_x_size = memory.read_u16_le(addr_map_x_size, "IWRAM") -- IWRAM = 0x03000000
 		local map_y_size = memory.read_u16_le(addr_map_y_size, "IWRAM")
@@ -73,7 +88,7 @@ while true do
 		-- If we are not in a level, we do nothing
 		if map_x_size <= 32 and map_y_size <= 32
 		then
-			view.DrawText(x_nb_tiles*tile_size/2 - 68, y_nb_tiles*tile_size/2 - 8, "Not in a level...")
+			view.drawText(x_nb_tiles*tile_size/2, y_nb_tiles*tile_size/2, "Not in a level...", nil, nil, 12, nil, nil, "center", "middle")
 		else
 			-- We consider position as an unsigned variable (see below).
 			local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
@@ -109,7 +124,7 @@ while true do
 					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
 					local tile_id = tile_index % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
 					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
-						view.DrawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
+						view.drawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
 					end
 					
 					-- Now we check collision with healing/ending zones. For that, the same calculus is performed except that position is considered signed and:
@@ -143,9 +158,9 @@ while true do
 						
 						-- We draw the healing/ending zone if there is any
 						if tile_id == 0xFB or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xED then
-							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFF4040FF)
+							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
 						elseif tile_id == 0xFE or tile_id == 0xFF then
-							view.DrawRectangle(x_tile, y_tile, tile_size-1, tile_size-1, 0xFFD0D000)
+							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x77D0D000)
 						end
 					end
 				end
@@ -153,17 +168,17 @@ while true do
 			
 			-- We draw the helirin
 			local helirin_rot = memory.read_u16_le(addr_rotate, "IWRAM")
-			view.DrawAxis(helirin_x_screen,helirin_y_screen,6)
-			view.DrawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
+			view.drawAxis(helirin_x_screen,helirin_y_screen,6)
+			view.drawEllipse(helirin_x_screen-helirin_radius,helirin_y_screen-helirin_radius,helirin_radius*2,helirin_radius*2)
 			local angle = helirin_rot * 2*math.pi / 0x10000 -- Rotation in game is stored using the full range of the 16bits variable
 			local x1 = helirin_x_screen+math.sin(angle)*helirin_radius
 			local y1 = helirin_y_screen-math.cos(angle)*helirin_radius
 			local x2 = helirin_x_screen-math.sin(angle)*helirin_radius
 			local y2 = helirin_y_screen+math.cos(angle)*helirin_radius
-			view.DrawLine(x1,y1,x2,y2)
+			view.drawLine(x1,y1,x2,y2)
 		end
 		
-		view.Refresh()
+		view.refresh()
 	end
 	emu.frameadvance()
 end
