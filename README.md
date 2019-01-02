@@ -15,7 +15,7 @@ Known issues:
  - Position of ending zones is inacurate
  - Some tiles are missing
 
-## v1.4 (beta)
+## v1.4
 
 Installation note:
  - The directory `sprites` is required. It must be placed in the same folder as the script.

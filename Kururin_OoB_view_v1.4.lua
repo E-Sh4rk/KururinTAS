@@ -1,6 +1,4 @@
 -- Kuru Kuru Kururin - OoB Viewer v1.4 by ThunderAxe31 & E-Sh4rk
--- TODO:
--- Check and improve zones detection
 
 -- Script parameters
 local x_nb_tiles = 30 -- Must be 30 if draw_in_separate_window is set to false
@@ -126,7 +124,7 @@ while true do
 					if y_pos_var >= 0x8000 then y_pos_var = y_pos_var-0x10000 end
 					
 					if y_pos_var >= 0 then -- In the top OOB, no healing/ending zone
-						if x_pos_var < 0 then -- There is mismatch between walls and zones only in the left OOB
+						if x_pos_var < 0 then -- If both x_pos_var and y_pos_var are still non-negative, previous computation for walls is still valid for zones.
 						
 							x_pos_tile = math.floor(x_pos_var/tile_size)+1 -- Note: it is different from truncate (=ceiling here). We use floor instead for stability reasons in the rendering.
 							x_tile = x_tile + 1 --  This line is here to compensate the approximation above.
