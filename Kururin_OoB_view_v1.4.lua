@@ -18,8 +18,8 @@ local addr_rotate     = 0x4572
 
 local tile_size = 8
 local helirin_radius = 32
-local helirin_x_screen = math.ceil (x_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
-local helirin_y_screen = math.ceil (y_nb_tiles*tile_size / 2) -- Should be between 127 and 128, seems to be ceiled in the game
+local helirin_x_screen = math.ceil (x_nb_tiles*tile_size / 2)
+local helirin_y_screen = math.ceil (y_nb_tiles*tile_size / 2)
 
 -- Initialize the view
 local view = nil
@@ -117,11 +117,17 @@ while true do
 					local y_pos_tile_mod = y_pos_tile % map_y_size
 					
 					-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
+					-- For more details, see https://medium.com/message/building-a-cheat-bot-f848f199e76b
 					local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
 					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
 					-- if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
 					
 					-- We draw the wall tile depending on its type
+					-- It follows this format: http://problemkaputt.de/gbatek.htm#lcdvrambgscreendataformatbgmap
+					-- Bits 0-9: Tile number
+					-- Bit 10: Horizontal flip
+					-- Bit 11: Vertical flip
+					-- Bits 12-15: Palette number
 					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
 					local tile_id = tile_index % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
 					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
@@ -129,11 +135,11 @@ while true do
 					end
 					
 					-- Now we check collision with healing/ending zones. For that, the same calculus is performed except that position is considered signed and:
-					-- Modulus of signed integers act like the C one
+					-- Modulo of signed integers act like the C one
 					-- Floor act like truncate
 					-- If it results in tile_addr offset being negative, no collision is reported
 					
-					-- The following computation does not really match the method described above, but it should gives the same results in the situations found in the game.
+					-- The following computation does not exactly match the method described above, but it should give the same results in the situations found in the game.
 					
 					-- We convert position variables to signed one.
 					if x_pos_var >= 0x8000 then x_pos_var = x_pos_var-0x10000 end
@@ -142,9 +148,9 @@ while true do
 					if y_pos_var >= 0 then -- In the top OOB, no healing/ending zone
 						if x_pos_var < 0 then -- If both x_pos_var and y_pos_var are still non-negative, previous computation for walls is still valid for zones.
 						
-							x_pos_tile = math.floor(x_pos_var/tile_size)+1 -- Note: it is different from truncate (=ceiling here). We use floor instead for stability reasons in the rendering.
+							x_pos_tile = math.floor(x_pos_var/tile_size)+1 -- Note: it is different from truncate (it should be ceiling here). We use floor instead for stability reasons in the rendering.
 							x_tile = x_tile + 1 --  This line is here to compensate the approximation above.
-							x_pos_tile_mod = -((-x_pos_tile) % map_x_size) -- Simulates the C modulus for negative numbers
+							x_pos_tile_mod = -((-x_pos_tile) % map_x_size) -- Simulates the C modulo for negative numbers
 							
 							tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
 							if tile_addr >= 4 then

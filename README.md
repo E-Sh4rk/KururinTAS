@@ -2,7 +2,7 @@
 
 NOTE: If you want the script to be faster, you can change the LUA interpreter in the settings of Bizhawks: `Config -> Customize... -> Advanced`, check `Lua+LuaInterface`, then restart Bizhawks.
 
-## v1.3
+## v1.3 (faster?)
 
 Changelog:
  - Code refactored
@@ -12,16 +12,14 @@ Changelog:
  - Add shortcuts to activate (SHIFT+V) or deactivate (CONTROL+V) the viewer
  
 Known issues:
- - Position of ending zones is inacurate
  - Some tiles are missing
 
-## v1.4
+## v1.4 (prettier)
 
 Installation note:
  - The directory `sprites` is required. It must be placed in the same folder as the script.
 
 Changelog:
  - Use real game tiles for walls rendering
- - Show healing/ending zones more accurately
  - Add a window zoom parameter
  
