@@ -1,0 +1,168 @@
+CODE:
+
+PROC0     (08004104) CREATE_OBJECT
+
+08015160: Jump to LBL0				IG FRAMES (2)
+	...
+	
+LBL0      (08015190)
+0801519A: Jump next	if ???			IG FRAMES (2)
+0801519C: Jump to LBL6				? NOT REACHED YET
+0801519E:							IG FRAMES (2)
+080151AE: Jump next if collision (r6, see description below)	IG FRAMES (2)
+080151B0: Jump to LBL6
+
+The following block seems to handle: Timer penalties, damage, invulnerability, some physics aspects (cancel user move if collision?)
+	080151B2:			 				COLLISIONS
+	080151BC: Jump to LBL1 IF DAMAGE	COLLISIONS
+
+		080151BE: 							COLLISIONS (SZ)
+		080151C0: Jump to PROC1				COLLISIONS (SZ)
+		080151C4: Jump to LBL2				COLLISIONS (SZ)
+
+		080151C6: Not reached yet			? NOT REACHED YET
+
+		LBL1	  (080151D0)				COLLISIONS (3s)
+		080151D2: Jump to PROC1				COLLISIONS (3s)
+
+	LBL2	  (080151D6)				COLLISIONS
+	080151EC: Jump to LBL4 if ???		COLLISIONS
+
+	-- LOOP START --
+		080151F2
+		080151F8: Jump to LBL3 if ???
+		... Small jumps ...
+		0801521A: Jump to PROC0
+		08015224: Jump to LBL4 if ???
+		08015232: Jump to LBL4 if ???
+		LBL3      (08015234)
+		08015238: Jump to LBL4 if ???
+		08015244: Loop start if ???
+	-- LOOP END --
+	LBL4      (08015246)
+
+	0801524C: Jump to LBL5 if ???
+		0801524E										COLLISIONS (3s+?)
+		Cancel the impact of the speed on the position of the helirin
+	LBL5	  (0801525E)
+
+	08015266: Jump to LBL7 IF INVULNERABLE
+	08015268: Reached in start zone	sometimes		COLLISIONS (SZ+?) ?
+	08015272: Jump to LBL7 if (Bitflag...?)
+		08015274: Reached in start zone BOURRE LE BORD	COLLISIONS (SZ+?) M+
+		0801528E: Jump to 08015294 if ???
+			08015290: Reached in start zone BOURRE LE BORD	COLLISIONS (SZ+?) M+
+		08015294
+		0801529E: Jump to 080152BA if (GameMode?)
+			080152A0: Add 3sec penalty (+180)				COLLISIONS (SZ+?) M+
+			080152AE: Jump next if timer exceeded 215999
+				080152B0: Set timer back to 215999
+			080152B6: Jump to PROC0
+		080152BA
+		080152C2: Loose life							COLLISIONS (D)
+		...
+		0801530C: Jump LBL7								COLLISIONS (D)
+		
+	LBL6      (08015314)
+	(Un)Set a flag to desactivate "damaging" state of the helirin.
+	Commenting it results in keeping the "damaging" bird's face.
+	...
+		
+LBL7      (0801531E)				IG FRAMES (2)
+
+PROC1     (PROCEDURE 0801B258)
+
+
+DATA:
+X			3004544         [3004544]!
+Y			3004548         [3004548]!
+X speed		3004554         [3004554]!
+Y speed		3004558         [3004558]!
+X bump		300454C			[300454C]!
+Y bump		3004550			[3004550]!
+Angle		3004572         [3004572]!
+Turn rate	3004574         [3004574]!
+Lives		3004582         [3004582]!
+
+Flags...	30046B8         [30046B8]!
+---- ---- ---- ---- ---- D--- ---- ----
+D:Damaging (set the sprite of the face)
+
+IWRAM		3000000
+FPS			60
+
+-------------------------------------------------------
+Collision Test
+Beginning: 08013D0C
+
+lines following 08013D4A:
+	r6: tile address
+	r2: tile type
+	r1: 3FFh
+Then: AND r1 r2 (cut palette and orientation)
+r1 contains tile ID
+r0= r1-1
+
+8013D54: if r0 <= 0x9E (unsigned): jump to 8013D64
+	No collision -> false
+8013D58: Jump to 8013D9A
+8013D64:
+	r0 = r1 << 5 (logical)
+	r10 += r0  ->  81DA788
+	r0 = 0x80
+	r0 = r0 << 3   (=0x400)
+	r0 = r0 & r2 (r0:orientation)
+	if r0 then not r9 (mvn)
+	r0 = 0x80
+	r0 = r0 << 4   (=0x800)
+	r2 = r0 & r2 (r2:orientation)
+	if r2 then not r7 (mvn)
+8013D84:
+	r0 <- 7
+	r2 <- r9
+	r2 <- r2 & r0   (r9 & 7)
+	r7 <- r7 & r0   (r7 & 7)
+	r0 <- r7 << 2
+	r0 <- r0 + r10  (r10: correspond to somewhere in the table of tiles)
+	r0 <- [r0]      (seems to select the relevant line of the relevant tile)
+	r1 <- r2 << 2
+	r0 <- r0 >> r1
+	r1 <- 0xF
+	r0 <- r0 & r1
+
+At 0x81DA7A8: table of tiles
+
+
+-----------------------------------------------------------
+r6 at 080151AE (just before collision branching)
+
+Possible values:
+8000	0 1000 0000 0000 0000
+A000	0 1010 0000 0000 0000
+AA80	0 1010 1010 1000 0000
+A800	0 1010 1000 0000 0000
+10000	1 0000 0000 0000 0000
+14000	1 0100 0000 0000 0000
+15000   1 0101 0000 0000 0000
+15540   1 0101 0101 0100 0000
+1555F   1 0101 0101 0100 1111
+157FF	1 0101 0111 1111 1111
+		0 1234 5678 ...
+
+1/2: Extermity of the helirin touched (left/right)
+Even/Odd positions: correspond to left/right
+==>
+Helirin separated in 17 parts
+
+16 14 12 10 8 6 4 2 0 1 3 5 7 9 11 13 15
+
+Collision sprite will appear at the location of the biggest bit number that is equal to 1
+
+-----------------------------------------------------------
+
+Global description of physics:
+
+1. Set x,y acceleration depending on inputs
+2. Move depending on acceleration
+3. Collision check (see above)
+4. If collision, modify acceleration accordingly and cancel step 2

@@ -1,0 +1,19 @@
+SystemID GBA
+4544	d	s	0	IWRAM	X
+4548	d	s	0	IWRAM	Y
+4554	d	s	0	IWRAM	XS
+4558	d	s	0	IWRAM	YS
+454C	d	s	0	IWRAM	XB
+4550	d	s	0	IWRAM	YB
+4572	w	s	0	IWRAM	Angle
+4574	w	s	0	IWRAM	Angle Rate
+4582	b	u	0	IWRAM	Lives
+313C	w	u	0	IWRAM	MapW IW
+313E	w	u	0	IWRAM	MapH IW
+000000	w	u	0	EWRAM	MapW EW
+000002	w	u	0	EWRAM	MapH EW
+4546	w	u	0	IWRAM	X Pixel
+454A	w	u	0	IWRAM	Y Pixel
+4545	b	u	0	IWRAM	X Subpixel
+4549	b	u	0	IWRAM	Y Subpixel
+
