@@ -129,6 +129,7 @@ r0= r1-1
 	r0 <- r0 >> r1
 	r1 <- 0xF
 	r0 <- r0 & r1
+Then compare r0 to 0... Collision if different.
 
 At 0x81DA7A8: table of tiles
 
@@ -163,6 +164,23 @@ Collision sprite will appear at the location of the biggest bit number that is e
 Global description of physics:
 
 1. Set x,y acceleration depending on inputs
-2. Move depending on acceleration
+2. Move depending on acceleration, rotate depending on rotation rate
 3. Collision check (see above)
 4. If collision, modify acceleration accordingly and cancel step 2
+
+-----------------------------------------------------------
+Bump when collision is only at one side of the helirin
+
+X--   (G1, X=100)
+AR:	-1024	1024	-1024	1024	-1204	1024	933	842	751	...
+XB:	131072	130048	130560	130048	130560	130048	97536	73152	54864	...
+YB:		-12800	9216	-12800	9216	-12800	-9600	-7200	-5400	...
+
+Vector XB/YB direction depends on direction of the helirin.
+-> depends on rotation of the helirin (current rotation var + rotation rate var)
+Angle rate alternate (if pos, becomes neg, and vice versa)
+
+Bump when collision comes from the two sides of the helirin
+
+Vector XB/YB direction depends on input speed (opposite direction).
+
