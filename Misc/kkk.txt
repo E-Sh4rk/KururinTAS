@@ -73,18 +73,37 @@ LBL7      (0801531E)				IG FRAMES (2)
 PROC1     (PROCEDURE 0801B258)
 
 
-DATA:
-X			3004544         [3004544]!
-Y			3004548         [3004548]!
-X speed		3004554         [3004554]!
-Y speed		3004558         [3004558]!
-X bump		300454C			[300454C]!
-Y bump		3004550			[3004550]!
-Angle		3004572         [3004572]!
-Turn rate	3004574         [3004574]!
-Lives		3004582         [3004582]!
+DATA ([3004548]! to break on change):
+X				3004544         
+Y				3004548
+X bump				300454C
+Y bump				3004550
+X speed				3004554
+Y speed				3004558
 
-Flags...	30046B8         [30046B8]!
+Fluctuate around 120 on L/R	300455C
+Fluctuate around 60884 on frame	3004560
+2049?				3004562
+1000-0 counter (reset in zone)	3004564
+counter (non null in zone/dmg)	3004566
+781?				3004568
+0?				300456A
+8?				300456C
+Input speed norm		3004570
+
+Angle				3004572
+Turn rate (with bump)		3004574
+Turn rate (at sleep, editable)	3004576
+91?				3004578
+Turn rate (with bump)		300457A
+Turn rate (at sleep)		300457C
+Bump count			300457E
+0?				3004580
+Lives				3004582
+0-255 counter			3004584
+Invulnerability timer		3004585
+
+Flags...			30046B8
 ---- ---- ---- ---- ---- D--- ---- ----
 D:Damaging (set the sprite of the face)
 
