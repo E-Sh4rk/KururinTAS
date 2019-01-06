@@ -61,10 +61,22 @@ function normalize_str(str)
 end
 -----------------------------
 
+local current_play_index = 0
+local current_play = {}
+local current_play_ans = ""
+
+function get_pos()
+	local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
+	local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
+	local rot = memory.read_u16_le(addr_rotation, "IWRAM")
+	local srot = memory.read_s16_le(addr_rotation_srate, "IWRAM")
+	return tostring(xpos) .. " " .. tostring(ypos) .. " " .. tostring(rot) .. " " .. tostring(srot) .. "\n"
+end
+
 while true
 do
 	-- Is there a task that awaits?
-	if file_exists(in_file)
+	if current_play_index == 0 and file_exists(in_file)
 	then
 		local content = lines_from(in_file)
 		--for i=1, #content do end
@@ -85,23 +97,17 @@ do
 				os.remove(in_file)
 				
 			elseif cmd == "GETPOS" then
-				local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
-				local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
-				local rot = memory.read_u16_le(addr_rotation, "IWRAM")
-				local srot = memory.read_s16_le(addr_rotation_srate, "IWRAM")
-				local res = tostring(xpos) .. " " .. tostring(ypos) .. "\n" .. tostring(rot) .. " " .. tostring(srot) .. "\n"
-				write_file(out_file, res)
+				write_file(out_file, get_pos())
 				os.remove(in_file)
 				
 			elseif cmd == "PLAY" then
-				if #content >= 3 then
+				if #content >= 2 then
 					-- Init
-					local pos = bizstring.split(normalize_str(content[2]), " ")
-					local rot = bizstring.split(normalize_str(content[3]), " ")
-					local xpos = tonumber(pos[1]) % 0x100000000
-					local ypos = tonumber(pos[2]) % 0x100000000
-					local rot = tonumber(rot[1]) % 0x10000
-					local srot = tonumber(rot[2])
+					local init = bizstring.split(normalize_str(content[2]), " ")
+					local xpos = tonumber(init[1]) % 0x100000000
+					local ypos = tonumber(init[2]) % 0x100000000
+					local rot = tonumber(init[3]) % 0x10000
+					local srot = tonumber(init[4])
 					memory.write_u32_le(addr_x_pos, xpos, "IWRAM")
 					memory.write_u32_le(addr_y_pos, ypos, "IWRAM")
 					memory.write_u32_le(addr_xb, 0, "IWRAM")
@@ -112,8 +118,36 @@ do
 					memory.write_s16_le(addr_rotation_rate, srot, "IWRAM")
 					memory.write_s16_le(addr_rotation_srate, srot, "IWRAM")
 					-- Play inputs
+					current_play = content
+					current_play_index = 3
+					current_play_ans = ""
 				end
 			end
+		end
+		
+	elseif current_play_index > 0 then
+	
+		current_play_ans = current_play_ans .. get_pos()
+		if current_play_index > #current_play then
+			-- Play terminated
+			write_file(out_file, current_play_ans)
+			os.remove(in_file)
+			current_play_ans = ""
+			current_play = {}
+			current_play_index = 0
+		else
+			-- Play next frame
+			local inputs_txt = current_play[current_play_index]
+			local inputs = {}
+			-- Up|Down|Left|Right|Start|Select|B|A|L|R|Power
+			if bizstring.contains(inputs_txt, "A") then inputs["A"] = true end
+			if bizstring.contains(inputs_txt, "B") then inputs["B"] = true end
+			if bizstring.contains(inputs_txt, "U") then inputs["Up"] = true end
+			if bizstring.contains(inputs_txt, "D") then inputs["Down"] = true end
+			if bizstring.contains(inputs_txt, "L") then inputs["Left"] = true end
+			if bizstring.contains(inputs_txt, "R") then inputs["Right"] = true end
+			joypad.set(inputs)
+			current_play_index = current_play_index + 1
 		end
 	end
 
