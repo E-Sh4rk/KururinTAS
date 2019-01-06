@@ -27,16 +27,24 @@ namespace KuruBot
         internal short rot_srate;
     }
 
-    static class Physics
+    class Physics
     {
-
-        internal static MapControl.GraphicalHelirin ToGraphicalHelirin (HelirinState h)
+        public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
             float angle = (float)(h.rot * 2 * Math.PI / 0x10000);
             int xpix = (int)h.xpos >> 16;
             int ypix = (int)h.ypos >> 16;
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
+
+        Form1 parent = null;
+
+        public Physics(Form1 parent)
+        {
+            this.parent = parent;
+        }
+
+
 
     }
 }
