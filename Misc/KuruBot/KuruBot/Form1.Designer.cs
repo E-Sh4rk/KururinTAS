@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.connect = new System.Windows.Forms.Button();
-            this.kuruComFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.dlMap = new System.Windows.Forms.Button();
             this.main_panel = new System.Windows.Forms.Panel();
             this.showGMap = new System.Windows.Forms.CheckBox();
             this.showPMap = new System.Windows.Forms.CheckBox();
+            this.kuruComFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.showPosition = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -46,11 +47,6 @@
             this.connect.Text = "Connect";
             this.connect.UseVisualStyleBackColor = true;
             this.connect.Click += new System.EventHandler(this.connect_Click);
-            // 
-            // kuruComFolderDialog
-            // 
-            this.kuruComFolderDialog.Description = "KuruCOM Folder";
-            this.kuruComFolderDialog.ShowNewFolderButton = false;
             // 
             // dlMap
             // 
@@ -99,11 +95,28 @@
             this.showPMap.UseVisualStyleBackColor = true;
             this.showPMap.CheckedChanged += new System.EventHandler(this.showGPMap_CheckedChanged);
             // 
+            // kuruComFileDialog
+            // 
+            this.kuruComFileDialog.FileName = "kuruCOM.lua";
+            this.kuruComFileDialog.Filter = "LUA Script|*.lua";
+            // 
+            // showPosition
+            // 
+            this.showPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.showPosition.Location = new System.Drawing.Point(202, 415);
+            this.showPosition.Name = "showPosition";
+            this.showPosition.Size = new System.Drawing.Size(103, 23);
+            this.showPosition.TabIndex = 5;
+            this.showPosition.Text = "Show Position";
+            this.showPosition.UseVisualStyleBackColor = true;
+            this.showPosition.Click += new System.EventHandler(this.showPosition_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.showPosition);
             this.Controls.Add(this.showPMap);
             this.Controls.Add(this.showGMap);
             this.Controls.Add(this.main_panel);
@@ -119,11 +132,12 @@
         #endregion
 
         private System.Windows.Forms.Button connect;
-        private System.Windows.Forms.FolderBrowserDialog kuruComFolderDialog;
         private System.Windows.Forms.Button dlMap;
         private System.Windows.Forms.Panel main_panel;
         private System.Windows.Forms.CheckBox showGMap;
         private System.Windows.Forms.CheckBox showPMap;
+        private System.Windows.Forms.OpenFileDialog kuruComFileDialog;
+        private System.Windows.Forms.Button showPosition;
     }
 }
 

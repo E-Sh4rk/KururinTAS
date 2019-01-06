@@ -60,5 +60,29 @@ namespace KuruBot
             return null;
         }
 
+        public HelirinState? GetHelirin()
+        {
+            try
+            {
+                if (File.Exists(in_path))
+                    return null;
+                if (File.Exists(out_path))
+                    File.Delete(out_path);
+                File.WriteAllText(in_path, "GETPOS");
+                while (!File.Exists(out_path))
+                    Thread.Sleep(250);
+                // Parsing the file
+                string[] res = File.ReadAllLines(out_path);
+                string[] headers = res[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                uint xpos = Convert.ToUInt32(headers[0]);
+                uint ypos = Convert.ToUInt32(headers[1]);
+                ushort rot = Convert.ToUInt16(headers[2]);
+                short rot_srate = Convert.ToInt16(headers[3]);
+                return new HelirinState(xpos, ypos, rot, rot_srate);
+            }
+            catch { }
+            return null;
+        }
+
     }
 }

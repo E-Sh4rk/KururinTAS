@@ -10,7 +10,8 @@ namespace KuruBot
 {
     class Map
     {
-        const int tile_size = 8;
+        internal const int tile_size = 8;
+        internal const int helirin_radius = 32;
 
         // Graphical atrributes
         ushort[,] map = null;
@@ -75,7 +76,7 @@ namespace KuruBot
 
         public bool IsTileAWall(ushort tile)
         {
-            ushort type = (ushort)(tile & 0x3FF);
+            ushort type = (ushort)((uint)tile & 0x3FF);
             if (type <= max_wall_type && !void_sprites.Contains(type))
                 return true;
             return false;

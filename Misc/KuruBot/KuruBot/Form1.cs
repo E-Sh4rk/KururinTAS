@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -18,16 +19,15 @@ namespace KuruBot
         public Form1()
         {
             InitializeComponent();
-            mapc = new MapControl(this);
+            mapc = new MapControl(this, showGMap.Checked, showPMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
-            mapc.SetSettings(showGMap.Checked, showPMap.Checked);
         }
 
         private void connect_Click(object sender, EventArgs e)
         {
-            if (kuruComFolderDialog.ShowDialog() == DialogResult.OK)
-                com = new Com(kuruComFolderDialog.SelectedPath);
+            if (kuruComFileDialog.ShowDialog() == DialogResult.OK)
+                com = new Com(Path.GetDirectoryName(kuruComFileDialog.FileName));
         }
 
         private void dlMap_Click(object sender, EventArgs e)
@@ -35,7 +35,19 @@ namespace KuruBot
             if (com != null)
             {
                 map = com.DownloadMap();
-                mapc.Refresh();
+                mapc.Redraw();
+            }
+        }
+
+        private void showPosition_Click(object sender, EventArgs e)
+        {
+            if (com != null)
+            {
+                HelirinState? h = com.GetHelirin();
+                if (h.HasValue)
+                    mapc.SetHelirin(Physics.ToGraphicalHelirin(h.Value));
+                else
+                    mapc.SetHelirin(null);
             }
         }
 
@@ -43,5 +55,6 @@ namespace KuruBot
         {
             mapc.SetSettings(showGMap.Checked, showPMap.Checked);
         }
+
     }
 }
