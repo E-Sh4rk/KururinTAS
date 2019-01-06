@@ -165,8 +165,9 @@ Global description of physics:
 
 1. Set x,y acceleration depending on inputs
 2. Move depending on acceleration, rotate depending on rotation rate
-3. Collision check (see above)
-4. If collision, modify acceleration accordingly and cancel step 2
+3. Detection of healing/ending zones
+4. Collision check (see above)
+5. If collision, modify acceleration accordingly (see below) and cancel step 2
 
 -----------------------------------------------------------
 Bump when collision is only at one side of the helirin
