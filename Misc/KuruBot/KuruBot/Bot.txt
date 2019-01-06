@@ -24,6 +24,7 @@ Search Bounds: Refuse states out of these bounds
 Max Moves: Only search paths that change inputs less than a fixed number of times
 Frame resolution: Refuse paths that change inputs two times in less than a fixed number of frames
 
------ COST FUNCTION (for A*) -----
+----- WEIGHTS & COST FUNCTION (for A*) -----
 
-For big distances, *euclidian distance*/*max speed*
+We could add a cost function *euclidian distance*/*max speed*
+Weight of edges could be greater when inputs change from last move (like 2 instead of 1)

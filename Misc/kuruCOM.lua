@@ -88,7 +88,7 @@ do
 				local res = tostring(xl) .. " " .. tostring(yl) .. "\n"
 				for y=0, yl-1 do
 					for x=0, xl-1 do
-						local tile = memory.read_u16_le(0x4 + x*2 + y*xl*2 + 4, "EWRAM")
+						local tile = memory.read_u16_le(0x4 + x*2 + y*xl*2, "EWRAM")
 						res = res .. tostring(tile) .. " "
 					end
 					res = res .. "\n"
