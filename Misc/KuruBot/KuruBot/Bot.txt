@@ -1,0 +1,29 @@
+﻿
+----- STATE -----
+
+XPos
+YPos
+XBump
+YBump
+Rot
+RotRate
+RotSleepRate
+
+----- STATE REDUCTION -----
+
+XPos/YPos: round to 1/64e pixel
+XBump/YBump: round to 1/64e pixel/frame
+Rot: round to *default frame offset*
+Rot rate: round to *default frame offset*/frame
+RotSleepRate: boolean value actually
+
+----- FORBIDDEN PATHS / PARAMETERS -----
+
+Max Frames: Only search paths under a certain number of frames
+Search Bounds: Refuse states out of these bounds
+Max Moves: Only search paths that change inputs less than a fixed number of times
+Frame resolution: Refuse paths that change inputs two times in less than a fixed number of frames
+
+----- COST FUNCTION (for A*) -----
+
+For big distances, *euclidian distance*/*max speed*
