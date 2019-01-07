@@ -181,12 +181,15 @@ Collision sprite will appear at the location of the biggest bit number that is e
 -----------------------------------------------------------
 
 Global description of physics:
+TODO: Check and add more detail for rotation
 
-1. Set x,y acceleration depending on inputs
-2. Move depending on acceleration, rotate depending on rotation rate
-3. Detection of healing/ending zones
-4. Collision check (see above)
-5. If collision, modify acceleration accordingly (see below) and cancel step 2
+1. Set position speed depending on inputs
+2. Decrease bump speed (for rotation and position) if relevant
+3. Move depending on speed (bump+input), rotate depending on current rotation rate
+4. Detection of healing/ending zones
+5. Collision check (see above)
+6. If collision, modify bump speed accordingly (see below), substract input speed to position,
+and apply this newly computed bump speed
 
 -----------------------------------------------------------
 Bump when collision is only at one side of the helirin

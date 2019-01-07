@@ -124,49 +124,73 @@ namespace KuruBot
             res = change_action_speed(res, e.speed);
             return res;
         }
-        public static string action_to_string(Action a)
+        public static ActionEffect action_to_effect(Action a)
         {
-            string res = "";
+            ActionEffect res = new ActionEffect();
+            res.speed = Speed.Speed0;
+            res.x = Direction1.None;
+            res.y = Direction1.None;
 
             if (a != Action.NoButton)
             {
                 int i = (int)a - 1;
-                // Speed
-                Speed speed = (Speed)(i / 8);
-                if (speed == Speed.Speed1)
-                    res += "A";
-                else if (speed == Speed.Speed2)
-                    res += "AB";
-                // Direction
+                res.speed = (Speed)(i / 8);
+                
                 int dir = i % 8;
                 switch (dir)
                 {
                     case 0:
-                        res += "U";
+                        res.y = Direction1.Backward;
                         break;
                     case 1:
-                        res += "D";
+                        res.y = Direction1.Forward;
                         break;
                     case 2:
-                        res += "L";
+                        res.x = Direction1.Backward;
                         break;
                     case 3:
-                        res += "R";
+                        res.x = Direction1.Forward;
                         break;
                     case 4:
-                        res += "UL";
+                        res.y = Direction1.Backward;
+                        res.x = Direction1.Backward;
                         break;
                     case 5:
-                        res += "UR";
+                        res.y = Direction1.Backward;
+                        res.x = Direction1.Forward;
                         break;
                     case 6:
-                        res += "DL";
+                        res.y = Direction1.Forward;
+                        res.x = Direction1.Backward;
                         break;
                     case 7:
-                        res += "DR";
+                        res.y = Direction1.Forward;
+                        res.x = Direction1.Forward;
                         break;
                 }
             }
+            return res;
+        }
+        public static string effect_to_string(ActionEffect e)
+        {
+            string res = "";
+
+            // Speed
+            if (e.speed == Speed.Speed1)
+                res += "A";
+            else if (e.speed == Speed.Speed2)
+                res += "AB";
+
+            // Direction
+            if (e.y == Direction1.Backward)
+                res += "U";
+            else if (e.y == Direction1.Forward)
+                res += "D";
+
+            if (e.x == Direction1.Backward)
+                res += "L";
+            else if (e.x == Direction1.Forward)
+                res += "R";
 
             return res;
         }

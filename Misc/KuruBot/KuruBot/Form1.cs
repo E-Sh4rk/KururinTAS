@@ -99,7 +99,7 @@ namespace KuruBot
 
                 if (hs.HasValue && phy != null)
                 {
-                    hs = phy.Next(hs.Value);
+                    hs = phy.Next(hs.Value, a);
                     mapc.SetHelirin(hs);
                 }
             }

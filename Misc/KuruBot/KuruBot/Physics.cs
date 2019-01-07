@@ -5,6 +5,7 @@ using System.Text;
 
 namespace KuruBot
 {
+    // /!\ This should remain a STRUCT
     public struct HelirinState
     {
         public HelirinState(uint xpos, uint ypos, ushort rot, short rot_srate)
@@ -20,8 +21,8 @@ namespace KuruBot
 
         public uint xpos;
         public uint ypos;
-        public short xb;
-        public short yb;
+        public int xb;
+        public int yb;
         public ushort rot;
         public short rot_rate;
         public short rot_srate;
@@ -44,9 +45,41 @@ namespace KuruBot
             this.map = map;
         }
 
-        public HelirinState Next(HelirinState st)
+        // Input speed constants
+        const int speed0 = (3*0xFFFF)/2;
+        const int speed1 = (3*speed0)/2;
+        const int speed2 = 2*speed0;
+        int[] input_speeds = new int[] { speed0, speed1, speed2 };
+
+        const int speed0_2 = 69504;
+        const int speed1_2 = (3*speed0_2)/2;
+        const int speed2_2 = 2*speed0_2;
+        int[] input_speeds_2 = new int[] { speed0_2, speed1_2, speed2_2 };
+
+        public HelirinState Next(HelirinState st, Action a)
         {
             // TODO
+            ActionEffect e = Controller.action_to_effect(a);
+            // 1. Set XS and YS depending on inputs
+            int[] speeds = input_speeds;
+            if (e.x != Direction1.None && e.y != Direction1.None)
+                speeds = input_speeds_2;
+            int speed = speeds[(int)e.speed];
+            int xs = 0;
+            if (e.x == Direction1.Backward)
+                xs = -speed;
+            else if (e.x == Direction1.Forward)
+                xs = speed;
+            int ys = 0;
+            if (e.y == Direction1.Backward)
+                ys = -speed;
+            else if (e.y == Direction1.Forward)
+                ys = speed;
+
+            // TMP
+            st.xpos += (uint)xs;
+            st.ypos += (uint)ys;
+
             return st;
         }
 
