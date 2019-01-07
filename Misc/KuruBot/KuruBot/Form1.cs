@@ -56,5 +56,52 @@ namespace KuruBot
             mapc.SetSettings(showGMap.Checked, showPMap.Checked);
         }
 
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar >= 97 && e.KeyChar <= 105)
+            {
+                e.Handled = true;
+                Action a = Action.NoButton;
+                switch (e.KeyChar)
+                {
+                    case (char)97:
+                        a = Action.DownLeft1;
+                        break;
+                    case (char)98:
+                        a = Action.Down1;
+                        break;
+                    case (char)99:
+                        a = Action.DownRight1;
+                        break;
+                    case (char)100:
+                        a = Action.Left1;
+                        break;
+                    case (char)102:
+                        a = Action.Right1;
+                        break;
+                    case (char)103:
+                        a = Action.UpLeft1;
+                        break;
+                    case (char)104:
+                        a = Action.Up1;
+                        break;
+                    case (char)105:
+                        a = Action.UpRight1;
+                        break;
+                }
+                Speed speed = Speed.Speed0;
+                if (ModifierKeys.HasFlag(Keys.Shift))
+                    speed = Speed.Speed2;
+                else if (ModifierKeys.HasFlag(Keys.Control))
+                    speed = Speed.Speed1;
+                a = Controller.change_action_speed(a, speed);
+                // TODO
+            }
+        }
+
+        private void enterInputString_Click(object sender, EventArgs e)
+        {
+            // TODO
+        }
     }
 }

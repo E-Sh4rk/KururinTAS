@@ -35,12 +35,14 @@
             this.showPMap = new System.Windows.Forms.CheckBox();
             this.kuruComFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.showPosition = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.enterInputString = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
             // 
             this.connect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.connect.Location = new System.Drawing.Point(12, 415);
+            this.connect.Location = new System.Drawing.Point(12, 426);
             this.connect.Name = "connect";
             this.connect.Size = new System.Drawing.Size(75, 23);
             this.connect.TabIndex = 0;
@@ -51,7 +53,7 @@
             // dlMap
             // 
             this.dlMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dlMap.Location = new System.Drawing.Point(93, 415);
+            this.dlMap.Location = new System.Drawing.Point(93, 426);
             this.dlMap.Name = "dlMap";
             this.dlMap.Size = new System.Drawing.Size(103, 23);
             this.dlMap.TabIndex = 1;
@@ -66,7 +68,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.main_panel.Location = new System.Drawing.Point(12, 12);
             this.main_panel.Name = "main_panel";
-            this.main_panel.Size = new System.Drawing.Size(776, 386);
+            this.main_panel.Size = new System.Drawing.Size(776, 366);
             this.main_panel.TabIndex = 2;
             // 
             // showGMap
@@ -75,7 +77,7 @@
             this.showGMap.AutoSize = true;
             this.showGMap.Checked = true;
             this.showGMap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showGMap.Location = new System.Drawing.Point(666, 415);
+            this.showGMap.Location = new System.Drawing.Point(666, 426);
             this.showGMap.Name = "showGMap";
             this.showGMap.Size = new System.Drawing.Size(122, 17);
             this.showGMap.TabIndex = 3;
@@ -87,7 +89,7 @@
             // 
             this.showPMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showPMap.AutoSize = true;
-            this.showPMap.Location = new System.Drawing.Point(532, 415);
+            this.showPMap.Location = new System.Drawing.Point(532, 426);
             this.showPMap.Name = "showPMap";
             this.showPMap.Size = new System.Drawing.Size(117, 17);
             this.showPMap.TabIndex = 4;
@@ -103,19 +105,42 @@
             // showPosition
             // 
             this.showPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.showPosition.Location = new System.Drawing.Point(202, 415);
+            this.showPosition.Location = new System.Drawing.Point(202, 426);
             this.showPosition.Name = "showPosition";
             this.showPosition.Size = new System.Drawing.Size(103, 23);
             this.showPosition.TabIndex = 5;
-            this.showPosition.Text = "Show Position";
+            this.showPosition.Text = "Download Position";
             this.showPosition.UseVisualStyleBackColor = true;
             this.showPosition.Click += new System.EventHandler(this.showPosition_Click);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 389);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(328, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Use Ø/CTRL/SHIFT+Numpad to perform a move for the next frame.";
+            // 
+            // enterInputString
+            // 
+            this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.enterInputString.Location = new System.Drawing.Point(665, 384);
+            this.enterInputString.Name = "enterInputString";
+            this.enterInputString.Size = new System.Drawing.Size(123, 23);
+            this.enterInputString.TabIndex = 7;
+            this.enterInputString.Text = "Enter a list of inputs";
+            this.enterInputString.UseVisualStyleBackColor = true;
+            this.enterInputString.Click += new System.EventHandler(this.enterInputString_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 461);
+            this.Controls.Add(this.enterInputString);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.showPosition);
             this.Controls.Add(this.showPMap);
             this.Controls.Add(this.showGMap);
@@ -124,6 +149,7 @@
             this.Controls.Add(this.connect);
             this.Name = "Form1";
             this.Text = "KuruBot";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,6 +164,8 @@
         private System.Windows.Forms.CheckBox showPMap;
         private System.Windows.Forms.OpenFileDialog kuruComFileDialog;
         private System.Windows.Forms.Button showPosition;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button enterInputString;
     }
 }
 

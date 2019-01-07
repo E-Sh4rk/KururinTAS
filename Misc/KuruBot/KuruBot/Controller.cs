@@ -37,72 +37,136 @@ namespace KuruBot
         DownLeft3,
         DownRight3
     }
+    enum Direction1
+    {
+        Backward=-1,
+        None=0,
+        Forward=1
+    }
+    enum Speed
+    {
+        Speed0 = 0,
+        Speed1 = 1,
+        Speed2 = 2
+    }
+    struct ActionEffect
+    {
+        public Direction1 x;
+        public Direction1 y;
+        public Speed speed;
+    }
 
     static class Controller
     {
-        static string action_to_string(Action a)
+        public static Action change_action_speed(Action a, Speed s)
         {
-            if (a == Action.NoButton)
-                return "";
-            int i = (int)a - 1;
-            string res = "";
-
-            int speed = i / 8;
-            if (speed == 1)
-                res += "A";
-            else if (speed == 2)
-                res += "AB";
-
-            int dir = i % 8;
-            switch (dir)
-            {
-                case 0:
-                    res += "U";
-                    break;
-                case 1:
-                    res += "D";
-                    break;
-                case 2:
-                    res += "L";
-                    break;
-                case 3:
-                    res += "R";
-                    break;
-                case 4:
-                    res += "UL";
-                    break;
-                case 5:
-                    res += "UR";
-                    break;
-                case 6:
-                    res += "DL";
-                    break;
-                case 7:
-                    res += "DR";
-                    break;
-            }
-
-            return res;
+            if (a != Action.NoButton)
+                a = (Action)(((int)a - 1) % 8 + 8 * (int)s + 1);
+            return a;
         }
-        static Size action_to_size(Action a)
+        public static ActionEffect string_to_effect(string action)
         {
-            string action = action_to_string(a);
-            Size u = new Size(0, -1);
-            Size l = new Size(-1, 0);
-            Size res = new Size(0, 0);
+            ActionEffect e;
+
             if (action.Contains("U"))
-                res = Size.Add(res, u);
-            if (action.Contains("D"))
-                res = Size.Subtract(res, u);
+                e.y = Direction1.Backward;
+            else if (action.Contains("D"))
+                e.y = Direction1.Forward;
+            else
+                e.y = Direction1.None;
+
+
             if (action.Contains("L"))
-                res = Size.Add(res, l);
-            if (action.Contains("R"))
-                res = Size.Subtract(res, l);
+                e.x = Direction1.Backward;
+            else if (action.Contains("R"))
+                e.x = Direction1.Forward;
+            else
+                e.x = Direction1.None;
 
             if (action.Contains("A") && action.Contains("B"))
-                res = Size.Add(Size.Add(res, res), res);
+                e.speed = Speed.Speed2;
             else if (action.Contains("A") || action.Contains("B"))
-                res = Size.Add(res, res);
+                e.speed = Speed.Speed1;
+            else
+                e.speed = Speed.Speed0;
+
+            return e;
+        }
+        public static Action effect_to_action(ActionEffect e)
+        {
+            Action res = Action.NoButton;
+            if (e.y == Direction1.Backward)
+            {
+                if (e.x == Direction1.Backward)
+                    res = Action.UpLeft1;
+                if (e.x == Direction1.None)
+                    res = Action.Up1;
+                if (e.x == Direction1.Forward)
+                    res = Action.UpRight1;
+            }
+            if (e.y == Direction1.None)
+            {
+                if (e.x == Direction1.Backward)
+                    res = Action.Left1;
+                if (e.x == Direction1.Forward)
+                    res = Action.Right1;
+            }
+            if (e.y == Direction1.Forward)
+            {
+                if (e.x == Direction1.Backward)
+                    res = Action.DownLeft1;
+                if (e.x == Direction1.None)
+                    res = Action.Down1;
+                if (e.x == Direction1.Forward)
+                    res = Action.DownRight1;
+            }
+
+            res = change_action_speed(res, e.speed);
+            return res;
+        }
+        public static string action_to_string(Action a)
+        {
+            string res = "";
+
+            if (a != Action.NoButton)
+            {
+                int i = (int)a - 1;
+                // Speed
+                Speed speed = (Speed)(i / 8);
+                if (speed == Speed.Speed1)
+                    res += "A";
+                else if (speed == Speed.Speed2)
+                    res += "AB";
+                // Direction
+                int dir = i % 8;
+                switch (dir)
+                {
+                    case 0:
+                        res += "U";
+                        break;
+                    case 1:
+                        res += "D";
+                        break;
+                    case 2:
+                        res += "L";
+                        break;
+                    case 3:
+                        res += "R";
+                        break;
+                    case 4:
+                        res += "UL";
+                        break;
+                    case 5:
+                        res += "UR";
+                        break;
+                    case 6:
+                        res += "DL";
+                        break;
+                    case 7:
+                        res += "DR";
+                        break;
+                }
+            }
 
             return res;
         }
