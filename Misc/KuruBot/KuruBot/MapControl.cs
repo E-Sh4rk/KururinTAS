@@ -27,38 +27,40 @@ namespace KuruBot
             public float angle;
         }
 
-        Form1 parent = null;
+        Map m = null;
         bool showG = true;
         bool showP = false;
-        Bitmap map = null;
+        Bitmap bmap = null;
         GraphicalHelirin helirin = null;
 
-        public MapControl(Form1 p, bool showG, bool showP)
+        public MapControl(Map m, bool showG, bool showP)
         {
             InitializeComponent();
             BackColor = Color.White;
-            parent = p;
-            SetSettings(showG, showP);
+            SetSettings(m, showG, showP);
         }
 
-        public void SetSettings(bool showG, bool showP)
+        public void SetSettings(Map m, bool showG, bool showP)
         {
+            this.m = m;
             this.showG = showG;
             this.showP = showP;
             Redraw();
         }
 
-        public void SetHelirin(GraphicalHelirin gh)
+        public void SetHelirin(HelirinState? st)
         {
-            helirin = gh;
+            if (st.HasValue)
+                helirin = Physics.ToGraphicalHelirin(st.Value);
+            else
+                helirin = null;
             Refresh();
         }
 
-        public void Redraw()
+        protected void Redraw()
         {
-            if (parent.map != null)
+            if (m != null)
             {
-                Map m = parent.map;
                 int width = m.Width * Map.tile_size;
                 int height = m.Height * Map.tile_size;
 
@@ -98,10 +100,10 @@ namespace KuruBot
                     }
                 }
 
-                map = bitmap;
+                bmap = bitmap;
             }
             else
-                map = null;
+                bmap = null;
 
             Refresh();
         }
@@ -116,11 +118,11 @@ namespace KuruBot
             int start_x = 0;
             int start_y = 0;
 
-            if (map != null)
+            if (bmap != null)
             {
-                start_x = (Width - map.Width) / 2;
-                start_y = (Height - map.Height) / 2;
-                g.DrawImage(map, start_x, start_y);
+                start_x = (Width - bmap.Width) / 2;
+                start_y = (Height - bmap.Height) / 2;
+                g.DrawImage(bmap, start_x, start_y);
             }
                 
             if (helirin != null)

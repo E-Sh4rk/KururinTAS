@@ -119,9 +119,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 389);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(328, 13);
+            this.label1.Size = new System.Drawing.Size(317, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Use Ø/CTRL/SHIFT+Numpad to perform a move for the next frame.";
+            this.label1.Text = "Use Ø/CTRL/ALT+Numpad to perform a move for the next frame.";
             // 
             // enterInputString
             // 

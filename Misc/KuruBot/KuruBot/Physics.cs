@@ -5,9 +5,9 @@ using System.Text;
 
 namespace KuruBot
 {
-    struct HelirinState
+    public struct HelirinState
     {
-        internal HelirinState(uint xpos, uint ypos, ushort rot, short rot_srate)
+        public HelirinState(uint xpos, uint ypos, ushort rot, short rot_srate)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -18,13 +18,13 @@ namespace KuruBot
             rot_rate = rot_srate;
         }
 
-        internal uint xpos;
-        internal uint ypos;
-        internal short xb;
-        internal short yb;
-        internal ushort rot;
-        internal short rot_rate;
-        internal short rot_srate;
+        public uint xpos;
+        public uint ypos;
+        public short xb;
+        public short yb;
+        public ushort rot;
+        public short rot_rate;
+        public short rot_srate;
     }
 
     class Physics
@@ -37,14 +37,18 @@ namespace KuruBot
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
-        Form1 parent = null;
+        Map map = null;
 
-        public Physics(Form1 parent)
+        public Physics(Map map)
         {
-            this.parent = parent;
+            this.map = map;
         }
 
-
+        public HelirinState Next(HelirinState st)
+        {
+            // TODO
+            return st;
+        }
 
     }
 }

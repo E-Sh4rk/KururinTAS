@@ -8,10 +8,10 @@ using System.Text;
 
 namespace KuruBot
 {
-    class Map
+    public class Map
     {
-        internal const int tile_size = 8;
-        internal const int helirin_radius = 32;
+        public const int tile_size = 8;
+        public const int helirin_radius = 32;
 
         // Graphical atrributes
         ushort[,] map = null;

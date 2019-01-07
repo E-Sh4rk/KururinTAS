@@ -12,14 +12,16 @@ namespace KuruBot
 {
     public partial class Form1 : Form
     {
-        internal Com com = null;
-        internal Map map = null;
+        Com com = null;
+        Map map = null;
         MapControl mapc = null;
+        Physics phy = null;
+        HelirinState? hs = new HelirinState();
 
         public Form1()
         {
             InitializeComponent();
-            mapc = new MapControl(this, showGMap.Checked, showPMap.Checked);
+            mapc = new MapControl(null, showGMap.Checked, showPMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
         }
@@ -35,7 +37,9 @@ namespace KuruBot
             if (com != null)
             {
                 map = com.DownloadMap();
-                mapc.Redraw();
+                if (map != null)
+                    phy = new Physics(map);
+                mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
             }
         }
 
@@ -43,17 +47,14 @@ namespace KuruBot
         {
             if (com != null)
             {
-                HelirinState? h = com.GetHelirin();
-                if (h.HasValue)
-                    mapc.SetHelirin(Physics.ToGraphicalHelirin(h.Value));
-                else
-                    mapc.SetHelirin(null);
+                hs = com.GetHelirin();
+                mapc.SetHelirin(hs);
             }
         }
 
         private void showGPMap_CheckedChanged(object sender, EventArgs e)
         {
-            mapc.SetSettings(showGMap.Checked, showPMap.Checked);
+            mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
         }
 
         private void Form1_KeyPress(object sender, KeyPressEventArgs e)
@@ -90,12 +91,17 @@ namespace KuruBot
                         break;
                 }
                 Speed speed = Speed.Speed0;
-                if (ModifierKeys.HasFlag(Keys.Shift))
+                if (ModifierKeys.HasFlag(Keys.Alt))
                     speed = Speed.Speed2;
                 else if (ModifierKeys.HasFlag(Keys.Control))
                     speed = Speed.Speed1;
                 a = Controller.change_action_speed(a, speed);
-                // TODO
+
+                if (hs.HasValue && phy != null)
+                {
+                    hs = phy.Next(hs.Value);
+                    mapc.SetHelirin(hs);
+                }
             }
         }
 
