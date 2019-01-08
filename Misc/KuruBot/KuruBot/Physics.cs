@@ -71,6 +71,7 @@ namespace KuruBot
         const int bump_speed_diff_frac = 4;
         const int nb_points_semi_helirin = 8;
         int[] helirin_points = null; // Automatically initialized
+        const int initial_bump_speed = 2 * 0x10000;
 
         public Physics(Map map)
         {
@@ -152,6 +153,7 @@ namespace KuruBot
             }
 
             // TODO
+            // TODO: Compute Sin / Cos in the GBA way...
 
             return st;
         }
