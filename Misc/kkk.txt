@@ -191,9 +191,9 @@ Collision sprite will appear at the location of the biggest bit number that is e
 
 Global description of physics:
 
-1. Set position speed depending on inputs
+1. Set position input speed depending on inputs
 2. Modify bump speed (for rotation and position) if relevant (make it nearer from the default value)
-3. Move depending on speed (bump+input), rotate depending on current rotation rate
+3. Move depending on speed (bump+input), rotate depending on rotation rate
 4. Detection of healing/ending zones
 5. Collision check (see above)
 6. If collision, modify bump speed accordingly (see below), substract input speed to position,
@@ -217,3 +217,12 @@ Bump when collision comes from the two sides of the helirin:
 
 Vector XB/YB direction depends on input speed (opposite direction).
 
+-----------------------------------------------------------
+
+Bump values evolution:
+
+Rotation +- 91 until default value
+
+Position, until 0:
+100 -> 75 (-25) -> 56 (-19) -> 42 (-14) -> 31 (-11) -> 23 (-8) -> 17 (-6) -> 12 (-5) -> 9 (-3) -> 6 (-3) -> 4 (-2) -> 3 -> 2 -> 1 -> 0
+We add/substract ceil(abs(nb)/4)

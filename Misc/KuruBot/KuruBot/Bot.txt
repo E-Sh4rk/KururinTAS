@@ -9,6 +9,9 @@ Rot
 RotRate
 RotSleepRate
 
+Lives
+Invicibility
+
 ----- STATE REDUCTION -----
 
 XPos/YPos: round to 1/64e pixel

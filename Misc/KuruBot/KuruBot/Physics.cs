@@ -26,6 +26,8 @@ namespace KuruBot
         public short rot;
         public short rot_rate;
         public short rot_srate;
+
+        // TODO: Add life and invicibility
     }
 
     class Physics
@@ -56,11 +58,23 @@ namespace KuruBot
         const int speed2_2 = 2*speed0_2;
         int[] input_speeds_2 = new int[] { speed0_2, speed1_2, speed2_2 };
 
+        // Various constants
+        const short rotation_rate_decr = 91;
+        const int bump_speed_diff_frac = 4;
+
+        int DecreaseBumpSpeed(int bs)
+        {
+            int diff = bs / bump_speed_diff_frac;
+            if (bs % bump_speed_diff_frac != 0)
+                diff += Math.Sign(bs);
+            return bs - diff;
+        }
+
         public HelirinState Next(HelirinState st, Action a)
         {
-            // TODO
             ActionEffect e = Controller.action_to_effect(a);
-            // 1. Set XS and YS depending on inputs
+
+            // 1. Set input speed (XS and YS) depending on inputs
             int[] speeds = input_speeds;
             if (e.x != Direction1.None && e.y != Direction1.None)
                 speeds = input_speeds_2;
@@ -76,9 +90,22 @@ namespace KuruBot
             else if (e.y == Direction1.Forward)
                 ys = speed;
 
-            // TMP
-            st.xpos += xs;
-            st.ypos += ys;
+            // 2. Reduce bump speed / bump rotation (XB, YB and Rot_rate)
+            short rot_diff = (short)(st.rot_srate - st.rot_rate);
+            if (rot_diff < -rotation_rate_decr)
+                rot_diff = -rotation_rate_decr;
+            if (rot_diff > rotation_rate_decr)
+                rot_diff = rotation_rate_decr;
+            st.rot_rate = (short)(st.rot_rate + rot_diff);
+            st.xb = DecreaseBumpSpeed(st.xb);
+            st.yb = DecreaseBumpSpeed(st.yb);
+
+            // 3. Move depending on speed (bump+input), rotate depending on rotation rate (Rot_rate)
+            st.xpos += xs + st.xb;
+            st.ypos += ys + st.yb;
+            st.rot += st.rot_rate;
+
+            // TODO
 
             return st;
         }
