@@ -68,22 +68,6 @@ namespace KuruBot
                 Graphics g = Graphics.FromImage(bitmap);
                 g.Clear(BackColor);
 
-                if (showG)
-                {
-                    for (int y = 0; y < m.Height; y++)
-                    {
-                        for (int x = 0; x < m.Width; x++)
-                        {
-                            Rectangle? sprite = m.GetTileSprite(m.TileAt(x, y));
-                            if (sprite.HasValue)
-                            {
-                                Rectangle dest = new Rectangle(x * Map.tile_size, y * Map.tile_size, Map.tile_size, Map.tile_size);
-                                g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
-                            }
-                        }
-                    }
-                }
-
                 if (showP)
                 {
                     Brush myBrush = Brushes.Red;
@@ -95,6 +79,22 @@ namespace KuruBot
                             {
                                 Rectangle dest = new Rectangle(x, y, 1, 1);
                                 g.FillRectangle(myBrush, dest);
+                            }
+                        }
+                    }
+                }
+
+                if (showG)
+                {
+                    for (int y = 0; y < m.Height; y++)
+                    {
+                        for (int x = 0; x < m.Width; x++)
+                        {
+                            Rectangle? sprite = m.GetTileSprite(m.TileAt(x, y));
+                            if (sprite.HasValue)
+                            {
+                                Rectangle dest = new Rectangle(x * Map.tile_size, y * Map.tile_size, Map.tile_size, Map.tile_size);
+                                g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
                             }
                         }
                     }

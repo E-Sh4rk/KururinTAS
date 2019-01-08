@@ -46,7 +46,7 @@ namespace KuruBot
         }
 
         // Input speed constants
-        const int speed0 = (3*0xFFFF)/2;
+        const int speed0 = (3*0x10000)/2;
         const int speed1 = (3*speed0)/2;
         const int speed2 = 2*speed0;
         int[] input_speeds = new int[] { speed0, speed1, speed2 };

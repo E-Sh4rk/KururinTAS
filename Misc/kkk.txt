@@ -89,7 +89,7 @@ counter (non null in zone/dmg)	3004566
 781?				3004568
 0?				300456A
 8?				300456C
-Input speed norm		3004570
+Input speed norm / 256		3004570
 
 Angle				3004572
 Turn rate (with bump)		3004574
@@ -167,7 +167,7 @@ A800	0 1010 1000 0000 0000
 15540   1 0101 0101 0100 0000
 1555F   1 0101 0101 0100 1111
 157FF	1 0101 0111 1111 1111
-		0 1234 5678 ...
+	0 1234 5678 ...
 
 1/2: Extermity of the helirin touched (left/right)
 Even/Odd positions: correspond to left/right
@@ -181,29 +181,29 @@ Collision sprite will appear at the location of the biggest bit number that is e
 -----------------------------------------------------------
 
 Global description of physics:
-TODO: Check and add more detail for rotation
 
 1. Set position speed depending on inputs
-2. Decrease bump speed (for rotation and position) if relevant
+2. Modify bump speed (for rotation and position) if relevant (make it nearer from the default value)
 3. Move depending on speed (bump+input), rotate depending on current rotation rate
 4. Detection of healing/ending zones
 5. Collision check (see above)
 6. If collision, modify bump speed accordingly (see below), substract input speed to position,
-and apply this newly computed bump speed
+and apply this newly computed bump speed to position (not rotation)
 
 -----------------------------------------------------------
-Bump when collision is only at one side of the helirin
+Bump when collision is only at one side of the helirin:
 
-X--   (G1, X=100)
+|-o-   (G1, X=100)
 AR:	-1024	1024	-1024	1024	-1204	1024	933	842	751	...
 XB:	131072	130048	130560	130048	130560	130048	97536	73152	54864	...
 YB:		-12800	9216	-12800	9216	-12800	-9600	-7200	-5400	...
 
 Vector XB/YB direction depends on direction of the helirin.
 -> depends on rotation of the helirin (current rotation var + rotation rate var)
+Xb=YB when helirin at 45° (_/_)   (-92672)
 Angle rate alternate (if pos, becomes neg, and vice versa)
 
-Bump when collision comes from the two sides of the helirin
+Bump when collision comes from the two sides of the helirin:
 
 Vector XB/YB direction depends on input speed (opposite direction).
 
