@@ -32,37 +32,60 @@ namespace KuruBot
 
     class Physics
     {
+        static float rot_to_angle(short rot)
+        {
+            return (float)(2 * Math.PI * rot / 0x10000);
+        }
+        static int pos_to_px(int pos)
+        {
+            return pos >> 16;
+        }
+        static int px_to_pos(int px)
+        {
+            return px << 16;
+        }
+
         public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
-            float angle = (float)(2 * Math.PI * h.rot / 0x10000);
-            int xpix = h.xpos >> 16;
-            int ypix = h.ypos >> 16;
+            float angle = rot_to_angle(h.rot);
+            int xpix = pos_to_px(h.xpos);
+            int ypix = pos_to_px(h.ypos);
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
         Map map = null;
 
-        public Physics(Map map)
-        {
-            this.map = map;
-        }
-
         // Input speed constants
-        const int speed0 = (3*0x10000)/2;
-        const int speed1 = (3*speed0)/2;
-        const int speed2 = 2*speed0;
+        const int speed0 = (3 * 0x10000) / 2;
+        const int speed1 = (3 * speed0) / 2;
+        const int speed2 = 2 * speed0;
         int[] input_speeds = new int[] { speed0, speed1, speed2 };
 
         const int speed0_2 = 69504;
-        const int speed1_2 = (3*speed0_2)/2;
-        const int speed2_2 = 2*speed0_2;
+        const int speed1_2 = (3 * speed0_2) / 2;
+        const int speed2_2 = 2 * speed0_2;
         int[] input_speeds_2 = new int[] { speed0_2, speed1_2, speed2_2 };
 
         // Various constants
         const short rotation_rate_decr = 91;
         const int bump_speed_diff_frac = 4;
+        const int nb_points_semi_helirin = 8;
+        int[] helirin_points = null; // Automatically initialized
 
-        int DecreaseBumpSpeed(int bs)
+        public Physics(Map map)
+        {
+            this.map = map;
+            // Set helirin physical points
+            helirin_points = new int[1+nb_points_semi_helirin*2];
+            helirin_points[0] = 0;
+            for (int i = 0; i < nb_points_semi_helirin; i++)
+            {
+                helirin_points[2*i+1] = px_to_pos(-(i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+                helirin_points[2*i+2] = px_to_pos( (i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+            }
+        }
+
+        static int DecreaseBumpSpeed(int bs)
         {
             int diff = bs / bump_speed_diff_frac;
             if (bs % bump_speed_diff_frac != 0)
@@ -104,6 +127,29 @@ namespace KuruBot
             st.xpos += xs + st.xb;
             st.ypos += ys + st.yb;
             st.rot += st.rot_rate;
+
+            // 4. Detection of healing/ending zones
+            Map.Zone zone = map.IsPixelInZone(pos_to_px(st.xpos), pos_to_px(st.ypos));
+            if (zone == Map.Zone.Healing)
+            {
+                // TODO
+            }
+            if (zone == Map.Zone.Ending)
+            {
+                // TODO
+            }
+
+            // 5. Compute collision mask
+            uint collision_mask = 0;
+            float angle = rot_to_angle(st.rot);
+            for (int i = 0; i < helirin_points.Length; i++)
+            {
+                int radius = helirin_points[i];
+                int pixX = pos_to_px((int)(st.xpos + Math.Sin(angle) * radius));
+                int pixY = pos_to_px((int)(st.ypos - Math.Cos(angle) * radius));
+                if (map.IsPixelInCollision(pixX, pixY))
+                    collision_mask = collision_mask | ((uint)1 << i);
+            }
 
             // TODO
 

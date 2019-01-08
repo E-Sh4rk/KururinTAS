@@ -169,7 +169,7 @@ B	0 0000 0000 0000 1011	(11)	AUTO BUMP
 A000	0 1010 0000 0000 0000
 AA80	0 1010 1010 1000 0000
 A800	0 1010 1000 0000 0000
-10000	1 0000 0000 0000 0000
+10000	1 0000 0000 0000 0000	(65536)
 14000	1 0100 0000 0000 0000
 15000   1 0101 0000 0000 0000
 15540   1 0101 0101 0100 0000
@@ -178,7 +178,7 @@ A800	0 1010 1000 0000 0000
 1FFFF	1 1111 1111 1111 1111
 	0 1234 5678 ...
 
-0/1: Extermity of the helirin touched (left/right)
+0/1: Extermity of the helirin touched (up/down when rot=0)
 Even/Odd positions: correspond to left/right
 ==>
 Helirin separated in 17 parts
@@ -195,7 +195,7 @@ Global description of physics:
 2. Modify bump speed (for rotation and position) if relevant (make it nearer from the default value)
 3. Move depending on speed (bump+input), rotate depending on rotation rate
 4. Detection of healing/ending zones
-5. Collision check (see above)
+5. Compute collision mask (see above)
 6. If collision, modify bump speed accordingly (see below), substract input speed to position,
 and apply this newly computed bump speed to position (not rotation)
 
