@@ -18,4 +18,6 @@ SystemID GBA
 4585	b	u	0	IWRAM	Invulnerability
 313C	w	u	0	IWRAM	MapW IW
 313E	w	u	0	IWRAM	MapH IW
+45D4	d	u	0	IWRAM	Collision 1
+45D8	d	u	0	IWRAM	Collision 2
 
