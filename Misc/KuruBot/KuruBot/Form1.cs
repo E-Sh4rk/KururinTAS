@@ -57,36 +57,41 @@ namespace KuruBot
             mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
         }
 
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        private void enterInputString_Click(object sender, EventArgs e)
         {
-            if (e.KeyChar >= 97 && e.KeyChar <= 105)
+            // TODO
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
             {
                 e.Handled = true;
                 Action a = Action.NoButton;
-                switch (e.KeyChar)
+                switch (e.KeyCode)
                 {
-                    case (char)97:
+                    case Keys.NumPad1:
                         a = Action.DownLeft1;
                         break;
-                    case (char)98:
+                    case Keys.NumPad2:
                         a = Action.Down1;
                         break;
-                    case (char)99:
+                    case Keys.NumPad3:
                         a = Action.DownRight1;
                         break;
-                    case (char)100:
+                    case Keys.NumPad4:
                         a = Action.Left1;
                         break;
-                    case (char)102:
+                    case Keys.NumPad6:
                         a = Action.Right1;
                         break;
-                    case (char)103:
+                    case Keys.NumPad7:
                         a = Action.UpLeft1;
                         break;
-                    case (char)104:
+                    case Keys.NumPad8:
                         a = Action.Up1;
                         break;
-                    case (char)105:
+                    case Keys.NumPad9:
                         a = Action.UpRight1;
                         break;
                 }
@@ -103,11 +108,6 @@ namespace KuruBot
                     mapc.SetHelirin(hs);
                 }
             }
-        }
-
-        private void enterInputString_Click(object sender, EventArgs e)
-        {
-            // TODO
         }
     }
 }

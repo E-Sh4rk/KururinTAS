@@ -8,7 +8,7 @@ namespace KuruBot
     // /!\ This should remain a STRUCT
     public struct HelirinState
     {
-        public HelirinState(uint xpos, uint ypos, ushort rot, short rot_srate)
+        public HelirinState(int xpos, int ypos, short rot, short rot_srate)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -19,11 +19,11 @@ namespace KuruBot
             rot_rate = rot_srate;
         }
 
-        public uint xpos;
-        public uint ypos;
+        public int xpos;
+        public int ypos;
         public int xb;
         public int yb;
-        public ushort rot;
+        public short rot;
         public short rot_rate;
         public short rot_srate;
     }
@@ -32,9 +32,9 @@ namespace KuruBot
     {
         public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
-            float angle = (float)(h.rot * 2 * Math.PI / 0x10000);
-            int xpix = (int)h.xpos >> 16;
-            int ypix = (int)h.ypos >> 16;
+            float angle = (float)(2 * Math.PI * h.rot / 0x10000);
+            int xpix = h.xpos >> 16;
+            int ypix = h.ypos >> 16;
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
@@ -77,8 +77,8 @@ namespace KuruBot
                 ys = speed;
 
             // TMP
-            st.xpos += (uint)xs;
-            st.ypos += (uint)ys;
+            st.xpos += xs;
+            st.ypos += ys;
 
             return st;
         }

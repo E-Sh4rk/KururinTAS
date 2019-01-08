@@ -147,9 +147,10 @@
             this.Controls.Add(this.main_panel);
             this.Controls.Add(this.dlMap);
             this.Controls.Add(this.connect);
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "KuruBot";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

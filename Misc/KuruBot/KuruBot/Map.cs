@@ -81,6 +81,17 @@ namespace KuruBot
                 return true;
             return false;
         }
+        public enum Zone
+        {
+            None = 0,
+            Healing,
+            Ending
+        }
+        public Zone IsTileAZone(ushort tile)
+        {
+            // TODO
+            return Zone.None;
+        }
         public Rectangle? GetTileSprite(ushort tile)
         {
             if (IsTileAWall(tile))
@@ -91,13 +102,33 @@ namespace KuruBot
             }
             return null;
         }
+        // For graphical purpose only (do not use for testing collisions). No OOB.
         public ushort TileAt(int x, int y)
         {
-            return map[y, x];
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return 0x0;
+            return map[y, x];  
         }
+        // For physical purpose
         public bool IsPixelInCollision(int x, int y)
         {
-            return physical_map[x + y*WidthPx];
+            // Note: these calculus simulate those of the actual Kururin implementation
+            uint xm = (uint)x % (uint)WidthPx;
+            uint ym = (uint)y % (uint)HeightPx;
+            uint addr = xm + ym * (uint)WidthPx;
+            return physical_map[(int)addr];
+        }
+        public Zone IsPixelInZone(int x, int y)
+        {
+            // Note: these calculus simulate those of the actual Kururin implementation
+            // C# integer division semantics matches the C one
+            // C# modulo semantics matches the C one
+            int x_tile = x / tile_size;
+            int y_tile = y / tile_size;
+            int xm = x_tile % Width;
+            int ym = y_tile % Height;
+            ushort tile = TileAt(xm, ym);
+            return IsTileAZone(tile);
         }
     }
 }

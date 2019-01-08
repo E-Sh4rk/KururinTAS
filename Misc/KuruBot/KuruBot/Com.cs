@@ -78,7 +78,7 @@ namespace KuruBot
                 uint ypos = Convert.ToUInt32(headers[1]);
                 ushort rot = Convert.ToUInt16(headers[2]);
                 short rot_srate = Convert.ToInt16(headers[3]);
-                return new HelirinState(xpos, ypos, rot, rot_srate);
+                return new HelirinState((int)xpos, (int)ypos, (short)rot, rot_srate);
             }
             catch { }
             return null;
