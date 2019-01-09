@@ -197,15 +197,9 @@ Global description of physics:
 4. Detection of healing/ending zones
 5. Compute collision mask (see above)
 6. If collision:
-	- substract default rate to rotation
 	- substract input speed to position
 	- modify bump speed accordingly (see below)
 	- apply this newly computed bump speed to position
-	- add 91 (default rate/2 ?) to rotation?
-TODO: Investigate it with nogba
-TODO: Investigate COS/SIN issue
-
-For computation of sin/cos, see: https://gfx.developpez.com/prog-gba/sprites/ ???
 
 -----------------------------------------------------------
 
@@ -235,3 +229,22 @@ Rotation +- 91 until default value
 Position, until 0:
 100 -> 75 (-25) -> 56 (-19) -> 42 (-14) -> 31 (-11) -> 23 (-8) -> 17 (-6) -> 12 (-5) -> 9 (-3) -> 6 (-3) -> 4 (-2) -> 3 -> 2 -> 1 -> 0
 We add/substract ceil(abs(nb)/4)
+
+
+------------------------------------------------------------
+
+COS/SIN prototype
+
+See https://gfx.developpez.com/prog-gba/sprites/
+
+short angle = Convert.ToInt16(Console.ReadLine());
+byte angle_high = (byte)(angle >> 8);
+int speed = 2 * 0x10000;
+int speed_high = speed >> 8;
+Console.WriteLine(2 * Math.PI * angle_high / 0x100);
+int cos = (int)(Math.Cos(2 * Math.PI * angle_high / 0x100) *0x100);
+Console.WriteLine(cos);
+int new_speed = speed_high * cos;
+Console.WriteLine(new_speed);
+Console.ReadLine();
+return 0;
