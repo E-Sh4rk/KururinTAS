@@ -219,7 +219,9 @@ Angle rate alternate (if pos, becomes neg, and vice versa)
 Bump when collision comes from the two sides of the helirin:
 
 Vector XB/YB direction depends on input speed (opposite direction).
-
+MAX: 262144 = 4*2^16
+MIXED: 185344
+IF NO DIRECTION, KEEP XB/YB AS IS (NO RESET)
 -----------------------------------------------------------
 
 Bump values evolution:
