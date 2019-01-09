@@ -74,9 +74,12 @@ local long_task_out_file = ""
 function get_pos()
 	local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
 	local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
+	local xb = memory.read_s32_le(addr_xb, "IWRAM")
+	local yb = memory.read_s32_le(addr_yb, "IWRAM")
 	local rot = memory.read_u16_le(addr_rotation, "IWRAM")
-	local srot = memory.read_s16_le(addr_rotation_srate, "IWRAM")
-	return tostring(xpos) .. " " .. tostring(ypos) .. " " .. tostring(rot) .. " " .. tostring(srot) .. "\n"
+	local rot_rate = memory.read_s16_le(addr_rotation_rate, "IWRAM")
+	local rot_srate = memory.read_s16_le(addr_rotation_srate, "IWRAM")
+	return tostring(xpos) .. " " .. tostring(ypos) .. " " .. tostring(xb) .. " " .. tostring(yb) .. " " .. tostring(rot) .. " " .. tostring(rot_rate) .. " " .. tostring(rot_srate) .. "\n"
 end
 
 while true

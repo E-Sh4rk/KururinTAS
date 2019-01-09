@@ -8,15 +8,15 @@ namespace KuruBot
     // /!\ This should remain a STRUCT
     public struct HelirinState
     {
-        public HelirinState(int xpos, int ypos, short rot, short rot_srate)
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate)
         {
             this.xpos = xpos;
             this.ypos = ypos;
+            this.xb = xb;
+            this.yb = yb;
             this.rot = rot;
+            this.rot_rate = rot_rate;
             this.rot_srate = rot_srate;
-            xb = 0;
-            yb = 0;
-            rot_rate = rot_srate;
         }
 
         public int xpos;

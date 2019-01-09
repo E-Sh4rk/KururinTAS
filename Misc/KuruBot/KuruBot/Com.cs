@@ -67,9 +67,12 @@ namespace KuruBot
             string[] headers = content.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             uint xpos = Convert.ToUInt32(headers[0]);
             uint ypos = Convert.ToUInt32(headers[1]);
-            ushort rot = Convert.ToUInt16(headers[2]);
-            short rot_srate = Convert.ToInt16(headers[3]);
-            return new HelirinState((int)xpos, (int)ypos, (short)rot, rot_srate);
+            int xb = Convert.ToInt32(headers[2]);
+            int yb = Convert.ToInt32(headers[3]);
+            ushort rot = Convert.ToUInt16(headers[4]);
+            short rot_rate = Convert.ToInt16(headers[5]);
+            short rot_srate = Convert.ToInt16(headers[6]);
+            return new HelirinState((int)xpos, (int)ypos, xb, yb, (short)rot, rot_rate, rot_srate);
         }
 
         public HelirinState? GetHelirin()
