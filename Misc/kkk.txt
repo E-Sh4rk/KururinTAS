@@ -167,10 +167,10 @@ Global description of physics:
 5. Compute collision mask (see below)
 6. If collision:
 	- substract input speed to position
-	- modify bump speed accordingly (see below) if relevant
+	- modify bump speed (pos & rot) accordingly (see below) if relevant
 	- if modified, apply this newly computed bump speed to position
 7. If mask has collision at one of the 3 lowest bits :
-	- modify bump speed depending on input
+	- modify bump speed (position) depending on input
 	- if modified, apply this newly computed bump speed to position
 
 -----------------------------------------------------------

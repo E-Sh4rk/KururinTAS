@@ -71,20 +71,31 @@ namespace KuruBot
         const short rotation_rate_decr = 91;
         const int bump_speed_diff_frac = 4;
         const int nb_points_semi_helirin = 8;
+        const int middle_mask = 0x7;
         int[] helirin_points = null; // Automatically initialized
-        const int initial_bump_speed = 2 * 0x10000;
+        uint up_mask = 0; // Automatically initialized
+        uint down_mask = 0; // Automatically initialized
+
+        // Bump speeds
+        const short rot_bump_rate = 1024;
+        const int auto_bump_speed = 2 * 0x10000;
+        const int input_bump_speed = 4 * 0x10000;
+        const int input_bump_speed_2 = 185344;
 
         public Physics(Map map)
         {
             this.map = map;
             math = new KuruMath();
             // Set helirin physical points
+            up_mask = 0; down_mask = 0;
             helirin_points = new int[1+nb_points_semi_helirin*2];
             helirin_points[0] = 0;
             for (int i = 0; i < nb_points_semi_helirin; i++)
             {
-                helirin_points[2*i+1] = px_to_pos(-(i+1) * (Map.helirin_radius / nb_points_semi_helirin));
-                helirin_points[2*i+2] = px_to_pos( (i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+                down_mask += (uint)1 << (2 * i + 1);
+                helirin_points[2*i+1] = px_to_pos( (i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+                up_mask += (uint)1 << (2 * i + 2);
+                helirin_points[2*i+2] = px_to_pos(-(i+1) * (Map.helirin_radius / nb_points_semi_helirin));
             }
         }
 
@@ -105,16 +116,8 @@ namespace KuruBot
             if (e.x != Direction1.None && e.y != Direction1.None)
                 speeds = input_speeds_2;
             int speed = speeds[(int)e.speed];
-            int xs = 0;
-            if (e.x == Direction1.Backward)
-                xs = -speed;
-            else if (e.x == Direction1.Forward)
-                xs = speed;
-            int ys = 0;
-            if (e.y == Direction1.Backward)
-                ys = -speed;
-            else if (e.y == Direction1.Forward)
-                ys = speed;
+            int xs = (int)e.x * speed;
+            int ys = (int)e.y * speed;
 
             // 2. Reduce bump speed / bump rotation (XB, YB and Rot_rate)
             short rot_diff = (short)(st.rot_srate - st.rot_rate);
@@ -147,18 +150,53 @@ namespace KuruBot
             for (int i = 0; i < helirin_points.Length; i++)
             {
                 int radius = helirin_points[i];
-                int pixX = pos_to_px(st.xpos + math.factor_by_sin(radius, st.rot));
-                int pixY = pos_to_px(st.ypos - math.factor_by_cos(radius, st.rot));
+                int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
+                int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));
                 if (map.IsPixelInCollision(pixX, pixY))
                     collision_mask = collision_mask | ((uint)1 << i);
             }
 
             // 6. If collision:
-            //      - Substract input speed (XS,YS) to position
-            //      - Modify bump speed accordingly if relevant
-            //      - If modified, apply this newly computed bump speed to position
+            //  - Substract input speed to position
+            //  - Modify bump speed (pos & rot) accordingly if relevant
+            //  - If modified, apply this newly computed bump speed to position
+            if (collision_mask != 0)
+            {
+                st.xpos -= xs;
+                st.ypos -= ys;
+                bool up_side = (collision_mask & up_mask) != 0;
+                bool down_side = (collision_mask & down_mask) != 0;
+                if (up_side && !down_side)
+                {
+                    st.xb = - math.factor_by_sin(auto_bump_speed, st.rot);
+                    st.yb =   math.factor_by_cos(auto_bump_speed, st.rot);
+                }
+                if (!up_side && down_side)
+                {
+                    st.xb =   math.factor_by_sin(auto_bump_speed, st.rot);
+                    st.yb = - math.factor_by_cos(auto_bump_speed, st.rot);
+                }
+                if (up_side != down_side)
+                {
+                    st.xpos += st.xb;
+                    st.ypos += st.yb;
+                }
+                st.rot_rate = (short)(-Math.Sign(st.rot_rate) * rot_bump_rate);
+                if (st.rot_rate == 0)
+                    st.rot_rate = rot_bump_rate;
 
-            // TODO
+                // 7. If mask has collision at one of the 3 lowest bits :
+                //  - Modify bump speed (position) depending on input
+                //  - If modified, apply this newly computed bump speed to position
+                if ((collision_mask & middle_mask) != 0)
+                {
+                    int bump_speed = input_bump_speed;
+                    if (e.x != Direction1.None && e.y != Direction1.None)
+                        bump_speed = input_bump_speed_2;
+                    st.xb = -(int)e.x * bump_speed;
+                    st.yb = -(int)e.y * bump_speed;
+                }
+            }
 
             return st;
         }
