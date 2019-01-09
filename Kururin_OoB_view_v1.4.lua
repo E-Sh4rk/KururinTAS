@@ -47,11 +47,13 @@ then
 	view.refresh = view.Refresh
 	view.clearGraphics = function () end
 	view.SetTitle("Out of Bounds Viewer")
+	view.SetDefaultForegroundColor(0xFF000000)
 	
 else
 	view = gui
 	view.clear = function (x) end
 	view.refresh = function () end
+	view.defaultForeground(0xFF000000)
 end
 
 while true do
