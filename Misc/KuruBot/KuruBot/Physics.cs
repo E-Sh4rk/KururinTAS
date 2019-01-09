@@ -188,13 +188,15 @@ namespace KuruBot
                 // 7. If mask has collision at one of the 3 lowest bits :
                 //  - Modify bump speed (position) depending on input
                 //  - If modified, apply this newly computed bump speed to position
-                if ((collision_mask & middle_mask) != 0)
+                if ((collision_mask & middle_mask) != 0 && (e.x != Direction1.None || e.y != Direction1.None))
                 {
                     int bump_speed = input_bump_speed;
                     if (e.x != Direction1.None && e.y != Direction1.None)
                         bump_speed = input_bump_speed_2;
                     st.xb = -(int)e.x * bump_speed;
                     st.yb = -(int)e.y * bump_speed;
+                    st.xpos += st.xb;
+                    st.ypos += st.yb;
                 }
             }
 
