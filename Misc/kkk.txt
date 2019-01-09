@@ -169,19 +169,31 @@ Global description of physics:
 	- substract input speed to position
 	- modify bump speed accordingly (see below) if relevant
 	- if modified, apply this newly computed bump speed to position
+7. Compute new collision mask if necessary
+8. If new position mask OR old one has collision at one of the 3 lowest bits :
+	- modify bump speed depending on input
+	- if modified, apply this newly computed bump speed to position
 
 -----------------------------------------------------------
 
 r6 at 080151AE (just before collision branching)
 
 Possible values:
-5	0 0000 0000 0000 0101	(5)	AUTO BUMP
-7	0 0000 0000 0000 0111	(7)	NO AUTO BUMP (BUMP CONTROLLED BY INPUT)
+5	0 0000 0000 0000 0101	(5)	AUTO BUMP.
+7	0 0000 0000 0000 0111	(7)	INPUT. NO AUTO BUMP.
+A	0 0000 0000 0000 1010	(10)	INPUT. AUTO BUMP.
 B	0 0000 0000 0000 1011	(11)	AUTO BUMP
+14	0 0000 0000 0001 0100	(20)	AUTO BUMP.
+28	0 0000 0000 0010 1000	(40)	INPUT. AUTO BUMP.
 157F	0 0001 0101 0111 1111	(5503)
 1583	0 0001 0101 1000 0011
+5280	0 0101 0010 1000 0000	(21120)	NO INPUT, NO AUTO
 8000	0 1000 0000 0000 0000
+8014	0 1000 0000 0001 0100	(32788) INPUT
+8050	0 1000 0000 0101 0000	(32848)	NO INPUT, NO AUTO.
 A000	0 1010 0000 0000 0000
+A050	0 1010 0000 0101 0000	(41040)	NO INPUT, NO AUTO.
+A140	0 1010 0001 0100 0000	(41280)	NO INPUT, NO AUTO.
 AA80	0 1010 1010 1000 0000
 A800	0 1010 1000 0000 0000
 10000	1 0000 0000 0000 0000	(65536)
@@ -214,7 +226,7 @@ We add/substract ceil(abs(nb)/4)
 
 ------------------------------------------------------------
 
-Bump when collision is only at one side of the helirin:
+Auto bump, when collision is only at one side of the helirin:
 
 |-o-   (G1, X=100)
 AR:	-1024	1024	-1024	1024	-1204	1024	933	842	751	...
@@ -227,7 +239,7 @@ XB=YB when helirin at 45° (_/_)   (-92672)
 XB=0 when helirin at 0° --> YB max at 131072 (= 2 * 0x10000)
 Angle rate alternate (if pos, becomes neg, and vice versa)
 
-Bump when collision comes from the two sides of the helirin:
+Bump depending on the input:
 
 Vector XB/YB direction depends on input speed (opposite direction).
 MAX: 262144 = 4*2^16
