@@ -65,6 +65,9 @@ local current_play_index = 0
 local current_play = {}
 local current_play_ans = ""
 
+local recording = false
+local current_record_ans = ""
+
 function get_pos()
 	local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
 	local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
@@ -76,7 +79,7 @@ end
 while true
 do
 	-- Is there a task that awaits?
-	if current_play_index == 0 and file_exists(in_file)
+	if (current_play_index == 0) and (recording == false) and file_exists(in_file)
 	then
 		local content = lines_from(in_file)
 		--for i=1, #content do end
@@ -122,6 +125,10 @@ do
 					current_play_index = 3
 					current_play_ans = ""
 				end
+				
+			elseif cmd == "STARTRECORD" then
+				recording = true
+				current_record_ans = ""
 			end
 		end
 		
@@ -148,6 +155,27 @@ do
 			if bizstring.contains(inputs_txt, "R") then inputs["Right"] = true end
 			joypad.set(inputs)
 			current_play_index = current_play_index + 1
+		end
+	end
+	
+	-- Recording
+	if recording then
+		-- Log inputs
+		local inputs = joypad.get()
+		if inputs["A"] == true then current_record_ans = current_record_ans .. "A" end
+		if inputs["B"] == true then current_record_ans = current_record_ans .. "B" end
+		if inputs["Up"] == true then current_record_ans = current_record_ans .. "U" end
+		if inputs["Down"] == true then current_record_ans = current_record_ans .. "D" end
+		if inputs["Left"] == true then current_record_ans = current_record_ans .. "L" end
+		if inputs["Right"] == true then current_record_ans = current_record_ans .. "R" end
+		current_record_ans = current_record_ans .. "\n"
+		-- Terminate?
+		if inputs["Power"] == true or inputs["Start"] == true or inputs["Select"] == true then
+			-- Recording terminated
+			write_file(out_file, current_record_ans)
+			os.remove(in_file)
+			current_record_ans = ""
+			recording = false
 		end
 	end
 

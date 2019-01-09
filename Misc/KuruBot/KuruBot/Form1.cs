@@ -57,9 +57,22 @@ namespace KuruBot
             mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
         }
 
+        private void ExecuteInputs(string[] inputs)
+        {
+            if (inputs == null || !hs.HasValue || phy == null)
+                return;
+            foreach (string input in inputs)
+                hs = phy.Next(hs.Value, Controller.effect_to_action(Controller.string_to_effect(input)));
+            mapc.SetHelirin(hs);
+        }
+
         private void enterInputString_Click(object sender, EventArgs e)
         {
-            // TODO
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                    ExecuteInputs(File.ReadAllLines(inputsFileDialog.FileName));
+            } catch { }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -108,6 +121,11 @@ namespace KuruBot
                     mapc.SetHelirin(hs);
                 }
             }
+        }
+
+        private void downloadInputs_Click(object sender, EventArgs e)
+        {
+            ExecuteInputs(com.DownloadInputs());
         }
     }
 }

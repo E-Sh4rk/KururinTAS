@@ -84,5 +84,22 @@ namespace KuruBot
             return null;
         }
 
+        public string[] DownloadInputs()
+        {
+            try
+            {
+                if (File.Exists(in_path))
+                    return null;
+                if (File.Exists(out_path))
+                    File.Delete(out_path);
+                File.WriteAllText(in_path, "STARTRECORD");
+                while (!File.Exists(out_path))
+                    Thread.Sleep(250);
+                return File.ReadAllLines(out_path);
+            }
+            catch { }
+            return null;
+        }
+
     }
 }

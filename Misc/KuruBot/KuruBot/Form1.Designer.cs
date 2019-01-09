@@ -37,6 +37,8 @@
             this.showPosition = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.enterInputString = new System.Windows.Forms.Button();
+            this.downloadInputs = new System.Windows.Forms.Button();
+            this.inputsFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // connect
@@ -134,11 +136,28 @@
             this.enterInputString.UseVisualStyleBackColor = true;
             this.enterInputString.Click += new System.EventHandler(this.enterInputString_Click);
             // 
+            // downloadInputs
+            // 
+            this.downloadInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.downloadInputs.Location = new System.Drawing.Point(311, 426);
+            this.downloadInputs.Name = "downloadInputs";
+            this.downloadInputs.Size = new System.Drawing.Size(123, 23);
+            this.downloadInputs.TabIndex = 8;
+            this.downloadInputs.Text = "Download next inputs";
+            this.downloadInputs.UseVisualStyleBackColor = true;
+            this.downloadInputs.Click += new System.EventHandler(this.downloadInputs_Click);
+            // 
+            // inputsFileDialog
+            // 
+            this.inputsFileDialog.FileName = "inputs.txt";
+            this.inputsFileDialog.Filter = "Text file|*.txt";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 461);
+            this.Controls.Add(this.downloadInputs);
             this.Controls.Add(this.enterInputString);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.showPosition);
@@ -167,6 +186,8 @@
         private System.Windows.Forms.Button showPosition;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button enterInputString;
+        private System.Windows.Forms.Button downloadInputs;
+        private System.Windows.Forms.OpenFileDialog inputsFileDialog;
     }
 }
 
