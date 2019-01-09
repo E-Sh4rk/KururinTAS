@@ -131,8 +131,8 @@ namespace KuruBot
                 g.DrawEllipse(myPen, start_x + helirin.pixelX - Map.helirin_radius, start_y + helirin.pixelY - Map.helirin_radius, Map.helirin_radius * 2, Map.helirin_radius * 2);
                 g.DrawEllipse(myPen, start_x + helirin.pixelX - 2, start_y + helirin.pixelY - 2, 4, 4);
                 Size o = new Size(start_x, start_y);
-                Point p1 = new Point((int)(helirin.pixelX+KuruMath.Sin(helirin.angle)*Map.helirin_radius), (int)(helirin.pixelY - KuruMath.Cos(helirin.angle) * Map.helirin_radius));
-                Point p2 = new Point((int)(helirin.pixelX - KuruMath.Sin(helirin.angle) * Map.helirin_radius), (int)(helirin.pixelY + KuruMath.Cos(helirin.angle) * Map.helirin_radius));
+                Point p1 = new Point((int)(helirin.pixelX + Math.Sin(helirin.angle) * Map.helirin_radius), (int)(helirin.pixelY - Math.Cos(helirin.angle) * Map.helirin_radius));
+                Point p2 = new Point((int)(helirin.pixelX - Math.Sin(helirin.angle) * Map.helirin_radius), (int)(helirin.pixelY + Math.Cos(helirin.angle) * Map.helirin_radius));
                 g.DrawLine(myPen, Point.Add(p1,o), Point.Add(p2,o));
             }
         }
