@@ -157,6 +157,21 @@ At 0x81DA7A8: table of tiles
 
 
 -----------------------------------------------------------
+
+Global description of physics:
+
+1. Set position input speed depending on inputs
+2. Decrease bump speed (for rotation and position) if relevant (see below)
+3. Move depending on speed (bump+input), rotate depending on rotation rate
+4. Detection of healing/ending zones
+5. Compute collision mask (see below)
+6. If collision:
+	- substract input speed to position
+	- modify bump speed accordingly (see below) if relevant
+	- if modified, apply this newly computed bump speed to position
+
+-----------------------------------------------------------
+
 r6 at 080151AE (just before collision branching)
 
 Possible values:
@@ -189,19 +204,15 @@ Collision sprite will appear at the location of the biggest bit number that is e
 
 -----------------------------------------------------------
 
-Global description of physics:
+Bump values evolution:
 
-1. Set position input speed depending on inputs
-2. Modify bump speed (for rotation and position) if relevant (make it nearer from the default value)
-3. Move depending on speed (bump+input), rotate depending on rotation rate
-4. Detection of healing/ending zones
-5. Compute collision mask (see above)
-6. If collision:
-	- substract input speed to position
-	- modify bump speed accordingly (see below)
-	- apply this newly computed bump speed to position
+Rotation +- 91 until default value
 
------------------------------------------------------------
+Position, until 0:
+100 -> 75 (-25) -> 56 (-19) -> 42 (-14) -> 31 (-11) -> 23 (-8) -> 17 (-6) -> 12 (-5) -> 9 (-3) -> 6 (-3) -> 4 (-2) -> 3 -> 2 -> 1 -> 0
+We add/substract ceil(abs(nb)/4)
+
+------------------------------------------------------------
 
 Bump when collision is only at one side of the helirin:
 
@@ -221,19 +232,8 @@ Bump when collision comes from the two sides of the helirin:
 Vector XB/YB direction depends on input speed (opposite direction).
 MAX: 262144 = 4*2^16
 MIXED: 185344
-IF NO DIRECTION, KEEP XB/YB AS IS (NO RESET)
+IF NO DIRECTION, KEEP XB/YB AS IS (NO RESET). (DO NOT APPLY IT A SECOND TIME IN THE FRAME)
 -----------------------------------------------------------
-
-Bump values evolution:
-
-Rotation +- 91 until default value
-
-Position, until 0:
-100 -> 75 (-25) -> 56 (-19) -> 42 (-14) -> 31 (-11) -> 23 (-8) -> 17 (-6) -> 12 (-5) -> 9 (-3) -> 6 (-3) -> 4 (-2) -> 3 -> 2 -> 1 -> 0
-We add/substract ceil(abs(nb)/4)
-
-
-------------------------------------------------------------
 
 COS/SIN prototype
 

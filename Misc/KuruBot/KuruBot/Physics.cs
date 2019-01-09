@@ -32,7 +32,7 @@ namespace KuruBot
 
     class Physics
     {
-        static float rot_to_angle(short rot)
+        static float rot_to_angle_exact(short rot)
         {
             return (float)(2 * Math.PI * rot / 0x10000);
         }
@@ -47,13 +47,14 @@ namespace KuruBot
 
         public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
-            float angle = rot_to_angle(h.rot);
+            float angle = rot_to_angle_exact(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
         Map map = null;
+        KuruMath math = null;
 
         // Input speed constants
         const int speed0 = (3 * 0x10000) / 2;
@@ -76,6 +77,7 @@ namespace KuruBot
         public Physics(Map map)
         {
             this.map = map;
+            math = new KuruMath();
             // Set helirin physical points
             helirin_points = new int[1+nb_points_semi_helirin*2];
             helirin_points[0] = 0;
@@ -142,18 +144,21 @@ namespace KuruBot
 
             // 5. Compute collision mask
             uint collision_mask = 0;
-            float angle = rot_to_angle(st.rot);
             for (int i = 0; i < helirin_points.Length; i++)
             {
                 int radius = helirin_points[i];
-                int pixX = pos_to_px((int)(st.xpos + Math.Sin(angle) * radius));
-                int pixY = pos_to_px((int)(st.ypos - Math.Cos(angle) * radius));
+                int pixX = pos_to_px(st.xpos + math.factor_by_sin(radius, st.rot));
+                int pixY = pos_to_px(st.ypos - math.factor_by_cos(radius, st.rot));
                 if (map.IsPixelInCollision(pixX, pixY))
                     collision_mask = collision_mask | ((uint)1 << i);
             }
 
+            // 6. If collision:
+            //      - Substract input speed (XS,YS) to position
+            //      - Modify bump speed accordingly if relevant
+            //      - If modified, apply this newly computed bump speed to position
+
             // TODO
-            // TODO: Compute Sin / Cos in the GBA way...
 
             return st;
         }
