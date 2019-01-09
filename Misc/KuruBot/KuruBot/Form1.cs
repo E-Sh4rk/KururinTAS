@@ -125,7 +125,11 @@ namespace KuruBot
 
         private void downloadInputs_Click(object sender, EventArgs e)
         {
-            ExecuteInputs(com.DownloadInputs());
+            HelirinState? hs = null;
+            string[] inputs = com.DownloadInputs(out hs);
+            this.hs = hs;
+            mapc.SetHelirin(hs);
+            ExecuteInputs(inputs);
         }
     }
 }

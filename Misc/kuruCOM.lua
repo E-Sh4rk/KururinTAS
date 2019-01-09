@@ -1,8 +1,8 @@
 
 -- Parameters
 local working_dir = "tasks"
-local in_filename = "in.txt"
-local out_filename = "out.txt"
+local in_filename = "in@.txt"
+local out_filename = "out@.txt"
 
 -----------------------------
 
@@ -68,6 +68,9 @@ local current_play_ans = ""
 local recording = false
 local current_record_ans = ""
 
+local long_task_in_file = ""
+local long_task_out_file = ""
+
 function get_pos()
 	local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
 	local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
@@ -78,67 +81,77 @@ end
 
 while true
 do
-	-- Is there a task that awaits?
-	if (current_play_index == 0) and (recording == false) and file_exists(in_file)
-	then
-		local content = lines_from(in_file)
-		--for i=1, #content do end
-		if #content > 0 then
-			local cmd = normalize_str(content[1])
-			if cmd == "DUMPMAP" then
-				local xl = memory.read_u16_le(0x0, "EWRAM")
-				local yl = memory.read_u16_le(0x2, "EWRAM")
-				local res = tostring(xl) .. " " .. tostring(yl) .. "\n"
-				for y=0, yl-1 do
-					for x=0, xl-1 do
-						local tile = memory.read_u16_le(0x4 + x*2 + y*xl*2, "EWRAM")
-						res = res .. tostring(tile) .. " "
+	for file_i=0, 2 do
+		local in_file_i = bizstring.replace(in_file, "@", tostring(file_i))
+		local out_file_i = bizstring.replace(out_file, "@", tostring(file_i))
+		-- Is there a task that awaits?
+		if (current_play_index == 0) and (recording == false) and file_exists(in_file_i)
+		then
+			local content = lines_from(in_file_i)
+			--for i=1, #content do end
+			if #content > 0 then
+				local cmd = normalize_str(content[1])
+				if cmd == "DUMPMAP" then
+					local xl = memory.read_u16_le(0x0, "EWRAM")
+					local yl = memory.read_u16_le(0x2, "EWRAM")
+					local res = tostring(xl) .. " " .. tostring(yl) .. "\n"
+					for y=0, yl-1 do
+						for x=0, xl-1 do
+							local tile = memory.read_u16_le(0x4 + x*2 + y*xl*2, "EWRAM")
+							res = res .. tostring(tile) .. " "
+						end
+						res = res .. "\n"
 					end
-					res = res .. "\n"
+					write_file(out_file_i, res)
+					os.remove(in_file_i)
+					
+				elseif cmd == "GETPOS" then
+					write_file(out_file_i, get_pos())
+					os.remove(in_file_i)
+					
+				elseif cmd == "PLAY" then
+					if #content >= 2 then
+						-- Init
+						local init = bizstring.split(normalize_str(content[2]), " ")
+						local xpos = tonumber(init[1]) % 0x100000000
+						local ypos = tonumber(init[2]) % 0x100000000
+						local rot = tonumber(init[3]) % 0x10000
+						local srot = tonumber(init[4])
+						memory.write_u32_le(addr_x_pos, xpos, "IWRAM")
+						memory.write_u32_le(addr_y_pos, ypos, "IWRAM")
+						memory.write_u32_le(addr_xb, 0, "IWRAM")
+						memory.write_u32_le(addr_yb, 0, "IWRAM")
+						memory.write_u32_le(addr_xs, 0, "IWRAM")
+						memory.write_u32_le(addr_ys, 0, "IWRAM")
+						memory.write_u16_le(addr_rotation, rot, "IWRAM")
+						memory.write_s16_le(addr_rotation_rate, srot, "IWRAM")
+						memory.write_s16_le(addr_rotation_srate, srot, "IWRAM")
+						-- Play inputs
+						current_play = content
+						current_play_index = 3
+						current_play_ans = ""
+						long_task_in_file = in_file_i
+						long_task_out_file = out_file_i
+					end
+					
+				elseif cmd == "STARTRECORD" then
+					recording = true
+					current_record_ans = get_pos()
+					long_task_in_file = in_file_i
+					long_task_out_file = out_file_i
 				end
-				write_file(out_file, res)
-				os.remove(in_file)
-				
-			elseif cmd == "GETPOS" then
-				write_file(out_file, get_pos())
-				os.remove(in_file)
-				
-			elseif cmd == "PLAY" then
-				if #content >= 2 then
-					-- Init
-					local init = bizstring.split(normalize_str(content[2]), " ")
-					local xpos = tonumber(init[1]) % 0x100000000
-					local ypos = tonumber(init[2]) % 0x100000000
-					local rot = tonumber(init[3]) % 0x10000
-					local srot = tonumber(init[4])
-					memory.write_u32_le(addr_x_pos, xpos, "IWRAM")
-					memory.write_u32_le(addr_y_pos, ypos, "IWRAM")
-					memory.write_u32_le(addr_xb, 0, "IWRAM")
-					memory.write_u32_le(addr_yb, 0, "IWRAM")
-					memory.write_u32_le(addr_xs, 0, "IWRAM")
-					memory.write_u32_le(addr_ys, 0, "IWRAM")
-					memory.write_u16_le(addr_rotation, rot, "IWRAM")
-					memory.write_s16_le(addr_rotation_rate, srot, "IWRAM")
-					memory.write_s16_le(addr_rotation_srate, srot, "IWRAM")
-					-- Play inputs
-					current_play = content
-					current_play_index = 3
-					current_play_ans = ""
-				end
-				
-			elseif cmd == "STARTRECORD" then
-				recording = true
-				current_record_ans = ""
 			end
 		end
+	end
 		
-	elseif current_play_index > 0 then
+	-- Player
+	if current_play_index > 0 then
 	
 		current_play_ans = current_play_ans .. get_pos()
 		if current_play_index > #current_play then
 			-- Play terminated
-			write_file(out_file, current_play_ans)
-			os.remove(in_file)
+			write_file(long_task_out_file, current_play_ans)
+			os.remove(long_task_in_file)
 			current_play_ans = ""
 			current_play = {}
 			current_play_index = 0
@@ -172,8 +185,8 @@ do
 		-- Terminate?
 		if inputs["Power"] == true or inputs["Start"] == true or inputs["Select"] == true then
 			-- Recording terminated
-			write_file(out_file, current_record_ans)
-			os.remove(in_file)
+			write_file(long_task_out_file, current_record_ans)
+			os.remove(long_task_in_file)
 			current_record_ans = ""
 			recording = false
 		end

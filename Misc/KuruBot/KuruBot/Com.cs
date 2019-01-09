@@ -10,8 +10,8 @@ namespace KuruBot
     class Com
     {
         const string subfolder = "tasks";
-        const string in_filename = "in.txt";
-        const string out_filename = "out.txt";
+        const string in_filename = "in@.txt";
+        const string out_filename = "out@.txt";
 
         string path = null;
         string in_path = null;
@@ -31,6 +31,8 @@ namespace KuruBot
 
         public Map DownloadMap()
         {
+            string in_path = this.in_path.Replace("@", "0");
+            string out_path = this.out_path.Replace("@", "0");
             try
             {
                 if (File.Exists(in_path))
@@ -60,8 +62,20 @@ namespace KuruBot
             return null;
         }
 
+        HelirinState? parse_hs(string content)
+        {
+            string[] headers = content.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            uint xpos = Convert.ToUInt32(headers[0]);
+            uint ypos = Convert.ToUInt32(headers[1]);
+            ushort rot = Convert.ToUInt16(headers[2]);
+            short rot_srate = Convert.ToInt16(headers[3]);
+            return new HelirinState((int)xpos, (int)ypos, (short)rot, rot_srate);
+        }
+
         public HelirinState? GetHelirin()
         {
+            string in_path = this.in_path.Replace("@", "1");
+            string out_path = this.out_path.Replace("@", "1");
             try
             {
                 if (File.Exists(in_path))
@@ -73,19 +87,17 @@ namespace KuruBot
                     Thread.Sleep(250);
                 // Parsing the file
                 string[] res = File.ReadAllLines(out_path);
-                string[] headers = res[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                uint xpos = Convert.ToUInt32(headers[0]);
-                uint ypos = Convert.ToUInt32(headers[1]);
-                ushort rot = Convert.ToUInt16(headers[2]);
-                short rot_srate = Convert.ToInt16(headers[3]);
-                return new HelirinState((int)xpos, (int)ypos, (short)rot, rot_srate);
+                return parse_hs(res[0]);
             }
             catch { }
             return null;
         }
 
-        public string[] DownloadInputs()
+        public string[] DownloadInputs(out HelirinState? hs)
         {
+            hs = null;
+            string in_path = this.in_path.Replace("@", "2");
+            string out_path = this.out_path.Replace("@", "2");
             try
             {
                 if (File.Exists(in_path))
@@ -95,7 +107,11 @@ namespace KuruBot
                 File.WriteAllText(in_path, "STARTRECORD");
                 while (!File.Exists(out_path))
                     Thread.Sleep(250);
-                return File.ReadAllLines(out_path);
+                string[] res = File.ReadAllLines(out_path);
+                hs = parse_hs(res[0]);
+                string[] res2 = new string[res.Length-1];
+                Array.Copy(res, 1, res2, 0, res2.Length);
+                return res2;
             }
             catch { }
             return null;
