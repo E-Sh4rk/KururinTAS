@@ -250,14 +250,16 @@ COS/SIN prototype
 
 See https://gfx.developpez.com/prog-gba/sprites/
 
-short angle = Convert.ToInt16(Console.ReadLine());
-byte angle_high = (byte)(angle >> 8);
-int speed = 2 * 0x10000;
-int speed_high = speed >> 8;
-Console.WriteLine(2 * Math.PI * angle_high / 0x100);
-int cos = (int)(Math.Cos(2 * Math.PI * angle_high / 0x100) *0x100);
-Console.WriteLine(cos);
-int new_speed = speed_high * cos;
-Console.WriteLine(new_speed);
-Console.ReadLine();
-return 0;
+            byte angle_high = 0;
+            do
+            {
+                int speed = 131072;//2 * 0x10000;
+                int speed_high = speed >> 8;
+                int cos = (int)(Math.Cos(2 * Math.PI * angle_high / 0x100) * 0x100);
+                int new_speed = speed_high * cos;
+                Console.WriteLine((angle_high << 8).ToString() + ": " + new_speed);
+                angle_high += 1;
+            }
+            while (angle_high > 0) ;
+            Console.ReadLine();
+            return 0;
