@@ -16,7 +16,7 @@ namespace KuruBot
         Map map = null;
         MapControl mapc = null;
         Physics phy = null;
-        HelirinState? hs = new HelirinState();
+        HelirinState? hs = null;
 
         public Form1()
         {
@@ -130,6 +130,33 @@ namespace KuruBot
             this.hs = hs;
             mapc.SetHelirin(hs);
             ExecuteInputs(inputs);
+        }
+
+        HelirinState? hs_bkp = null;
+        private void savePos_Click(object sender, EventArgs e)
+        {
+            hs_bkp = hs;
+        }
+
+        private void restorePos_Click(object sender, EventArgs e)
+        {
+            hs = hs_bkp;
+            mapc.SetHelirin(hs);
+        }
+
+        private void convertInputs_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = inputsFileDialog.FileName;
+                    string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
+                    new_filename += "_conv.txt";
+                    File.WriteAllLines(new_filename, Controller.from_bz2_format(File.ReadAllLines(filename)));
+                }
+            }
+            catch { }
         }
     }
 }

@@ -194,5 +194,36 @@ namespace KuruBot
 
             return res;
         }
+        public static string[] from_bz2_format(string[] lines)
+        {
+            List<string> res = new List<string>();
+            foreach (string line in lines)
+            {
+                int i = line.IndexOf('.');
+                if (i >= 0)
+                {
+                    try
+                    {
+                        string str = "";
+                        string src = line.Substring(i, 11);
+                        if (src[0] != '.')
+                            str += "U";
+                        if (src[1] != '.')
+                            str += "D";
+                        if (src[2] != '.')
+                            str += "L";
+                        if (src[3] != '.')
+                            str += "R";
+                        if (src[6] != '.')
+                            str += "B";
+                        if (src[7] != '.')
+                            str += "A";
+                        res.Add(str);
+                    }
+                    catch { }
+                }
+            }
+            return res.ToArray();
+        }
     }
 }

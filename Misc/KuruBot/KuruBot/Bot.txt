@@ -27,7 +27,11 @@ Search Bounds: Refuse states out of these bounds
 Max Moves: Only search paths that change inputs less than a fixed number of times
 Frame resolution: Refuse paths that change inputs two times in less than a fixed number of frames
 
------ WEIGHTS & COST FUNCTION (for A*) -----
+----- COST FUNCTION (for A*) -----
 
-We could add a cost function *euclidian distance*/*max speed*
-Weight of edges could be greater when inputs change from last move (like 2 instead of 1)
+We can start with naive cost function *euclidian distance*/*max speed*.
+
+We could implement a better cost function by building a map of cost (for each pixel of position), with a flooding algorithm that only consider position.
+Flooding could get a little constant bonus when infiltrating into walls, and a little constant malus when leaving a wall.
+It could propagate inside walls (maybe at the same speed than on ground, because it can't stay into wall forever due to lives).
+(/!\ result will not be optimal)

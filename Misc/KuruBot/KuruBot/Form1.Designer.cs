@@ -39,6 +39,9 @@
             this.enterInputString = new System.Windows.Forms.Button();
             this.downloadInputs = new System.Windows.Forms.Button();
             this.inputsFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.savePos = new System.Windows.Forms.Button();
+            this.restorePos = new System.Windows.Forms.Button();
+            this.convertInputs = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -128,7 +131,7 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(665, 384);
+            this.enterInputString.Location = new System.Drawing.Point(568, 384);
             this.enterInputString.Name = "enterInputString";
             this.enterInputString.Size = new System.Drawing.Size(123, 23);
             this.enterInputString.TabIndex = 7;
@@ -152,11 +155,47 @@
             this.inputsFileDialog.FileName = "inputs.txt";
             this.inputsFileDialog.Filter = "Text file|*.txt";
             // 
+            // savePos
+            // 
+            this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.savePos.Location = new System.Drawing.Point(494, 384);
+            this.savePos.Name = "savePos";
+            this.savePos.Size = new System.Drawing.Size(31, 23);
+            this.savePos.TabIndex = 9;
+            this.savePos.Text = "SP";
+            this.savePos.UseVisualStyleBackColor = true;
+            this.savePos.Click += new System.EventHandler(this.savePos_Click);
+            // 
+            // restorePos
+            // 
+            this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.restorePos.Location = new System.Drawing.Point(531, 384);
+            this.restorePos.Name = "restorePos";
+            this.restorePos.Size = new System.Drawing.Size(31, 23);
+            this.restorePos.TabIndex = 10;
+            this.restorePos.Text = "RP";
+            this.restorePos.UseVisualStyleBackColor = true;
+            this.restorePos.Click += new System.EventHandler(this.restorePos_Click);
+            // 
+            // convertInputs
+            // 
+            this.convertInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.convertInputs.Location = new System.Drawing.Point(697, 384);
+            this.convertInputs.Name = "convertInputs";
+            this.convertInputs.Size = new System.Drawing.Size(91, 23);
+            this.convertInputs.TabIndex = 11;
+            this.convertInputs.Text = "Convert inputs";
+            this.convertInputs.UseVisualStyleBackColor = true;
+            this.convertInputs.Click += new System.EventHandler(this.convertInputs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 461);
+            this.Controls.Add(this.convertInputs);
+            this.Controls.Add(this.restorePos);
+            this.Controls.Add(this.savePos);
             this.Controls.Add(this.downloadInputs);
             this.Controls.Add(this.enterInputString);
             this.Controls.Add(this.label1);
@@ -188,6 +227,9 @@
         private System.Windows.Forms.Button enterInputString;
         private System.Windows.Forms.Button downloadInputs;
         private System.Windows.Forms.OpenFileDialog inputsFileDialog;
+        private System.Windows.Forms.Button savePos;
+        private System.Windows.Forms.Button restorePos;
+        private System.Windows.Forms.Button convertInputs;
     }
 }
 
