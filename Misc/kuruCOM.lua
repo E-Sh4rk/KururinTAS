@@ -118,17 +118,20 @@ do
 						local init = bizstring.split(normalize_str(content[2]), " ")
 						local xpos = tonumber(init[1]) % 0x100000000
 						local ypos = tonumber(init[2]) % 0x100000000
-						local rot = tonumber(init[3]) % 0x10000
-						local srot = tonumber(init[4])
+						local xb = tonumber(init[3])
+						local yb = tonumber(init[4])
+						local rot = tonumber(init[5]) % 0x10000
+						local rot_rate = tonumber(init[6])
+						local rot_srate = tonumber(init[7])
 						memory.write_u32_le(addr_x_pos, xpos, "IWRAM")
 						memory.write_u32_le(addr_y_pos, ypos, "IWRAM")
-						memory.write_u32_le(addr_xb, 0, "IWRAM")
-						memory.write_u32_le(addr_yb, 0, "IWRAM")
+						memory.write_s32_le(addr_xb, xb, "IWRAM")
+						memory.write_s32_le(addr_yb, yb, "IWRAM")
 						memory.write_u32_le(addr_xs, 0, "IWRAM")
 						memory.write_u32_le(addr_ys, 0, "IWRAM")
 						memory.write_u16_le(addr_rotation, rot, "IWRAM")
-						memory.write_s16_le(addr_rotation_rate, srot, "IWRAM")
-						memory.write_s16_le(addr_rotation_srate, srot, "IWRAM")
+						memory.write_s16_le(addr_rotation_rate, rot_rate, "IWRAM")
+						memory.write_s16_le(addr_rotation_srate, rot_srate, "IWRAM")
 						-- Play inputs
 						current_play = content
 						current_play_index = 3

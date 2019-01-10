@@ -42,6 +42,8 @@
             this.savePos = new System.Windows.Forms.Button();
             this.restorePos = new System.Windows.Forms.Button();
             this.convertInputs = new System.Windows.Forms.Button();
+            this.sendLastInputs = new System.Windows.Forms.Button();
+            this.logLastMoves = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -73,7 +75,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.main_panel.Location = new System.Drawing.Point(12, 12);
             this.main_panel.Name = "main_panel";
-            this.main_panel.Size = new System.Drawing.Size(776, 366);
+            this.main_panel.Size = new System.Drawing.Size(791, 366);
             this.main_panel.TabIndex = 2;
             // 
             // showGMap
@@ -82,7 +84,7 @@
             this.showGMap.AutoSize = true;
             this.showGMap.Checked = true;
             this.showGMap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showGMap.Location = new System.Drawing.Point(666, 426);
+            this.showGMap.Location = new System.Drawing.Point(681, 426);
             this.showGMap.Name = "showGMap";
             this.showGMap.Size = new System.Drawing.Size(122, 17);
             this.showGMap.TabIndex = 3;
@@ -94,7 +96,7 @@
             // 
             this.showPMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showPMap.AutoSize = true;
-            this.showPMap.Location = new System.Drawing.Point(532, 426);
+            this.showPMap.Location = new System.Drawing.Point(560, 426);
             this.showPMap.Name = "showPMap";
             this.showPMap.Size = new System.Drawing.Size(117, 17);
             this.showPMap.TabIndex = 4;
@@ -131,7 +133,7 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(568, 384);
+            this.enterInputString.Location = new System.Drawing.Point(583, 384);
             this.enterInputString.Name = "enterInputString";
             this.enterInputString.Size = new System.Drawing.Size(123, 23);
             this.enterInputString.TabIndex = 7;
@@ -158,7 +160,7 @@
             // savePos
             // 
             this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(494, 384);
+            this.savePos.Location = new System.Drawing.Point(509, 384);
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(31, 23);
             this.savePos.TabIndex = 9;
@@ -169,7 +171,7 @@
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(531, 384);
+            this.restorePos.Location = new System.Drawing.Point(546, 384);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
@@ -180,7 +182,7 @@
             // convertInputs
             // 
             this.convertInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.convertInputs.Location = new System.Drawing.Point(697, 384);
+            this.convertInputs.Location = new System.Drawing.Point(712, 384);
             this.convertInputs.Name = "convertInputs";
             this.convertInputs.Size = new System.Drawing.Size(91, 23);
             this.convertInputs.TabIndex = 11;
@@ -188,11 +190,35 @@
             this.convertInputs.UseVisualStyleBackColor = true;
             this.convertInputs.Click += new System.EventHandler(this.convertInputs_Click);
             // 
+            // sendLastInputs
+            // 
+            this.sendLastInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.sendLastInputs.Location = new System.Drawing.Point(440, 426);
+            this.sendLastInputs.Name = "sendLastInputs";
+            this.sendLastInputs.Size = new System.Drawing.Size(99, 23);
+            this.sendLastInputs.TabIndex = 12;
+            this.sendLastInputs.Text = "Send last inputs";
+            this.sendLastInputs.UseVisualStyleBackColor = true;
+            this.sendLastInputs.Click += new System.EventHandler(this.sendLastInputs_Click);
+            // 
+            // logLastMoves
+            // 
+            this.logLastMoves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.logLastMoves.Location = new System.Drawing.Point(406, 384);
+            this.logLastMoves.Name = "logLastMoves";
+            this.logLastMoves.Size = new System.Drawing.Size(97, 23);
+            this.logLastMoves.TabIndex = 13;
+            this.logLastMoves.Text = "Log last moves";
+            this.logLastMoves.UseVisualStyleBackColor = true;
+            this.logLastMoves.Click += new System.EventHandler(this.logLastMoves_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 461);
+            this.ClientSize = new System.Drawing.Size(815, 461);
+            this.Controls.Add(this.logLastMoves);
+            this.Controls.Add(this.sendLastInputs);
             this.Controls.Add(this.convertInputs);
             this.Controls.Add(this.restorePos);
             this.Controls.Add(this.savePos);
@@ -230,6 +256,8 @@
         private System.Windows.Forms.Button savePos;
         private System.Windows.Forms.Button restorePos;
         private System.Windows.Forms.Button convertInputs;
+        private System.Windows.Forms.Button sendLastInputs;
+        private System.Windows.Forms.Button logLastMoves;
     }
 }
 

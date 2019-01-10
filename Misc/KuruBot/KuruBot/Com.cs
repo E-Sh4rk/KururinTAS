@@ -75,6 +75,18 @@ namespace KuruBot
             return new HelirinState((int)xpos, (int)ypos, xb, yb, (short)rot, rot_rate, rot_srate);
         }
 
+        public string hs_to_string(HelirinState hs)
+        {
+            string xpos_str = ((uint)hs.xpos).ToString();
+            string ypos_str = ((uint)hs.ypos).ToString();
+            string xb_str = hs.xb.ToString();
+            string yb_str = hs.yb.ToString();
+            string rot_str = ((ushort)hs.rot).ToString();
+            string rot_rate_str = hs.rot_rate.ToString();
+            string rot_srate_str = hs.rot_srate.ToString();
+            return xpos_str + " " + ypos_str + " " + xb_str + " " + yb_str + " " + rot_str + " " + rot_rate_str + " " + rot_srate_str + "\n";
+        }
+
         public HelirinState? GetHelirin()
         {
             string in_path = this.in_path.Replace("@", "1");

@@ -158,5 +158,15 @@ namespace KuruBot
             }
             catch { }
         }
+
+        private void sendLastInputs_Click(object sender, EventArgs e)
+        {
+            // TODO
+        }
+
+        private void logLastMoves_Click(object sender, EventArgs e)
+        {
+            // TODO
+        }
     }
 }
