@@ -146,12 +146,18 @@ namespace KuruBot
             }
 
             // 5. Compute collision mask
+            // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             uint collision_mask = 0;
             for (int i = 0; i < helirin_points.Length; i++)
             {
                 int radius = helirin_points[i];
-                int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
-                int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));
+
+                // Position seems to be truncated BEFORE adding result of sin/cos
+                /*int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
+                int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));*/
+                int pixX = pos_to_px(st.xpos) - pos_to_px(math.factor_by_sin(radius, st.rot));
+                int pixY = pos_to_px(st.ypos) + pos_to_px(math.factor_by_cos(radius, st.rot));
+
                 if (map.IsPixelInCollision(pixX, pixY))
                     collision_mask = collision_mask | ((uint)1 << i);
             }
