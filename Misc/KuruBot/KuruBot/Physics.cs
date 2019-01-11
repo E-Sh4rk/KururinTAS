@@ -36,11 +36,11 @@ namespace KuruBot
         {
             return (float)(2 * Math.PI * rot / 0x10000);
         }
-        static int pos_to_px(int pos)
+        static short pos_to_px(int pos)
         {
-            return pos >> 16;
+            return (short)(pos >> 16);
         }
-        static int px_to_pos(int px)
+        static int px_to_pos(short px)
         {
             return px << 16;
         }
@@ -93,9 +93,9 @@ namespace KuruBot
             for (int i = 0; i < nb_points_semi_helirin; i++)
             {
                 down_mask += (uint)1 << (2 * i + 1);
-                helirin_points[2*i+1] = px_to_pos( (i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+                helirin_points[2*i+1] = px_to_pos((short)( (i+1) * Map.helirin_radius / nb_points_semi_helirin));
                 up_mask += (uint)1 << (2 * i + 2);
-                helirin_points[2*i+2] = px_to_pos(-(i+1) * (Map.helirin_radius / nb_points_semi_helirin));
+                helirin_points[2*i+2] = px_to_pos((short)(-(i+1) * Map.helirin_radius / nb_points_semi_helirin));
             }
         }
 
@@ -155,8 +155,8 @@ namespace KuruBot
                 // Position seems to be truncated BEFORE adding result of sin/cos
                 /*int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
                 int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));*/
-                int pixX = pos_to_px(st.xpos) - pos_to_px(math.factor_by_sin(radius, st.rot));
-                int pixY = pos_to_px(st.ypos) + pos_to_px(math.factor_by_cos(radius, st.rot));
+                short pixX = (short)(pos_to_px(st.xpos) - pos_to_px(math.factor_by_sin(radius, st.rot)));
+                short pixY = (short)(pos_to_px(st.ypos) + pos_to_px(math.factor_by_cos(radius, st.rot)));
 
                 if (map.IsPixelInCollision(pixX, pixY))
                     collision_mask = collision_mask | ((uint)1 << i);

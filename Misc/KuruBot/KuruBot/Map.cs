@@ -110,7 +110,7 @@ namespace KuruBot
             return map[y, x];  
         }
         // For physical purpose
-        public bool IsPixelInCollision(int x, int y)
+        public bool IsPixelInCollision(short x, short y)
         {
             // Note: these calculus simulate those of the actual Kururin implementation
             uint xm = (ushort)x % (uint)WidthPx;
@@ -118,13 +118,13 @@ namespace KuruBot
             uint addr = xm + ym * (uint)WidthPx;
             return physical_map[(int)addr];
         }
-        public Zone IsPixelInZone(int x, int y)
+        public Zone IsPixelInZone(short x, short y)
         {
             // Note: these calculus simulate those of the actual Kururin implementation
             // C# integer division semantics matches the C one
             // C# modulo semantics matches the C one
-            int x_tile = (short)x / tile_size;
-            int y_tile = (short)y / tile_size;
+            int x_tile = x / tile_size;
+            int y_tile = y / tile_size;
             int xm = x_tile % Width;
             int ym = y_tile % Height;
             ushort tile = TileAt(xm, ym);

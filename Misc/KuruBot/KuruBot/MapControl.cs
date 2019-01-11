@@ -71,9 +71,9 @@ namespace KuruBot
                 if (showP)
                 {
                     Brush myBrush = Brushes.Red;
-                    for (int y = 0; y < m.HeightPx; y++)
+                    for (short y = 0; y < m.HeightPx; y++)
                     {
-                        for (int x = 0; x < m.WidthPx; x++)
+                        for (short x = 0; x < m.WidthPx; x++)
                         {
                             if (m.IsPixelInCollision(x, y))
                             {
