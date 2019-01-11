@@ -70,7 +70,7 @@ namespace KuruBot
         // Various constants
         const short rotation_rate_decr = 91;
         const int bump_speed_diff_frac = 4;
-        const int nb_points_semi_helirin = 8;
+        short[] down_helirin_pixels_asc = new short[] { 4, 8, 12, 16, 20, 24, 28, 31 };
         const int middle_mask = 0x7;
         int[] helirin_points = null; // Automatically initialized
         uint up_mask = 0; // Automatically initialized
@@ -88,14 +88,14 @@ namespace KuruBot
             math = new KuruMath();
             // Set helirin physical points
             up_mask = 0; down_mask = 0;
-            helirin_points = new int[1+nb_points_semi_helirin*2];
+            helirin_points = new int[1 + down_helirin_pixels_asc.Length * 2];
             helirin_points[0] = 0;
-            for (int i = 0; i < nb_points_semi_helirin; i++)
+            for (int i = 0; i < down_helirin_pixels_asc.Length; i++)
             {
                 down_mask += (uint)1 << (2 * i + 1);
-                helirin_points[2*i+1] = px_to_pos((short)( (i+1) * Map.helirin_radius / nb_points_semi_helirin));
+                helirin_points[2*i+1] = px_to_pos(down_helirin_pixels_asc[i]);
                 up_mask += (uint)1 << (2 * i + 2);
-                helirin_points[2*i+2] = px_to_pos((short)(-(i+1) * Map.helirin_radius / nb_points_semi_helirin));
+                helirin_points[2*i+2] = px_to_pos((short)(-down_helirin_pixels_asc[i]));
             }
         }
 

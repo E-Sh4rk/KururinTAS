@@ -121,7 +121,12 @@ namespace KuruBot
                 string txt = "PLAY\n";
                 txt += hs_to_string(hs);
                 foreach (Action a in actions)
-                    txt += Controller.effect_to_string(Controller.action_to_effect(a)) + "\n";
+                {
+                    string str = Controller.effect_to_string(Controller.action_to_effect(a));
+                    if (String.IsNullOrEmpty(str))
+                        str = "_"; // No empty line because they are ignored by the LUA script
+                    txt += str + "\n";
+                }
                 File.WriteAllText(in_path, txt);
                 while (!File.Exists(out_path))
                     Thread.Sleep(250);

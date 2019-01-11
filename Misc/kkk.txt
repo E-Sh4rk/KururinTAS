@@ -213,6 +213,9 @@ Helirin separated in 17 parts
 
 Collision sprite will appear at the location of the biggest bit number that is equal to 1
 
+Physical helirin (radius=31):
+X--X---X---X---X---X---X---X---O---X---X---X---X---X---X---X--X
+
 -----------------------------------------------------------
 
 Bump values evolution:
