@@ -44,6 +44,8 @@
             this.convertInputs = new System.Windows.Forms.Button();
             this.sendLastInputs = new System.Windows.Forms.Button();
             this.logLastMoves = new System.Windows.Forms.Button();
+            this.saveLogFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.saveInputs = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -133,11 +135,11 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(583, 384);
+            this.enterInputString.Location = new System.Drawing.Point(545, 384);
             this.enterInputString.Name = "enterInputString";
-            this.enterInputString.Size = new System.Drawing.Size(123, 23);
+            this.enterInputString.Size = new System.Drawing.Size(76, 23);
             this.enterInputString.TabIndex = 7;
-            this.enterInputString.Text = "Enter a list of inputs";
+            this.enterInputString.Text = "Load inputs";
             this.enterInputString.UseVisualStyleBackColor = true;
             this.enterInputString.Click += new System.EventHandler(this.enterInputString_Click);
             // 
@@ -160,7 +162,7 @@
             // savePos
             // 
             this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(509, 384);
+            this.savePos.Location = new System.Drawing.Point(469, 384);
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(31, 23);
             this.savePos.TabIndex = 9;
@@ -171,7 +173,7 @@
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(546, 384);
+            this.restorePos.Location = new System.Drawing.Point(508, 384);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
@@ -204,7 +206,7 @@
             // logLastMoves
             // 
             this.logLastMoves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logLastMoves.Location = new System.Drawing.Point(406, 384);
+            this.logLastMoves.Location = new System.Drawing.Point(366, 384);
             this.logLastMoves.Name = "logLastMoves";
             this.logLastMoves.Size = new System.Drawing.Size(97, 23);
             this.logLastMoves.TabIndex = 13;
@@ -212,11 +214,27 @@
             this.logLastMoves.UseVisualStyleBackColor = true;
             this.logLastMoves.Click += new System.EventHandler(this.logLastMoves_Click);
             // 
+            // saveLogFileDialog
+            // 
+            this.saveLogFileDialog.Filter = "Text file|*.txt";
+            // 
+            // saveInputs
+            // 
+            this.saveInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveInputs.Location = new System.Drawing.Point(627, 384);
+            this.saveInputs.Name = "saveInputs";
+            this.saveInputs.Size = new System.Drawing.Size(79, 23);
+            this.saveInputs.TabIndex = 14;
+            this.saveInputs.Text = "Save inputs";
+            this.saveInputs.UseVisualStyleBackColor = true;
+            this.saveInputs.Click += new System.EventHandler(this.saveInputs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 461);
+            this.Controls.Add(this.saveInputs);
             this.Controls.Add(this.logLastMoves);
             this.Controls.Add(this.sendLastInputs);
             this.Controls.Add(this.convertInputs);
@@ -258,6 +276,8 @@
         private System.Windows.Forms.Button convertInputs;
         private System.Windows.Forms.Button sendLastInputs;
         private System.Windows.Forms.Button logLastMoves;
+        private System.Windows.Forms.SaveFileDialog saveLogFileDialog;
+        private System.Windows.Forms.Button saveInputs;
     }
 }
 

@@ -57,12 +57,28 @@ namespace KuruBot
             mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
         }
 
+        Action[] last_inputs = null;
+        HelirinState[] last_positions = null;
+        HelirinState[] last_positions_emu = null;
         private void ExecuteInputs(string[] inputs)
         {
             if (inputs == null || !hs.HasValue || phy == null)
                 return;
+
+            List<Action> last_inputs = new List<Action>();
+            List<HelirinState> last_positions = new List<HelirinState>();
+            last_positions.Add(hs.Value);
             foreach (string input in inputs)
-                hs = phy.Next(hs.Value, Controller.effect_to_action(Controller.string_to_effect(input)));
+            {
+                Action a = Controller.effect_to_action(Controller.string_to_effect(input));
+                hs = phy.Next(hs.Value, a);
+                last_inputs.Add(a);
+                last_positions.Add(hs.Value);
+            }
+
+            this.last_inputs = last_inputs.ToArray();
+            this.last_positions = last_positions.ToArray();
+            last_positions_emu = null;
             mapc.SetHelirin(hs);
         }
 
@@ -166,7 +182,42 @@ namespace KuruBot
 
         private void logLastMoves_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string res = "";
+                    res += com.hs_to_string(last_positions[0]);
+                    if (last_positions_emu != null)
+                        res += com.hs_to_string(last_positions_emu[0]);
+                    res += "----------\n";
+                    for (int i = 0; i < last_inputs.Length; i++)
+                    {
+                        res += Controller.effect_to_string(Controller.action_to_effect(last_inputs[i])) + "\n";
+                        res += com.hs_to_string(last_positions[i+1]);
+                        if (last_positions_emu != null)
+                            res += com.hs_to_string(last_positions_emu[i+1]);
+                        res += "----------\n";
+                    }
+                    File.WriteAllText(saveLogFileDialog.FileName, res);
+                }
+                catch { }
+            }
+        }
+
+        private void saveInputs_Click(object sender, EventArgs e)
+        {
+            if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string res = "";
+                    foreach (Action input in last_inputs)
+                        res += Controller.effect_to_string(Controller.action_to_effect(input)) + "\n";
+                    File.WriteAllText(saveLogFileDialog.FileName, res);
+                }
+                catch { }
+            }
         }
     }
 }
