@@ -108,6 +108,41 @@ namespace KuruBot
             return null;
         }
 
+        public HelirinState[] Play(HelirinState hs, Action[] actions)
+        {
+            string in_path = this.in_path.Replace("@", "2");
+            string out_path = this.out_path.Replace("@", "2");
+            try
+            {
+                if (File.Exists(in_path))
+                    return null;
+                if (File.Exists(out_path))
+                    File.Delete(out_path);
+                string txt = "PLAY\n";
+                txt += hs_to_string(hs);
+                foreach (Action a in actions)
+                    txt += Controller.effect_to_string(Controller.action_to_effect(a)) + "\n";
+                File.WriteAllText(in_path, txt);
+                while (!File.Exists(out_path))
+                    Thread.Sleep(250);
+                // Parsing the file
+                string[] res = File.ReadAllLines(out_path);
+                List<HelirinState> hs_res = new List<HelirinState>();
+                try
+                {
+                    foreach (string line in res)
+                    {
+                        if (!String.IsNullOrEmpty(line))
+                            hs_res.Add(parse_hs(line).Value);
+                    }
+                }
+                catch { }
+                return hs_res.ToArray();
+            }
+            catch { }
+            return null;
+        }
+
         public string[] DownloadInputs(out HelirinState? hs)
         {
             hs = null;
