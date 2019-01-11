@@ -31,16 +31,12 @@ namespace KuruBot
         public int factor_by_cos(int radius, short rot)
         {
             int angle = (ushort)rot >> (16 - nb_bits_angle);
-            int cos = cos_table[angle];
-            radius = radius >> nb_bits_after_point;
-            return radius * cos;
+            return (radius >> nb_bits_after_point) * cos_table[angle];
         }
         public int factor_by_sin(int radius, short rot)
         {
             int angle = (ushort)rot >> (16 - nb_bits_angle);
-            int sin = sin_table[angle];
-            radius = radius >> nb_bits_after_point;
-            return radius * sin;
+            return (radius >> nb_bits_after_point) * sin_table[angle];
         }
     }
 }
