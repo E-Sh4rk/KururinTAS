@@ -40,6 +40,10 @@ namespace KuruBot
         {
             return (short)(pos >> 16);
         }
+        static short pos_to_px_arith(int pos)
+        {
+            return (short)(pos / 0x10000);
+        }
         static int px_to_pos(short px)
         {
             return px << 16;
@@ -155,9 +159,9 @@ namespace KuruBot
                 // Position seems to be truncated BEFORE adding result of sin/cos
                 /*int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
                 int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));*/
-                short pixX = (short)(pos_to_px(st.xpos) + pos_to_px(-math.factor_by_sin(radius, st.rot)));
-                short pixY = (short)(pos_to_px(st.ypos) + pos_to_px(math.factor_by_cos(radius, st.rot)));
-
+                short pixX = (short)(pos_to_px(st.xpos) - pos_to_px_arith(math.factor_by_sin(radius, st.rot)));
+                short pixY = (short)(pos_to_px(st.ypos) + pos_to_px_arith(math.factor_by_cos(radius, st.rot)));
+                
                 if (map.IsPixelInCollision(pixX, pixY))
                     collision_mask = collision_mask | ((uint)1 << i);
             }
