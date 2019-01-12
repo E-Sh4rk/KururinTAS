@@ -29,6 +29,35 @@ namespace KuruBot
             out_path = Path.Combine(this.path, out_filename);
         }
 
+        public static Map parse_map(string[] lines)
+        {
+            string[] headers = lines[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            ushort xl = Convert.ToUInt16(headers[0]);
+            ushort yl = Convert.ToUInt16(headers[1]);
+            ushort[,] map = new ushort[yl, xl];
+            for (ushort i = 0; i < yl; i++)
+            {
+                string[] line = lines[i + 1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                for (ushort j = 0; j < xl; j++)
+                    map[i, j] = Convert.ToUInt16(line[j]);
+            }
+            return new Map(map);
+        }
+
+        public static string map_to_string(Map m)
+        {
+            if (m == null)
+                return null;
+            string res = m.Width.ToString() + " " + m.Height.ToString() + "\n";
+            for (int y = 0; y < m.Height; y++)
+            {
+                for (int x = 0; x < m.Width; x++)
+                    res += m.TileAt(x,y).ToString() + " ";
+                res += "\n";
+            }
+            return res;
+        }
+
         public Map DownloadMap()
         {
             string in_path = this.in_path.Replace("@", "0");
@@ -42,21 +71,7 @@ namespace KuruBot
                 File.WriteAllText(in_path, "DUMPMAP");
                 while (!File.Exists(out_path))
                     Thread.Sleep(250);
-                // Parsing the file
-                string[] res = File.ReadAllLines(out_path);
-                string[] headers = res[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                ushort xl = Convert.ToUInt16(headers[0]);
-                ushort yl = Convert.ToUInt16(headers[1]);
-                ushort[,] map = new ushort[yl,xl];
-                for (ushort i = 0; i < yl; i++)
-                {
-                    string[] line = res[i+1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    for (ushort j = 0; j < xl; j++)
-                    {
-                        map[i, j] = Convert.ToUInt16(line[j]);
-                    }
-                }
-                return new Map(map);
+                return parse_map(File.ReadAllLines(out_path));
             }
             catch { }
             return null;
@@ -100,9 +115,7 @@ namespace KuruBot
                 File.WriteAllText(in_path, "GETPOS");
                 while (!File.Exists(out_path))
                     Thread.Sleep(250);
-                // Parsing the file
-                string[] res = File.ReadAllLines(out_path);
-                return parse_hs(res[0]);
+                return parse_hs(File.ReadAllLines(out_path)[0]);
             }
             catch { }
             return null;

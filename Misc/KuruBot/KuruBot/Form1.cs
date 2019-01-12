@@ -82,15 +82,6 @@ namespace KuruBot
             mapc.SetHelirin(hs);
         }
 
-        private void enterInputString_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
-                    ExecuteInputs(File.ReadAllLines(inputsFileDialog.FileName));
-            } catch { }
-        }
-
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
@@ -208,6 +199,8 @@ namespace KuruBot
 
         private void saveInputs_Click(object sender, EventArgs e)
         {
+            if (last_inputs == null)
+                return;
             if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -219,6 +212,16 @@ namespace KuruBot
                 }
                 catch { }
             }
+        }
+
+        private void enterInputString_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                    ExecuteInputs(File.ReadAllLines(inputsFileDialog.FileName));
+            }
+            catch { }
         }
 
         private void savePos_Click(object sender, EventArgs e)
@@ -242,10 +245,41 @@ namespace KuruBot
             {
                 if (inputsFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    hs = Com.parse_hs(File.ReadAllText(inputsFileDialog.FileName));
+                    hs = Com.parse_hs(File.ReadAllLines(inputsFileDialog.FileName)[0]);
                     mapc.SetHelirin(hs);
                 }
                    
+            }
+            catch { }
+        }
+
+        private void saveMap_Click(object sender, EventArgs e)
+        {
+            if (map == null)
+                return;
+            if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string res = Com.map_to_string(map);
+                    File.WriteAllText(saveLogFileDialog.FileName, res);
+                }
+                catch { }
+            }
+        }
+
+        private void loadMap_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    map = Com.parse_map(File.ReadAllLines(inputsFileDialog.FileName));
+                    if (map != null)
+                        phy = new Physics(map);
+                    mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
+                }
+
             }
             catch { }
         }

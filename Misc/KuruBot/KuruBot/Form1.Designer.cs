@@ -48,6 +48,8 @@
             this.saveInputs = new System.Windows.Forms.Button();
             this.loadPos = new System.Windows.Forms.Button();
             this.savePos = new System.Windows.Forms.Button();
+            this.loadMap = new System.Windows.Forms.Button();
+            this.saveMap = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -130,9 +132,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 389);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(317, 13);
+            this.label1.Size = new System.Drawing.Size(232, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Use Ø/CTRL/ALT+Numpad to perform a move for the next frame.";
+            this.label1.Text = "Use Ø/CTRL/ALT+Numpad to perform a move.";
             // 
             // enterInputString
             // 
@@ -208,7 +210,7 @@
             // logLastMoves
             // 
             this.logLastMoves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logLastMoves.Location = new System.Drawing.Point(393, 384);
+            this.logLastMoves.Location = new System.Drawing.Point(319, 384);
             this.logLastMoves.Name = "logLastMoves";
             this.logLastMoves.Size = new System.Drawing.Size(97, 23);
             this.logLastMoves.TabIndex = 13;
@@ -253,11 +255,35 @@
             this.savePos.UseVisualStyleBackColor = true;
             this.savePos.Click += new System.EventHandler(this.savePos_Click);
             // 
+            // loadMap
+            // 
+            this.loadMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.loadMap.Location = new System.Drawing.Point(422, 384);
+            this.loadMap.Name = "loadMap";
+            this.loadMap.Size = new System.Drawing.Size(31, 23);
+            this.loadMap.TabIndex = 17;
+            this.loadMap.Text = "LM";
+            this.loadMap.UseVisualStyleBackColor = true;
+            this.loadMap.Click += new System.EventHandler(this.loadMap_Click);
+            // 
+            // saveMap
+            // 
+            this.saveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveMap.Location = new System.Drawing.Point(459, 384);
+            this.saveMap.Name = "saveMap";
+            this.saveMap.Size = new System.Drawing.Size(31, 23);
+            this.saveMap.TabIndex = 18;
+            this.saveMap.Text = "SM";
+            this.saveMap.UseVisualStyleBackColor = true;
+            this.saveMap.Click += new System.EventHandler(this.saveMap_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 461);
+            this.Controls.Add(this.saveMap);
+            this.Controls.Add(this.loadMap);
             this.Controls.Add(this.savePos);
             this.Controls.Add(this.loadPos);
             this.Controls.Add(this.saveInputs);
@@ -306,6 +332,8 @@
         private System.Windows.Forms.Button saveInputs;
         private System.Windows.Forms.Button loadPos;
         private System.Windows.Forms.Button savePos;
+        private System.Windows.Forms.Button loadMap;
+        private System.Windows.Forms.Button saveMap;
     }
 }
 

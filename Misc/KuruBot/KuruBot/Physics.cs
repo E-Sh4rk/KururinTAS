@@ -156,9 +156,7 @@ namespace KuruBot
             {
                 int radius = helirin_points[i];
 
-                // Position seems to be truncated BEFORE adding result of sin/cos
-                /*int pixX = pos_to_px(st.xpos - math.factor_by_sin(radius, st.rot));
-                int pixY = pos_to_px(st.ypos + math.factor_by_cos(radius, st.rot));*/
+                // Position seems to be converted to px BEFORE adding the result of the sin/cos
                 short pixX = (short)(pos_to_px(st.xpos) - pos_to_px_arith(math.factor_by_sin(radius, st.rot)));
                 short pixY = (short)(pos_to_px(st.ypos) + pos_to_px_arith(math.factor_by_cos(radius, st.rot)));
                 
@@ -167,8 +165,8 @@ namespace KuruBot
             }
 
             // 6. If collision:
-            //  - Substract input speed to position
-            //  - Modify bump speed (pos & rot) accordingly if relevant
+            //  - Substract input speed (XS and YS) to position
+            //  - Modify bump speed and rot rate (XB, YB and Rot_rate) accordingly if relevant
             //  - If modified, apply this newly computed bump speed to position
             if (collision_mask != 0)
             {
@@ -196,7 +194,7 @@ namespace KuruBot
                     st.rot_rate = rot_bump_rate;
 
                 // 7. If mask has collision at one of the 3 lowest bits :
-                //  - Modify bump speed (position) depending on input
+                //  - Modify bump speed (XB and YB) depending on input (if any)
                 //  - If modified, apply this newly computed bump speed to position
                 if ((collision_mask & middle_mask) != 0 && (e.x != Direction1.None || e.y != Direction1.None))
                 {
