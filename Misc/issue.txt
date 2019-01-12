@@ -1,0 +1,43 @@
+
+19194112 12443904 0 0 22386 182 182
+19194112 12443904 0 0 22386 182 182
+----------
+ABR
+19085568 12371200 -108544 -72704 22568 -1024 182
+19390720 12443904 0 0 22568 182 182
+
+
+-------------------------------
+
+22568
+
+COS*31:
+22528: -18
+22784: -18
+
+SIN*31:
+22528: 25
+22784: 25
+
+X:295+25=320   (320-328)
+Y:189+18=207   (200-208)
+
+In KuruBot: 321/206 but still not good
+
+-----
+
+IG, both x+1 or y+1 cause a collision. 
+
+320/205	GOOD
+320/206	GOOD
+320/207 BAD
+321/205	GOOD
+321/206	BAD
+322/205	BAD
+
+===> 320/206 or 321/205 could the right value
+
+-----
+
+TODO : inspect consequences of different pos/neg combinations (for radius & computed cos/sin)
+

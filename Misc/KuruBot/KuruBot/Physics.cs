@@ -93,9 +93,9 @@ namespace KuruBot
             for (int i = 0; i < down_helirin_pixels_asc.Length; i++)
             {
                 down_mask += (uint)1 << (2 * i + 1);
-                helirin_points[2*i+1] = px_to_pos(down_helirin_pixels_asc[i]);
+                helirin_points[2 * i + 1] = px_to_pos(down_helirin_pixels_asc[i]);
                 up_mask += (uint)1 << (2 * i + 2);
-                helirin_points[2*i+2] = px_to_pos((short)(-down_helirin_pixels_asc[i]));
+                helirin_points[2 * i + 2] = px_to_pos((short)(-down_helirin_pixels_asc[i]));
             }
         }
 
