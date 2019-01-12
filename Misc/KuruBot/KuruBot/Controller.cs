@@ -199,13 +199,13 @@ namespace KuruBot
             List<string> res = new List<string>();
             foreach (string line in lines)
             {
-                int i = line.IndexOf('.');
+                int i = line.LastIndexOf(',');
                 if (i >= 0)
                 {
                     try
                     {
                         string str = "";
-                        string src = line.Substring(i, 11);
+                        string src = line.Substring(i+1, 11);
                         if (src[0] != '.')
                             str += "U";
                         if (src[1] != '.')
