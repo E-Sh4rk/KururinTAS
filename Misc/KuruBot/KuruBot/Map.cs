@@ -11,7 +11,7 @@ namespace KuruBot
     public class Map
     {
         public const int tile_size = 8;
-        public const int helirin_radius = 32;
+        public const int helirin_radius = 32; // Not really... This value is only used for rendering.
 
         // Graphical atrributes
         ushort[,] map = null;
