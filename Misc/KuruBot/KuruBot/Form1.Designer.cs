@@ -39,13 +39,15 @@
             this.enterInputString = new System.Windows.Forms.Button();
             this.downloadInputs = new System.Windows.Forms.Button();
             this.inputsFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.savePos = new System.Windows.Forms.Button();
+            this.backupPos = new System.Windows.Forms.Button();
             this.restorePos = new System.Windows.Forms.Button();
             this.convertInputs = new System.Windows.Forms.Button();
             this.sendLastInputs = new System.Windows.Forms.Button();
             this.logLastMoves = new System.Windows.Forms.Button();
             this.saveLogFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.saveInputs = new System.Windows.Forms.Button();
+            this.loadPos = new System.Windows.Forms.Button();
+            this.savePos = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -135,11 +137,11 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(545, 384);
+            this.enterInputString.Location = new System.Drawing.Point(640, 384);
             this.enterInputString.Name = "enterInputString";
-            this.enterInputString.Size = new System.Drawing.Size(76, 23);
+            this.enterInputString.Size = new System.Drawing.Size(29, 23);
             this.enterInputString.TabIndex = 7;
-            this.enterInputString.Text = "Load inputs";
+            this.enterInputString.Text = "LI";
             this.enterInputString.UseVisualStyleBackColor = true;
             this.enterInputString.Click += new System.EventHandler(this.enterInputString_Click);
             // 
@@ -159,21 +161,21 @@
             this.inputsFileDialog.FileName = "inputs.txt";
             this.inputsFileDialog.Filter = "Text file|*.txt";
             // 
-            // savePos
+            // backupPos
             // 
-            this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(469, 384);
-            this.savePos.Name = "savePos";
-            this.savePos.Size = new System.Drawing.Size(31, 23);
-            this.savePos.TabIndex = 9;
-            this.savePos.Text = "SP";
-            this.savePos.UseVisualStyleBackColor = true;
-            this.savePos.Click += new System.EventHandler(this.savePos_Click);
+            this.backupPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.backupPos.Location = new System.Drawing.Point(533, 384);
+            this.backupPos.Name = "backupPos";
+            this.backupPos.Size = new System.Drawing.Size(31, 23);
+            this.backupPos.TabIndex = 9;
+            this.backupPos.Text = "BP";
+            this.backupPos.UseVisualStyleBackColor = true;
+            this.backupPos.Click += new System.EventHandler(this.bkpPos_Click);
             // 
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(508, 384);
+            this.restorePos.Location = new System.Drawing.Point(496, 384);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
@@ -206,7 +208,7 @@
             // logLastMoves
             // 
             this.logLastMoves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logLastMoves.Location = new System.Drawing.Point(366, 384);
+            this.logLastMoves.Location = new System.Drawing.Point(393, 384);
             this.logLastMoves.Name = "logLastMoves";
             this.logLastMoves.Size = new System.Drawing.Size(97, 23);
             this.logLastMoves.TabIndex = 13;
@@ -221,25 +223,49 @@
             // saveInputs
             // 
             this.saveInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveInputs.Location = new System.Drawing.Point(627, 384);
+            this.saveInputs.Location = new System.Drawing.Point(675, 384);
             this.saveInputs.Name = "saveInputs";
-            this.saveInputs.Size = new System.Drawing.Size(79, 23);
+            this.saveInputs.Size = new System.Drawing.Size(31, 23);
             this.saveInputs.TabIndex = 14;
-            this.saveInputs.Text = "Save inputs";
+            this.saveInputs.Text = "SI";
             this.saveInputs.UseVisualStyleBackColor = true;
             this.saveInputs.Click += new System.EventHandler(this.saveInputs_Click);
+            // 
+            // loadPos
+            // 
+            this.loadPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.loadPos.Location = new System.Drawing.Point(570, 384);
+            this.loadPos.Name = "loadPos";
+            this.loadPos.Size = new System.Drawing.Size(29, 23);
+            this.loadPos.TabIndex = 15;
+            this.loadPos.Text = "LP";
+            this.loadPos.UseVisualStyleBackColor = true;
+            this.loadPos.Click += new System.EventHandler(this.loadPos_Click);
+            // 
+            // savePos
+            // 
+            this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.savePos.Location = new System.Drawing.Point(605, 384);
+            this.savePos.Name = "savePos";
+            this.savePos.Size = new System.Drawing.Size(29, 23);
+            this.savePos.TabIndex = 16;
+            this.savePos.Text = "SP";
+            this.savePos.UseVisualStyleBackColor = true;
+            this.savePos.Click += new System.EventHandler(this.savePos_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 461);
+            this.Controls.Add(this.savePos);
+            this.Controls.Add(this.loadPos);
             this.Controls.Add(this.saveInputs);
             this.Controls.Add(this.logLastMoves);
             this.Controls.Add(this.sendLastInputs);
             this.Controls.Add(this.convertInputs);
             this.Controls.Add(this.restorePos);
-            this.Controls.Add(this.savePos);
+            this.Controls.Add(this.backupPos);
             this.Controls.Add(this.downloadInputs);
             this.Controls.Add(this.enterInputString);
             this.Controls.Add(this.label1);
@@ -271,13 +297,15 @@
         private System.Windows.Forms.Button enterInputString;
         private System.Windows.Forms.Button downloadInputs;
         private System.Windows.Forms.OpenFileDialog inputsFileDialog;
-        private System.Windows.Forms.Button savePos;
+        private System.Windows.Forms.Button backupPos;
         private System.Windows.Forms.Button restorePos;
         private System.Windows.Forms.Button convertInputs;
         private System.Windows.Forms.Button sendLastInputs;
         private System.Windows.Forms.Button logLastMoves;
         private System.Windows.Forms.SaveFileDialog saveLogFileDialog;
         private System.Windows.Forms.Button saveInputs;
+        private System.Windows.Forms.Button loadPos;
+        private System.Windows.Forms.Button savePos;
     }
 }
 

@@ -62,7 +62,7 @@ namespace KuruBot
             return null;
         }
 
-        HelirinState? parse_hs(string content)
+        public static HelirinState? parse_hs(string content)
         {
             string[] headers = content.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             uint xpos = Convert.ToUInt32(headers[0]);
@@ -75,7 +75,7 @@ namespace KuruBot
             return new HelirinState((int)xpos, (int)ypos, xb, yb, (short)rot, rot_rate, rot_srate);
         }
 
-        public string hs_to_string(HelirinState hs)
+        public static string hs_to_string(HelirinState hs)
         {
             string xpos_str = ((uint)hs.xpos).ToString();
             string ypos_str = ((uint)hs.ypos).ToString();

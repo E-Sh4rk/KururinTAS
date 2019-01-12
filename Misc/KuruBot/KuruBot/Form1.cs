@@ -149,7 +149,7 @@ namespace KuruBot
         }
 
         HelirinState? hs_bkp = null;
-        private void savePos_Click(object sender, EventArgs e)
+        private void bkpPos_Click(object sender, EventArgs e)
         {
             hs_bkp = hs;
         }
@@ -188,16 +188,16 @@ namespace KuruBot
                 try
                 {
                     string res = "";
-                    res += com.hs_to_string(last_positions[0]);
+                    res += Com.hs_to_string(last_positions[0]);
                     if (last_positions_emu != null)
-                        res += com.hs_to_string(last_positions_emu[0]);
+                        res += Com.hs_to_string(last_positions_emu[0]);
                     res += "----------\n";
                     for (int i = 0; i < last_inputs.Length; i++)
                     {
                         res += Controller.effect_to_string(Controller.action_to_effect(last_inputs[i])) + "\n";
-                        res += com.hs_to_string(last_positions[i+1]);
+                        res += Com.hs_to_string(last_positions[i+1]);
                         if (last_positions_emu != null)
-                            res += com.hs_to_string(last_positions_emu[i+1]);
+                            res += Com.hs_to_string(last_positions_emu[i+1]);
                         res += "----------\n";
                     }
                     File.WriteAllText(saveLogFileDialog.FileName, res);
@@ -219,6 +219,35 @@ namespace KuruBot
                 }
                 catch { }
             }
+        }
+
+        private void savePos_Click(object sender, EventArgs e)
+        {
+            if (!hs.HasValue)
+                return;
+            if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string res = Com.hs_to_string(hs.Value);
+                    File.WriteAllText(saveLogFileDialog.FileName, res);
+                }
+                catch { }
+            }
+        }
+
+        private void loadPos_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    hs = Com.parse_hs(File.ReadAllText(inputsFileDialog.FileName));
+                    mapc.SetHelirin(hs);
+                }
+                   
+            }
+            catch { }
         }
     }
 }

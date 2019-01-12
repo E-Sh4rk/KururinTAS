@@ -9,7 +9,7 @@ ABR
 
 -------------------------------
 
-22568
+22568  /  -10200
 
 COS*31:
 22528: -18
@@ -39,5 +39,21 @@ IG, both x+1 or y+1 cause a collision.
 
 -----
 
-TODO : inspect consequences of different pos/neg combinations (for radius & computed cos/sin)
+FIX: negate the sin result before converting to pos
 
+-----------------------------------------------------------
+
+22020597 11632399 -9456 -2613 14261 -205 182
+22020597 11632399 -9456 -2613 14261 -205 182
+----------
+ABDR
+22152513 11769448 -7092 -1959 14147 -114 182
+21886017 11659112 -127488 28672 14147 1024 182
+
+Computed pre-collision values
+22020597 -9456 +139008 = 22150149
+11632399 -2613 +139008 = 11768794
+14261 -205 + 91  = 14147
+
+IG Collisions mask:
+----X---O--------
