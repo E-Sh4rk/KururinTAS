@@ -140,7 +140,9 @@ namespace KuruBot
 
             // 4. Detection of healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
-            Map.Zone zone = map.IsPixelInZone(pos_to_px(st.xpos), pos_to_px(st.ypos));
+            short xpix = pos_to_px(st.xpos);
+            short ypix = pos_to_px(st.ypos);
+            Map.Zone zone = map.IsPixelInZone(xpix, ypix);
             if (zone == Map.Zone.Healing)
             {
                 // TODO
@@ -157,11 +159,11 @@ namespace KuruBot
             {
                 int radius = helirin_points[i];
 
-                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels even in negative positions).
-                short pixX = (short)(pos_to_px(st.xpos) - pos_to_px_arith(math.factor_by_sin(radius, st.rot)));
-                short pixY = (short)(pos_to_px(st.ypos) + pos_to_px_arith(math.factor_by_cos(radius, st.rot)));
+                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
+                short px = (short)(xpix - pos_to_px_arith(math.factor_by_sin(radius, st.rot)));
+                short py = (short)(ypix + pos_to_px_arith(math.factor_by_cos(radius, st.rot)));
                 
-                if (map.IsPixelInCollision(pixX, pixY))
+                if (map.IsPixelInCollision(px, py))
                     collision_mask = collision_mask | ((uint)1 << i);
             }
 
