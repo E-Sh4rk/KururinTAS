@@ -1,5 +1,0 @@
-For Grassland1:
-If the third A is at line 1, the true level begins at line 16.
-
-For Ghost Castle1:
-First move at rot=28938
