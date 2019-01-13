@@ -135,6 +135,11 @@ namespace KuruBot
                 start_x = (Width - (int)(bmap.Width*scale)) / 2;
                 start_y = (Height - (int)(bmap.Height*scale)) / 2;
                 g.DrawImage(bmap, start_x, start_y, bmap.Width*scale, bmap.Height*scale);
+                if (showP)
+                {
+                    start_x += (int)(bmap.Width * scale / 3);
+                    start_y += (int)(bmap.Height * scale / 3);
+                }
             }
                 
             if (helirin != null)

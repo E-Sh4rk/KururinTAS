@@ -168,7 +168,7 @@ namespace KuruBot
 
         private void sendLastInputs_Click(object sender, EventArgs e)
         {
-            if (last_inputs != null && last_positions != null)
+            if (com != null && last_inputs != null && last_positions != null)
                 last_positions_emu = com.Play(last_positions[0], last_inputs);
         }
 
