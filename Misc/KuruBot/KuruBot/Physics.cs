@@ -157,7 +157,7 @@ namespace KuruBot
             {
                 int radius = helirin_points[i];
 
-                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels).
+                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels even in negative positions).
                 short pixX = (short)(pos_to_px(st.xpos) - pos_to_px_arith(math.factor_by_sin(radius, st.rot)));
                 short pixY = (short)(pos_to_px(st.ypos) + pos_to_px_arith(math.factor_by_cos(radius, st.rot)));
                 
