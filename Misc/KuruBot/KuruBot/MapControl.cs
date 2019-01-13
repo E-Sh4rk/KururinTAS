@@ -78,18 +78,26 @@ namespace KuruBot
                 Graphics g = Graphics.FromImage(bitmap);
                 g.Clear(BackColor);
 
+                Brush healingBrush = new SolidBrush(Color.FromArgb(0x77, 0x40, 0x40, 0xFF));
+                Brush endingBrush = new SolidBrush(Color.FromArgb(0x77, 0xD0, 0xD0, 0x00));
+                Brush collisionBrush = Brushes.Red;
+                Brush phyHealingBrush = new SolidBrush(Color.FromArgb(0x55, 0x40, 0x40, 0xFF));
+                Brush phyEndingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0xD0, 0x00));
                 if (showP)
                 {
-                    Brush myBrush = Brushes.Red;
+                    
                     for (int y = 0; y < bitmap.Height; y++)
                     {
                         for (int x = 0; x < bitmap.Width; x++)
                         {
+                            Rectangle dest = new Rectangle(x, y, 1, 1);
                             if (m.IsPixelInCollision((short)(x-start_x), (short)(y-start_y)))
-                            {
-                                Rectangle dest = new Rectangle(x, y, 1, 1);
-                                g.FillRectangle(myBrush, dest);
-                            }
+                                g.FillRectangle(collisionBrush, dest);
+                            Map.Zone zone = m.IsPixelInZone((short)(x - start_x), (short)(y - start_y));
+                            if (zone == Map.Zone.Healing)
+                                g.FillRectangle(phyHealingBrush, dest);
+                            else if (zone == Map.Zone.Ending)
+                                g.FillRectangle(phyEndingBrush, dest);
                         }
                     }
                 }
@@ -100,12 +108,15 @@ namespace KuruBot
                     {
                         for (int x = 0; x < m.Width; x++)
                         {
+                            Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
                             Rectangle? sprite = m.GetTileSprite(m.TileAt(x, y));
                             if (sprite.HasValue)
-                            {
-                                Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
                                 g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
-                            }
+                            Map.Zone zone = m.IsTileAZone(m.TileAt(x, y));
+                            if (zone == Map.Zone.Healing)
+                                g.FillRectangle(healingBrush, dest);
+                            else if (zone == Map.Zone.Ending)
+                                g.FillRectangle(endingBrush, dest);
                         }
                     }
                 }

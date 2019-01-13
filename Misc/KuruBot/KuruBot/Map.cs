@@ -20,6 +20,7 @@ namespace KuruBot
         
         // Physical attributes
         BitArray physical_map = null;
+        Zone[] physical_zone_map = null;
 
         public Map(ushort[,] map)
         {
@@ -53,6 +54,17 @@ namespace KuruBot
                             }
                         }
                     }
+                }
+            }
+
+            // Build physical zone map from graphical map
+            physical_zone_map = new Zone[Height*Width];
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    Zone z = IsTileAZone(TileAt(x,y));
+                    physical_zone_map[x + y * Width] = z;
                 }
             }
         }
@@ -89,7 +101,11 @@ namespace KuruBot
         }
         public Zone IsTileAZone(ushort tile)
         {
-            // TODO
+            ushort type = (ushort)((uint)tile & 0x3FF);
+            if (type == 0xFE || type == 0xFF)
+                return Zone.Ending;
+            if (type == 0xFB || type == 0xFC || type == 0xFD || type == 0xEA || type == 0xED)
+                return Zone.Healing;
             return Zone.None;
         }
         public Rectangle? GetTileSprite(ushort tile)
@@ -127,8 +143,10 @@ namespace KuruBot
             int y_tile = y / tile_size;
             int xm = x_tile % Width;
             int ym = y_tile % Height;
-            ushort tile = TileAt(xm, ym);
-            return IsTileAZone(tile);
+            int addr = xm + ym * Width;
+            if (addr < 0)
+                return Zone.None;
+            return physical_zone_map[addr];
         }
     }
 }
