@@ -122,7 +122,8 @@ while true do
 					-- For more details, see https://medium.com/message/building-a-cheat-bot-f848f199e76b
 					local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
 					local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
-					-- if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
+					--if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
+					--view.drawText(x_tile+tile_size/2, y_tile+tile_size/2, tostring(tile_type), nil, nil, 4, nil, nil, "center", "middle") -- Uncomment to print the tile type on each sprite.
 					
 					-- We draw the wall tile depending on its type
 					-- It follows this format: http://problemkaputt.de/gbatek.htm#lcdvrambgscreendataformatbgmap

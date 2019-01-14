@@ -1,0 +1,39 @@
+UP
+248-0-248-0-248-0
+DOWN
+2296-0-2296-0
+RIGHT
+249-0-249-0
+LEFT
+1273-0-1273-0
+
+
+> 249  0
+> 0    0
+
+< 1273 0  (1273=249+1024)
+< 0    0
+
+
+248  0
+ 0   0
+/\  /\
+
+2296 0   (2296=248+2048)
+ 0   0
+\/  \/
+
+----------
+
+Default rate = -Default rate  if relevant (if the relevant semi helirin touched)
+If both side touched, priority to the side that changed the default rot rate.
+
+Bump:
+65536, direction of the bumper (applied immediatly)
+Angle rate:
+768, direction of the new sleep rate (not applied immediatly)
+
+Physics of helirin: similar to that of walls
+
+
+Takes place BEFORE wall physics BUT the change of rotation direction seems not to influence it.
