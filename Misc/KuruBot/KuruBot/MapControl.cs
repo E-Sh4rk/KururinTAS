@@ -92,14 +92,22 @@ namespace KuruBot
                     {
                         for (int x = 0; x < bitmap.Width; x++)
                         {
+                            short xp = (short)(x - start_x);
+                            short yp = (short)(y - start_y);
+
                             Rectangle dest = new Rectangle(x, y, 1, 1);
-                            if (m.IsPixelInCollision((short)(x-start_x), (short)(y-start_y)))
+                            if (m.IsPixelInCollision(xp, yp))
                                 g.FillRectangle(collisionBrush, dest);
-                            Map.Zone zone = m.IsPixelInZone((short)(x - start_x), (short)(y - start_y));
+
+                            Map.Zone zone = m.IsPixelInZone(xp, yp);
                             if (zone == Map.Zone.Healing)
                                 g.FillRectangle(phyHealingBrush, dest);
                             else if (zone == Map.Zone.Ending)
                                 g.FillRectangle(phyEndingBrush, dest);
+
+                            Map.Spring[] springs = m.IsPixelInSpring(xp, yp);
+                            foreach (Map.Spring s in springs)
+                                g.FillRectangle(phySpringBrush, dest);
                         }
                     }
                 }

@@ -22,6 +22,7 @@ namespace KuruBot
         // Physical attributes
         BitArray physical_map = null;
         Zone[] physical_zone_map = null;
+        Spring[,][] physical_spring_map = null;
 
         public Map(ushort[,] map)
         {
@@ -58,7 +59,7 @@ namespace KuruBot
                 }
             }
 
-            // Build physical zone map from graphical map
+            // Build physical zone map
             physical_zone_map = new Zone[Height*Width];
             for (int y = 0; y < Height; y++)
             {
@@ -66,6 +67,37 @@ namespace KuruBot
                 {
                     Zone z = IsTileAZone(TileAt(x,y));
                     physical_zone_map[x + y * Width] = z;
+                }
+            }
+
+            // Build physical spring map
+            physical_spring_map = new Spring[HeightPx, WidthPx][];
+            for (int y = 0; y < HeightPx; y++)
+            {
+                for (int x = 0; x < WidthPx; x++)
+                    physical_spring_map[y, x] = new Spring[0];
+            }
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    Spring s = IsTileASpring(TileAt(x,y));
+                    if (s != Spring.None)
+                    {
+                        for (int y2 = 0; y2 < spring_size; y2++)
+                        {
+                            for (int x2 = 0; x2 < spring_size; x2++)
+                            {
+                                int py = y*tile_size + y2;
+                                int px = x*tile_size + x2;
+                                Spring[] cur = physical_spring_map[py, px];
+                                Spring[] res = new Spring[cur.Length+1];
+                                Array.Copy(cur, res, cur.Length);
+                                res[cur.Length] = s;
+                                physical_spring_map[py, px] = res;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -124,12 +156,7 @@ namespace KuruBot
             Up = 1,
             Down,
             Left,
-            Right,
-
-            DoubleUp = 5,
-            DoubleDown,
-            DoubleLeft,
-            DoubleRight
+            Right
         }
         public Spring IsTileASpring(ushort tile)
         {
@@ -155,6 +182,7 @@ namespace KuruBot
             }
             return null;
         }
+
         // For graphical purpose only (do not use for testing collisions). No OOB.
         public ushort TileAt(int x, int y)
         {
@@ -162,6 +190,7 @@ namespace KuruBot
                 return 0x0;
             return map[y, x];  
         }
+
         // For physical purpose
         public bool IsPixelInCollision(short x, short y)
         {
@@ -184,6 +213,12 @@ namespace KuruBot
             if (addr < 0)
                 return Zone.None;
             return physical_zone_map[addr];
+        }
+        public Spring[] IsPixelInSpring(short x, short y)
+        {
+            if (x < 0 || x >= WidthPx || y < 0 || y >= HeightPx)
+                return new Spring[0];
+            return physical_spring_map[y, x];
         }
     }
 }
