@@ -9,31 +9,32 @@ LEFT
 
 
 > 249  0
-> 0    0
+> 0    0  NOTE: overflow of 1 px at bottom
 
 < 1273 0  (1273=249+1024)
-< 0    0
+< 0    0  NOTE: overflow of 1 px at bottom
 
 
 248  0
- 0   0
+ 0   0   NOTE: overflow of 1 px at right
 /\  /\
 
 2296 0   (2296=248+2048)
- 0   0
+ 0   0   NOTE: overflow of 1 px at right
 \/  \/
 
 ----------
 
-Default rate = -Default rate  if relevant (if the relevant semi helirin touched)
-If both side touched, priority to the side that changed the default rot rate.
-
+Default rate = -Default rate  if at least one spring touch the good semi-helirin (the one with the right angle)
+If many spring touch: cumulate the effects of position bump!
 Bump:
 65536, direction of the bumper (applied immediatly)
 Angle rate:
-768, direction of the new sleep rate (not applied immediatly)
+768, direction of the new sleep rate (not applied this frame)
 
-Physics of helirin: similar to that of walls
+It seems to takes place BEFORE the effects of wall physics
+BUT modification of rotation rate direction does not influence wall physics.
 
-
-Takes place BEFORE wall physics BUT the change of rotation direction seems not to influence it.
+Physics of helirin: seems quite similar to that for walls collisions, but less points:
+0---X---X---X---X---X---X--X
+S|          S|             S|
