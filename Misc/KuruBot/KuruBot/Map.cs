@@ -11,6 +11,7 @@ namespace KuruBot
     public class Map
     {
         public const int tile_size = 8;
+        public const int spring_size = 2*8 + 1;
         public const int helirin_radius = 32; // Not really... This value is only used for rendering.
 
         // Graphical atrributes
@@ -86,6 +87,14 @@ namespace KuruBot
             get { return map.GetLength(1) * tile_size; }
         }
 
+        /*
+		 * Tile identifiers follow this format: http://problemkaputt.de/gbatek.htm#lcdvrambgscreendataformatbgmap
+		 * Bits 0-9: Tile number
+		 * Bit 10: Horizontal flip
+		 * Bit 11: Vertical flip
+		 * Bits 12-15: Palette number
+        */
+
         public bool IsTileAWall(ushort tile)
         {
             ushort type = (ushort)((uint)tile & 0x3FF);
@@ -104,10 +113,38 @@ namespace KuruBot
             ushort type = (ushort)((uint)tile & 0x3FF);
             if (type == 0xFE || type == 0xFF)
                 return Zone.Ending;
-            if (type == 0xFB || type == 0xFC || type == 0xFD || type == 0xEA || type == 0xED)
+            if (type == 0xFB || type == 0xFC || type == 0xFD || type == 0xEA || type == 0xEC || type == 0xED || type == 0xEF)
                 return Zone.Healing;
             return Zone.None;
         }
+        public enum Spring
+        {
+            None = 0,
+
+            Up = 1,
+            Down,
+            Left,
+            Right,
+
+            DoubleUp = 5,
+            DoubleDown,
+            DoubleLeft,
+            DoubleRight
+        }
+        public Spring IsTileASpring(ushort tile)
+        {
+            tile = (ushort)((uint)tile & 0xFFF);
+            if (tile == 0x0F8 || tile == 0x4F8)
+                return Spring.Up;
+            if (tile == 0x8F8 || tile == 0xCF8)
+                return Spring.Down;
+            if (tile == 0x4F9 || tile == 0xCF9)
+                return Spring.Left;
+            if (tile == 0x0F9 || tile == 0x8F9)
+                return Spring.Right;
+            return Spring.None;
+        }
+
         public Rectangle? GetTileSprite(ushort tile)
         {
             if (IsTileAWall(tile))

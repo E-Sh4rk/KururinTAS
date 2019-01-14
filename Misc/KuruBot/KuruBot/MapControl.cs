@@ -80,9 +80,11 @@ namespace KuruBot
 
                 Brush healingBrush = new SolidBrush(Color.FromArgb(0x77, 0x40, 0x40, 0xFF));
                 Brush endingBrush = new SolidBrush(Color.FromArgb(0x77, 0xD0, 0xD0, 0x00));
+                Brush springBrush = new SolidBrush(Color.FromArgb(0x77, 0x80, 0x80, 0x80));
                 Brush collisionBrush = Brushes.Red;
                 Brush phyHealingBrush = new SolidBrush(Color.FromArgb(0x55, 0x40, 0x40, 0xFF));
                 Brush phyEndingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0xD0, 0x00));
+                Brush phySpringBrush = new SolidBrush(Color.FromArgb(0x55, 0x80, 0x80, 0x80));
                 if (showP)
                 {
                     
@@ -108,15 +110,24 @@ namespace KuruBot
                     {
                         for (int x = 0; x < m.Width; x++)
                         {
+                            ushort tile = m.TileAt(x, y);
+
                             Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
-                            Rectangle? sprite = m.GetTileSprite(m.TileAt(x, y));
+                            Rectangle? sprite = m.GetTileSprite(tile);
                             if (sprite.HasValue)
                                 g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
-                            Map.Zone zone = m.IsTileAZone(m.TileAt(x, y));
+
+                            Map.Zone zone = m.IsTileAZone(tile);
                             if (zone == Map.Zone.Healing)
                                 g.FillRectangle(healingBrush, dest);
                             else if (zone == Map.Zone.Ending)
                                 g.FillRectangle(endingBrush, dest);
+
+                            if (m.IsTileASpring(tile) != Map.Spring.None)
+                            {
+                                dest = new Rectangle(dest.X, dest.Y, Map.spring_size, Map.spring_size);
+                                g.FillRectangle(springBrush, dest);
+                            }
                         }
                     }
                 }
