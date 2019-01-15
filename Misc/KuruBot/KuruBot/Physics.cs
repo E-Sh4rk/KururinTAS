@@ -182,8 +182,8 @@ namespace KuruBot
                         {
                             short spring_angle = AngleOfSpring(spr.type);
                             short helirin_angle = radius > 0 ? st.rot : (short)(st.rot + (0x10000 / 2));
-                            short helirin_normal_angle = (short)(helirin_angle + Math.Sign(st.rot_rate) * (0x10000 / 4));
-                            short diff = (short)(spring_angle - helirin_angle);
+                            short helirin_normal_angle = (short)(helirin_angle + Math.Sign(st.rot_srate) * (0x10000 / 4));
+                            short diff = (short)(spring_angle - helirin_normal_angle);
                             if (Math.Abs((int)diff) > 0x10000 / 4)
                                 invert_rotation = true;
                         }

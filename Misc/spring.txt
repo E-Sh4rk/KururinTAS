@@ -25,7 +25,7 @@ LEFT
 
 ----------
 
-Default rate = -Default rate  if at least one spring touch the good semi-helirin (the one with the right angle)
+Default rate = -Default rate  if at least one spring touch the good semi-helirin (depending on current default rate and spring direction)
 If many spring touch: cumulate the effects of position bump!
 Bump:
 65536, direction of the bumper (applied immediatly)
