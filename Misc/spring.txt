@@ -30,11 +30,11 @@ If many spring touch: cumulate the effects of position bump!
 Bump:
 65536, direction of the bumper (applied immediatly)
 Angle rate:
-768, direction of the new sleep rate (not applied this frame)
+768, direction of the new sleep rate (not applied this frame) (- by default)
 
 It seems to takes place BEFORE the effects of wall physics
 BUT modification of rotation rate direction and position does not influence wall physics.
 
 Physics of helirin: seems quite similar to that for walls collisions, but less points:
-0---X---X---X---X---X---X--X
-S|          S|             S|
+0---X---X---X---X---X---X---X--X
+S|          S|          S|     S|

@@ -81,9 +81,10 @@ namespace KuruBot
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    Spring s = IsTileASpring(TileAt(x,y));
-                    if (s != Spring.None)
+                    SpringType? t = IsTileASpring(TileAt(x,y));
+                    if (t.HasValue)
                     {
+                        int id = x + y * Width;
                         for (int y2 = 0; y2 < spring_size; y2++)
                         {
                             for (int x2 = 0; x2 < spring_size; x2++)
@@ -93,7 +94,7 @@ namespace KuruBot
                                 Spring[] cur = physical_spring_map[py, px];
                                 Spring[] res = new Spring[cur.Length+1];
                                 Array.Copy(cur, res, cur.Length);
-                                res[cur.Length] = s;
+                                res[cur.Length] = new Spring(t.Value, id);
                                 physical_spring_map[py, px] = res;
                             }
                         }
@@ -149,27 +150,35 @@ namespace KuruBot
                 return Zone.Healing;
             return Zone.None;
         }
-        public enum Spring
+        public enum SpringType
         {
-            None = 0,
-
-            Up = 1,
+            Up = 0,
             Down,
             Left,
             Right
         }
-        public Spring IsTileASpring(ushort tile)
+        public class Spring
+        {
+            public Spring (SpringType t, int id)
+            {
+                type = t;
+                unique_id = id;
+            }
+            public SpringType type = SpringType.Down;
+            public int unique_id = -1;
+        }
+        public SpringType? IsTileASpring(ushort tile)
         {
             tile = (ushort)((uint)tile & 0xFFF);
             if (tile == 0x0F8 || tile == 0x4F8)
-                return Spring.Up;
+                return SpringType.Up;
             if (tile == 0x8F8 || tile == 0xCF8)
-                return Spring.Down;
+                return SpringType.Down;
             if (tile == 0x4F9 || tile == 0xCF9)
-                return Spring.Left;
+                return SpringType.Left;
             if (tile == 0x0F9 || tile == 0x8F9)
-                return Spring.Right;
-            return Spring.None;
+                return SpringType.Right;
+            return null;
         }
 
         public Rectangle? GetTileSprite(ushort tile)

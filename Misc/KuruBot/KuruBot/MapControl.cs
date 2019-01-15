@@ -131,7 +131,7 @@ namespace KuruBot
                             else if (zone == Map.Zone.Ending)
                                 g.FillRectangle(endingBrush, dest);
 
-                            if (m.IsTileASpring(tile) != Map.Spring.None)
+                            if (m.IsTileASpring(tile).HasValue)
                             {
                                 dest = new Rectangle(dest.X, dest.Y, Map.spring_size, Map.spring_size);
                                 g.FillRectangle(springBrush, dest);

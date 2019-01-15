@@ -164,12 +164,13 @@ Global description of physics:
 2. Decrease bump speed (for rotation and position) if relevant (see below)
 3. Move depending on speed (bump+input), rotate depending on rotation rate
 4. Detection of healing/ending zones
-5. Compute collision mask (see below)
-6. If collision:
+5. Compute action of springs (see dedicated file)
+6. Compute collision mask (see below)
+7. If collision:
 	- substract input speed to position
 	- modify bump speed (pos & rot) accordingly (see below) if relevant
 	- if modified, apply this newly computed bump speed to position
-7. If mask has collision at one of the 3 lowest bits :
+8. If mask has collision at one of the 3 lowest bits :
 	- modify bump speed (position) depending on input
 	- if modified, apply this newly computed bump speed to position
 
