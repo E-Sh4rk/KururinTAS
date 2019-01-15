@@ -157,15 +157,15 @@ namespace KuruBot
             Left,
             Right
         }
-        public class Spring
+        public struct Spring
         {
             public Spring (SpringType t, int id)
             {
                 type = t;
                 unique_id = id;
             }
-            public SpringType type = SpringType.Down;
-            public int unique_id = -1;
+            public SpringType type;
+            public int unique_id;
         }
         public SpringType? IsTileASpring(ushort tile)
         {

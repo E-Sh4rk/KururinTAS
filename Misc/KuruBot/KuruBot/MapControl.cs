@@ -13,7 +13,7 @@ namespace KuruBot
     public partial class MapControl : Control
     {
 
-        public class GraphicalHelirin
+        public struct GraphicalHelirin
         {
             public GraphicalHelirin(int px, int py, float a)
             {
@@ -31,7 +31,7 @@ namespace KuruBot
         bool showG = true;
         bool showP = false;
         Bitmap bmap = null;
-        GraphicalHelirin helirin = null;
+        GraphicalHelirin? helirin = null;
 
         public MapControl(Map m, bool showG, bool showP)
         {
@@ -174,18 +174,22 @@ namespace KuruBot
                 
             if (helirin != null)
             {
+                GraphicalHelirin h = helirin.Value;
                 Pen myPen = new Pen(Color.Black, 1);
-                int offset_x = helirin.pixelX - Map.helirin_radius;
-                int offset_y = helirin.pixelY - Map.helirin_radius;
+
+                int offset_x = h.pixelX - Map.helirin_radius;
+                int offset_y = h.pixelY - Map.helirin_radius;
                 int size = Map.helirin_radius * 2;
                 g.DrawEllipse(myPen, start_x + offset_x*scale, start_y + offset_y*scale, size*scale, size*scale);
-                offset_x = helirin.pixelX - 2;
-                offset_y = helirin.pixelY - 2;
+
+                offset_x = h.pixelX - 2;
+                offset_y = h.pixelY - 2;
                 size = 4;
                 g.DrawEllipse(myPen, start_x + offset_x * scale, start_y + offset_y * scale, size * scale, size * scale);
+
                 Size o = new Size(start_x, start_y);
-                Point p1 = new Point((int)(helirin.pixelX + Math.Sin(helirin.angle) * Map.helirin_radius), (int)(helirin.pixelY - Math.Cos(helirin.angle) * Map.helirin_radius));
-                Point p2 = new Point((int)(helirin.pixelX - Math.Sin(helirin.angle) * Map.helirin_radius), (int)(helirin.pixelY + Math.Cos(helirin.angle) * Map.helirin_radius));
+                Point p1 = new Point((int)(h.pixelX + Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY - Math.Cos(h.angle) * Map.helirin_radius));
+                Point p2 = new Point((int)(h.pixelX - Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY + Math.Cos(h.angle) * Map.helirin_radius));
                 p1 = new Point((int)(p1.X * scale), (int)(p1.Y * scale));
                 p2 = new Point((int)(p2.X * scale), (int)(p2.Y * scale));
                 g.DrawLine(myPen, Point.Add(p1,o), Point.Add(p2,o));
