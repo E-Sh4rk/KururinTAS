@@ -149,7 +149,7 @@ namespace KuruBot
             short xpix = pos_to_px(st.xpos);
             short ypix = pos_to_px(st.ypos);
             Map.Zone zone = map.IsPixelInZone(xpix, ypix);
-            if (zone == Map.Zone.Healing)
+            if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
             {
                 // TODO
             }

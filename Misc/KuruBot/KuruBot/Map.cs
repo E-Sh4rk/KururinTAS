@@ -138,6 +138,7 @@ namespace KuruBot
         public enum Zone
         {
             None = 0,
+            Starting,
             Healing,
             Ending
         }
@@ -146,7 +147,9 @@ namespace KuruBot
             ushort type = (ushort)((uint)tile & 0x3FF);
             if (type == 0xFE || type == 0xFF)
                 return Zone.Ending;
-            if (type == 0xFB || type == 0xFC || type == 0xFD || type == 0xEA || type == 0xEC || type == 0xED || type == 0xEF)
+            if (type == 0xFB || type == 0xFC || type == 0xFD) // 0xFB is clockwise, 0xFC is counter-clockwise
+                return Zone.Starting;
+            if (type >= 0xEA && type <= 0xEF)
                 return Zone.Healing;
             return Zone.None;
         }

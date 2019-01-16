@@ -236,7 +236,7 @@ while true do
 						-- We draw the healing/ending zone if there is any
 						if tile_id == 0xFE or tile_id == 0xFF then
 							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x77D0D000)
-						elseif tile_id == 0xFB or tile_id == 0xFC or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xEC or tile_id == 0xED or tile_id == 0xEF then
+						elseif tile_id == 0xFB or tile_id == 0xFC or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xEB or tile_id == 0xEC or tile_id == 0xED or tile_id == 0xEE or tile_id == 0xEF then
 							view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
 						end
 					end

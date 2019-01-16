@@ -100,11 +100,14 @@ Turn rate (at sleep)		300457C
 Bump count			300457E
 0?				3004580
 Lives				3004582
-0-255 counter			3004584
+0-255 frame counter		3004584
 Invulnerability timer		3004585
 
-Collision location 1		30045D4
-Collision location 2		30045D8
+World number			3004420
+Level number			3004421
+
+Collision mask 1		30045D4
+Collision mask 2?		30045D8
 
 Flags...			30046B8
 ---- ---- ---- ---- ---- D--- ---- ----
