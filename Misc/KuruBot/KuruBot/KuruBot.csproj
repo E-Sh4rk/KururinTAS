@@ -46,6 +46,7 @@
     <Compile Include="Bot.cs" />
     <Compile Include="Com.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="Flooding.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
