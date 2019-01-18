@@ -20,6 +20,8 @@ Rot: round to *default frame offset*
 Rot rate: round to *default frame offset*/frame
 RotSleepRate: boolean value actually
 
+Precision could be proportionnal to the "distance to a wall".
+
 ----- FORBIDDEN PATHS / PARAMETERS -----
 
 Max Frames: Only search paths under a certain number of frames
@@ -34,5 +36,5 @@ Flooding could get a little constant bonus when infiltrating into walls, and a l
 It could propagate inside walls (maybe at the same speed than on ground, because it can't stay into wall forever due to lives).
 (/!\ result will not be optimal)
 
-We could also build a second map of cost for when the helirin has no heart left (and no invicibility time left).
-It would be a no-wall-clip cost function: infiltration into walls would not be allowed in this map.
+Bonus for infiltrating walls decrease when the player loose a life (or more preceisely, when the player spend invicibility time):
+at least one cost map per heart should be generated, the last one (1 heart) disallowing wall clip.

@@ -6,15 +6,17 @@ using Priority_Queue;
 
 namespace KuruBot
 {
-    static class Flooding
+    class Flooding
     {
+        // All these values must be non-negative
         const float ground_speed = 0f;
-        const float wall_speed = ground_speed;
-        const float ground_wall_bonus = 0f;
-        const float wall_ground_malus = ground_wall_bonus; // Must be greater or equal than ground_wall_bonus, otherwise there would be negative cycles...
+        const float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
+        const float ground_wall_bonus = 0f; // Bonus applied to each pixel in a wall (in a post procedure) in order to simulate the fact that velocity is higher in a wall (for some distance).
+        const float ground_wall_bonus_min_dist = 0f; // Min weight required for a wall to benefit from full bonus.
+        const float oob_malus = 0f; // Malus applied everytime we go from a wall to an oob zone, in order to capture the fact that leaving the oob zone could be expensive.
 
-        // Bellman-Ford algorithm should be used instead of Djikstra, because weights can be negative.
-        // However, for efficiency reasons, we will use Djikstra anyway. Depending on the settings above, the result could still be correct.
+        // Ground wall bonus is not applied during the Djikstra algorithm because it would generate negative weights.
+        // Instead, it will be applied after to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
 
         public struct Pixel
         {
@@ -27,8 +29,29 @@ namespace KuruBot
             public short y;
         }
 
-        public static float[,] ComputeCostMap(Map m, Pixel start, Pixel end, bool wall_clip)
+        public Flooding(Map m, Pixel start, Pixel end)
         {
+            this.m = m;
+            this.start = start;
+            this.end = end;
+            oob_zones = ComputeOobZones();
+        }
+
+        Pixel start;
+        Pixel end;
+        Map m;
+        bool[,] oob_zones;
+
+        bool[,] ComputeOobZones()
+        {
+            throw new NotImplementedException();
+        }
+
+        public float[,] ComputeCostMap(float gwb_multiplier, float oobm_multiplier, bool disallow_wall_clip, float disallow_oob_threshold)
+        {
+            float gwb = ground_wall_bonus * gwb_multiplier;
+            float oobm = oob_malus * oobm_multiplier;
+
             int width = end.x - start.x + 1;
             int height = end.y - start.y + 1;
             float[,] res = new float[height,width];
@@ -48,11 +71,13 @@ namespace KuruBot
                 }
             }
                 
-
-            
-
-
             return res;
         }
+
+        public float[,] ComputeDistanceToAWall()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
