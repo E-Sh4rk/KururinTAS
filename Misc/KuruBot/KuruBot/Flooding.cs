@@ -25,6 +25,13 @@ namespace KuruBot
                 this.x = x;
                 this.y = y;
             }
+            public Pixel Add(Pixel p)
+            {
+                Pixel res = this;
+                res.x += p.x;
+                res.y += p.y;
+                return res;
+            }
             public short x;
             public short y;
         }
@@ -34,17 +41,79 @@ namespace KuruBot
             this.m = m;
             this.start = start;
             this.end = end;
-            oob_zones = ComputeOobZones();
+            legal_zones = ComputeLegalZones();
         }
 
         Pixel start;
         Pixel end;
         Map m;
-        bool[,] oob_zones;
+        bool[,] legal_zones;
 
-        bool[,] ComputeOobZones()
+        Pixel[] DiagNeighbors(Pixel p)
         {
-            throw new NotImplementedException();
+            List<Pixel> res = new List<Pixel>();
+
+            if (p.y > start.y && p.x > start.x)
+                res.Add(p.Add(new Pixel(-1, -1)));
+            if (p.y < end.y && p.x < end.x)
+                res.Add(p.Add(new Pixel(1, 1)));
+            if (p.y < end.y && p.x > start.x)
+                res.Add(p.Add(new Pixel(-1, 1)));
+            if (p.y > start.y && p.x < end.x)
+                res.Add(p.Add(new Pixel(1, -1)));
+
+            return res.ToArray();
+        }
+
+        Pixel[] StraightNeighbors(Pixel p)
+        {
+            List<Pixel> res = new List<Pixel>();
+
+            if (p.y > start.y)
+                res.Add(p.Add(new Pixel(0,-1)));
+            if (p.y < end.y)
+                res.Add(p.Add(new Pixel(0,1)));
+            if (p.x > start.x)
+                res.Add(p.Add(new Pixel(-1,0)));
+            if (p.x < end.x)
+                res.Add(p.Add(new Pixel(1,0)));
+
+            return res.ToArray();
+        }
+
+        bool[,] ComputeLegalZones()
+        {
+            int width = end.x - start.x + 1;
+            int height = end.y - start.y + 1;
+            bool[,] res = new bool[height, width];
+            Queue<Pixel> q = new Queue<Pixel>();
+
+            // Init
+            for (short y = start.y; y <= end.y; y++)
+            {
+                for (short x = start.x; x <= end.x; x++)
+                {
+                    res[y - start.y, x - start.x] = false;
+                    if (x >= 0 && x < m.WidthPx && y >= 0 && y < m.HeightPx) // We only consider the ending zones in the "legal map"
+                        if (m.IsPixelInZone(x, y) == Map.Zone.Ending)
+                            q.Enqueue(new Pixel(x, y));
+                }
+            }
+                
+            // Graph walk
+            while (q.Count > 0)
+            {
+                Pixel p = q.Dequeue();
+                if (!res[p.y - start.y, p.x - start.x] && !m.IsPixelInCollision(p.x, p.y))
+                {
+                    res[p.y - start.y, p.x - start.x] = true;
+                    Pixel[] neighbors = StraightNeighbors(p);
+                    foreach (Pixel np in neighbors)
+                        q.Enqueue(np);
+                }
+            }
+
+            return res;
         }
 
         public float[,] ComputeCostMap(float gwb_multiplier, float oobm_multiplier, bool disallow_wall_clip, float disallow_oob_threshold)
@@ -55,8 +124,10 @@ namespace KuruBot
             int width = end.x - start.x + 1;
             int height = end.y - start.y + 1;
             float[,] res = new float[height,width];
+            HashSet<Pixel> already_visited = new HashSet<Pixel>();
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
+            // Init
             for (short y = start.y; y <= end.y; y++)
             {
                 for (short x = start.x; x <= end.x; x++)
@@ -70,6 +141,11 @@ namespace KuruBot
                         res[y - start.y, x - start.x] = float.PositiveInfinity;
                 }
             }
+
+            // Djikstra
+            throw new NotImplementedException();
+
+            // Post-procedure
                 
             return res;
         }
