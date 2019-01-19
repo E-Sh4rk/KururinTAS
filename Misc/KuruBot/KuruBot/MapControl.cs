@@ -77,14 +77,21 @@ namespace KuruBot
                 int start_x = 0;
                 int start_y = 0;
                 Bitmap bitmap = null;
-                if (showP)
+
+                if (showC)
+                {
+                    start_x = 0; start_y = 0; // TODO
+                    bitmap = new Bitmap(cost_map.GetLength(1), cost_map.GetLength(0), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                }
+                else if (showP)
                 {
                     start_x = width;
                     start_y = height;
-                    bitmap = new Bitmap(3*width, 3*height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    bitmap = new Bitmap(3 * width, 3 * height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 }
                 else
                     bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
                 Graphics g = Graphics.FromImage(bitmap);
                 g.Clear(BackColor);
 
@@ -97,65 +104,85 @@ namespace KuruBot
                 Brush phyHealingBrush = new SolidBrush(Color.FromArgb(0x55, 0x40, 0x40, 0xFF));
                 Brush phyEndingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0xD0, 0x00));
                 Brush phySpringBrush = new SolidBrush(Color.FromArgb(0x55, 0x80, 0x80, 0x80));
-                if (showP)
+
+                if (showC)
                 {
-                    
+                    float max = Flooding.GetMaxWeightExceptInfinity(cost_map);
                     for (int y = 0; y < bitmap.Height; y++)
                     {
                         for (int x = 0; x < bitmap.Width; x++)
                         {
-                            short xp = (short)(x - start_x);
-                            short yp = (short)(y - start_y);
-
                             Rectangle dest = new Rectangle(x, y, 1, 1);
-                            if (m.IsPixelInCollision(xp, yp))
-                                g.FillRectangle(collisionBrush, dest);
-
-                            Map.Zone zone = m.IsPixelInZone(xp, yp);
-                            if (zone == Map.Zone.Starting)
-                                g.FillRectangle(phyStartingBrush, dest);
-                            else if (zone == Map.Zone.Healing)
-                                g.FillRectangle(phyHealingBrush, dest);
-                            else if (zone == Map.Zone.Ending)
-                                g.FillRectangle(phyEndingBrush, dest);
-
-                            Map.Spring[] springs = m.IsPixelInSpring(xp, yp);
-                            foreach (Map.Spring s in springs)
-                                g.FillRectangle(phySpringBrush, dest);
+                            float cost = cost_map[y, x];
+                            int color = cost < float.PositiveInfinity ? (int)((cost/max)*255) : 255;
+                            color = 255 - color;
+                            Brush brush = new SolidBrush(Color.FromArgb(255,color,color,color));
+                            g.FillRectangle(brush, dest);
                         }
                     }
                 }
-
-                if (showG)
+                else
                 {
-                    for (int y = 0; y < m.Height; y++)
+                    if (showP)
                     {
-                        for (int x = 0; x < m.Width; x++)
+
+                        for (int y = 0; y < bitmap.Height; y++)
                         {
-                            ushort tile = m.TileAt(x, y);
-
-                            Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
-                            Rectangle? sprite = m.GetTileSprite(tile);
-                            if (sprite.HasValue)
-                                g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
-
-                            Map.Zone zone = m.IsTileAZone(tile);
-                            if (zone == Map.Zone.Starting)
-                                g.FillRectangle(startingBrush, dest);
-                            else if (zone == Map.Zone.Healing)
-                                g.FillRectangle(healingBrush, dest);
-                            else if (zone == Map.Zone.Ending)
-                                g.FillRectangle(endingBrush, dest);
-
-                            if (m.IsTileASpring(tile).HasValue)
+                            for (int x = 0; x < bitmap.Width; x++)
                             {
-                                dest = new Rectangle(dest.X, dest.Y, Map.spring_size, Map.spring_size);
-                                g.FillRectangle(springBrush, dest);
+                                short xp = (short)(x - start_x);
+                                short yp = (short)(y - start_y);
+
+                                Rectangle dest = new Rectangle(x, y, 1, 1);
+                                if (m.IsPixelInCollision(xp, yp))
+                                    g.FillRectangle(collisionBrush, dest);
+
+                                Map.Zone zone = m.IsPixelInZone(xp, yp);
+                                if (zone == Map.Zone.Starting)
+                                    g.FillRectangle(phyStartingBrush, dest);
+                                else if (zone == Map.Zone.Healing)
+                                    g.FillRectangle(phyHealingBrush, dest);
+                                else if (zone == Map.Zone.Ending)
+                                    g.FillRectangle(phyEndingBrush, dest);
+
+                                Map.Spring[] springs = m.IsPixelInSpring(xp, yp);
+                                foreach (Map.Spring s in springs)
+                                    g.FillRectangle(phySpringBrush, dest);
+                            }
+                        }
+                    }
+
+                    if (showG)
+                    {
+                        for (int y = 0; y < m.Height; y++)
+                        {
+                            for (int x = 0; x < m.Width; x++)
+                            {
+                                ushort tile = m.TileAt(x, y);
+
+                                Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
+                                Rectangle? sprite = m.GetTileSprite(tile);
+                                if (sprite.HasValue)
+                                    g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
+
+                                Map.Zone zone = m.IsTileAZone(tile);
+                                if (zone == Map.Zone.Starting)
+                                    g.FillRectangle(startingBrush, dest);
+                                else if (zone == Map.Zone.Healing)
+                                    g.FillRectangle(healingBrush, dest);
+                                else if (zone == Map.Zone.Ending)
+                                    g.FillRectangle(endingBrush, dest);
+
+                                if (m.IsTileASpring(tile).HasValue)
+                                {
+                                    dest = new Rectangle(dest.X, dest.Y, Map.spring_size, Map.spring_size);
+                                    g.FillRectangle(springBrush, dest);
+                                }
                             }
                         }
                     }
                 }
-
+                
                 bmap = bitmap;
             }
             else

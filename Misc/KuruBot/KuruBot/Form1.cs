@@ -289,7 +289,7 @@ namespace KuruBot
         {
             if (b != null)
             {
-                b.ComputeNewCostMaps(40, 40, Flooding.WallClipSetting.Allow);
+                b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
                 mapc.SetCostMap(b.GetCurrentCostMap());
             }
         }

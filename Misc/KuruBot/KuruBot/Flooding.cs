@@ -6,7 +6,7 @@ using Priority_Queue;
 
 namespace KuruBot
 {
-    class Flooding
+    class Flooding // TODO: apply wgm only after deep_oob_dist? apply wall bonus for all pixels within deep_oob_dist of a wall?
     {
         // All these values must be non-negative
         const float ground_speed = 3;
@@ -314,7 +314,7 @@ namespace KuruBot
             }
         }
 
-        public float GetMaxWeightExceptInfinity(float[,] map)
+        public static float GetMaxWeightExceptInfinity(float[,] map)
         {
             float res = 0;
             for (int y = 0; y < map.GetLength(0); y++)
