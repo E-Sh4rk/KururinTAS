@@ -107,17 +107,17 @@ namespace KuruBot
         {
             get { return map.GetLength(0); }
         }
-        public int HeightPx
+        public short HeightPx
         {
-            get { return map.GetLength(0) * tile_size; }
+            get { return (short)(map.GetLength(0) * tile_size); }
         }
         public int Width
         {
             get { return map.GetLength(1); }
         }
-        public int WidthPx
+        public short WidthPx
         {
-            get { return map.GetLength(1) * tile_size; }
+            get { return (short)(map.GetLength(1) * tile_size); }
         }
 
         /*

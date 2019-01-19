@@ -314,5 +314,15 @@ namespace KuruBot
             }
         }
 
+        public float GetMaxWeightExceptInfinity(float[,] map)
+        {
+            float res = 0;
+            for (int y = 0; y < map.GetLength(0); y++)
+                for (int x = 0; x < map.GetLength(1); x++)
+                    if (map[y, x] < float.PositiveInfinity && map[y, x] > res)
+                        res = map[y, x];
+            return res;
+        }
+
     }
 }

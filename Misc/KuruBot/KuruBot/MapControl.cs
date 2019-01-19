@@ -28,23 +28,26 @@ namespace KuruBot
         }
 
         Map m = null;
+        bool showC = false;
         bool showG = true;
         bool showP = false;
         Bitmap bmap = null;
         GraphicalHelirin? helirin = null;
+        float[,] cost_map = null;
 
-        public MapControl(Map m, bool showG, bool showP)
+        public MapControl(Map m, bool showG, bool showP, bool showC)
         {
             InitializeComponent();
             BackColor = Color.White;
-            SetSettings(m, showG, showP);
+            SetSettings(m, showG, showP, showC);
         }
 
-        public void SetSettings(Map m, bool showG, bool showP)
+        public void SetSettings(Map m, bool showG, bool showP, bool showC)
         {
             this.m = m;
             this.showG = showG;
             this.showP = showP;
+            this.showC = showC;
             Redraw();
         }
 
@@ -55,6 +58,13 @@ namespace KuruBot
             else
                 helirin = null;
             Refresh();
+        }
+
+        public void SetCostMap(float[,] cost_map)
+        {
+            this.cost_map = cost_map;
+            if (showC)
+                Redraw();
         }
 
         protected void Redraw()

@@ -17,11 +17,12 @@ namespace KuruBot
         MapControl mapc = null;
         Physics phy = null;
         HelirinState? hs = null;
+        Bot b = null;
 
         public Form1()
         {
             InitializeComponent();
-            mapc = new MapControl(null, showGMap.Checked, showPMap.Checked);
+            mapc = new MapControl(null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
         }
@@ -39,7 +40,7 @@ namespace KuruBot
                 map = com.DownloadMap();
                 if (map != null)
                     phy = new Physics(map);
-                mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
+                mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
             }
         }
 
@@ -54,7 +55,7 @@ namespace KuruBot
 
         private void showGPMap_CheckedChanged(object sender, EventArgs e)
         {
-            mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
+            mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
         }
 
         Action[] last_inputs = null;
@@ -277,11 +278,26 @@ namespace KuruBot
                     map = Com.parse_map(File.ReadAllLines(inputsFileDialog.FileName));
                     if (map != null)
                         phy = new Physics(map);
-                    mapc.SetSettings(map, showGMap.Checked, showPMap.Checked);
+                    mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
                 }
 
             }
             catch { }
+        }
+
+        private void computeCostMap_Click(object sender, EventArgs e)
+        {
+            if (b != null)
+            {
+                b.ComputeNewCostMaps(40, 40, Flooding.WallClipSetting.Allow);
+                mapc.SetCostMap(b.GetCurrentCostMap());
+            }
+        }
+
+        private void buildSolver_Click(object sender, EventArgs e)
+        {
+            if (map != null)
+                b = new Bot(map, new Flooding.Pixel(0,0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
         }
     }
 }
