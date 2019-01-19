@@ -194,14 +194,14 @@ namespace KuruBot
             return dist_to_wall[y, x];
         }
 
-        public enum WallClipSetting
+        public enum EndingZoneSettings
         {
-            NoWallClip = 0, // Only legal zones
-            NoOob,          // Only legal zones or pixels in collision
-            NoDeepOob,      // Only legal zones or zones near from a wall
-            Allow           // All zones
+            AllEndingZones = 0, // Actually, only legal and left ones.
+            LegalEndingZones,
+            LeftEndingZones
         }
-        public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, WallClipSetting wall_clip_setting)
+
+        public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip, bool no_deep_oob, EndingZoneSettings ez)
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
             float wgm = wall_ground_malus * wgm_multiplier;
@@ -212,11 +212,15 @@ namespace KuruBot
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
             // Init
+            bool legal_ending_zones = ez == EndingZoneSettings.AllEndingZones || ez == EndingZoneSettings.LegalEndingZones;
+            bool left_ending_zones = ez == EndingZoneSettings.AllEndingZones || ez == EndingZoneSettings.LeftEndingZones;
             for (short y = start.y; y <= end.y; y++)
             {
                 for (short x = start.x; x <= end.x; x++)
                 {
-                    if (m.IsPixelInZone(x,y) == Map.Zone.Ending)
+                    if (m.IsPixelInZone(x,y) == Map.Zone.Ending &&
+                        ((left_ending_zones && x < 0) ||
+                        (legal_ending_zones && x >= 0 && x < m.WidthPx && y >= 0 && y < m.HeightPx)))
                     {
                         q.Enqueue(new Pixel(x, y), 0);
                         res[y - start.y, x - start.x] = 0;
@@ -232,6 +236,30 @@ namespace KuruBot
             // Post-procedure
                 
             return res;
+        }
+
+        public enum WallClipSetting
+        {
+            NoWallClip = 0,     // No wall clip
+            NoCompleteWallClip, // No complete wall clip (the helirin can't perform a new wall clip to reach the ending zone)
+            Allow
+        }
+
+        public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, WallClipSetting wcs)
+        {
+            if (wcs == WallClipSetting.NoWallClip)
+                return ComputeCostMap(gwb_multiplier, wgm_multiplier, true, false, EndingZoneSettings.AllEndingZones);
+            else if (wcs == WallClipSetting.Allow)
+                return ComputeCostMap(gwb_multiplier, wgm_multiplier, false, false, EndingZoneSettings.AllEndingZones);
+            else
+            {
+                float[,] legal = ComputeCostMap(gwb_multiplier, wgm_multiplier, false, true, EndingZoneSettings.LegalEndingZones);
+                float[,] oob = ComputeCostMap(gwb_multiplier, wgm_multiplier, true, false, EndingZoneSettings.LeftEndingZones);
+                for (int y = 0; y < legal.GetLength(0); y++)
+                    for (int x = 0; x < legal.GetLength(1); x++)
+                        legal[y, x] = Math.Min(legal[y, x], oob[y, x]);
+                return legal;
+            }
         }
 
     }
