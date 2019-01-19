@@ -9,12 +9,12 @@ namespace KuruBot
     class Flooding
     {
         // All these values must be non-negative
-        const float ground_speed = 0f;
+        const float ground_speed = 3;
         const float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
-        const float ground_wall_bonus = 0f; // Bonus applied to each pixel in a wall (in a post procedure) in order to simulate the fact that velocity is higher in a wall (for some distance).
-        const float ground_wall_bonus_min_dist = 0f; // Min weight required for a wall to benefit from full bonus.
-        const float wall_ground_malus = 0f; // Malus applied everytime we go from a wall to a free zone, in order to capture the fact that doing the other way could be expensive.
-        const float deep_oob_dist = 4f; // Distance from the wall at which the helirin has no control anymore.
+        const float ground_wall_bonus = 7-ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to simulate the fact that velocity is higher in a wall. Unit: weight/frame.
+        const float ground_wall_bonus_min_dist = 7; // Min weight required for a wall to benefit from full bonus. Unit: dist/frame.
+        const float wall_ground_malus = 3*60; // Malus applied everytime we go from a wall to a free zone, in order to capture the fact that doing the other way could be expensive.
+        const float deep_oob_dist = 4; // Distance from the wall at which the helirin has no control anymore.
 
         const float sqrt2 = 1.41421356237F;
 
@@ -191,7 +191,7 @@ namespace KuruBot
 
         public float DistToWall(short x, short y)
         {
-            return dist_to_wall[y, x];
+            return dist_to_wall[y - start.y, x - start.x];
         }
 
         public enum EndingZoneSettings
@@ -204,6 +204,7 @@ namespace KuruBot
         public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip, bool no_deep_oob, EndingZoneSettings ez)
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
+            float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
             float wgm = wall_ground_malus * wgm_multiplier;
 
             int width = end.x - start.x + 1;
@@ -231,10 +232,61 @@ namespace KuruBot
             }
 
             // Djikstra
-            throw new NotImplementedException();
+            while (q.Count > 0)
+            {
+                Pixel p = q.Dequeue();
+                float weight = res[p.y - start.y, p.x - start.x];
+                bool from_wall = m.IsPixelInCollision(p.x, p.y);
 
-            // Post-procedure
-                
+                PixelDist[] neighbors = Neighbors(p);
+                foreach (PixelDist npd in neighbors)
+                {
+                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
+                    int npy = npd.px.y - start.y;
+                    int npx = npd.px.x - start.x;
+
+                    if (no_wall_clip && to_wall)
+                        continue;
+                    if (no_deep_oob && !legal_zones[npy, npx] && dist_to_wall[npy, npx] > deep_oob_dist)
+                        continue;
+
+                    float nw = weight;
+                    if (from_wall && to_wall)
+                        nw += npd.dist / wall_speed;
+                    else if (!from_wall)
+                        nw += npd.dist / ground_speed;
+                    else
+                        nw += npd.dist / wall_speed + wgm;
+
+                    float ow = res[npy, npx];
+                    if (nw < ow)
+                    {
+                        res[npy, npx] = nw;
+                        if (ow < float.PositiveInfinity)
+                            q.UpdatePriority(npd.px, nw);
+                        else
+                            q.Enqueue(npd.px, nw);
+                    }
+                }
+            }
+
+            // Post-procedure (bonus for walls)
+            for (short y = start.y; y <= end.y; y++)
+            {
+                for (short x = start.x; x <= end.x; x++)
+                {
+                    if (m.IsPixelInCollision(x, y))
+                    {
+                        float w = res[y - start.y, x - start.x];
+                        if (w >= gwb_md)
+                            w -= gwb;
+                        else
+                            w -= gwb * w / gwb_md;
+                        res[y - start.y, x - start.x] = w;
+                    }
+                }
+            }
+
             return res;
         }
 
