@@ -32,9 +32,17 @@ namespace KuruBot
 
     class Physics
     {
-        static float rot_to_angle_exact(short rot)
+        static float rot_to_angle_approx(short rot) // May be innacurrate! Do not use in the physics engine.
         {
             return (float)(2 * Math.PI * rot / 0x10000);
+        }
+        static short angle_to_rot_approx(float angle) // May be innacurrate! Do not use in the physics engine.
+        {
+            return (short)(angle / (2 * Math.PI) * 0x10000);
+        }
+        static int px_to_pos_approx(short px) // May be innacurrate! Do not use in the physics engine.
+        {
+            return px << 16;
         }
         static short pos_to_px(int pos)
         {
@@ -43,10 +51,20 @@ namespace KuruBot
 
         public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
-            float angle = rot_to_angle_exact(h.rot);
+            float angle = rot_to_angle_approx(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
+        }
+
+        const short default_srate = 182;
+        public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
+        {
+            short rot = angle_to_rot_approx(h.angle);
+            int xpos = px_to_pos_approx((short)h.pixelX);
+            int ypos = px_to_pos_approx((short)h.pixelY);
+            short srate = clockwise ? default_srate : (short)(-default_srate);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate);
         }
 
         Map map = null;

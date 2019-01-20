@@ -22,9 +22,15 @@ namespace KuruBot
         public Form1()
         {
             InitializeComponent();
-            mapc = new MapControl(null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
+            mapc = new MapControl(this, null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
+        }
+
+        public void SetHelirinState(HelirinState st)
+        {
+            hs = st;
+            mapc.SetHelirin(hs);
         }
 
         private void connect_Click(object sender, EventArgs e)

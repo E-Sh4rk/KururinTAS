@@ -27,6 +27,8 @@ namespace KuruBot
             public float angle;
         }
 
+        Form1 p;
+
         Map m = null;
         bool showC = false;
         bool showG = true;
@@ -36,14 +38,31 @@ namespace KuruBot
         float[,] cost_map = null;
         Flooding.Pixel? cost_map_start_pixel = null;
 
-        public MapControl(Map m, bool showG, bool showP, bool showC)
+        public MapControl(Form1 p, Map m, bool showG, bool showP, bool showC)
         {
             InitializeComponent();
             BackColor = Color.White;
             SetSettings(m, showG, showP, showC);
+
+            this.p = p;
+            MouseClick += Control1_MouseClick;
         }
 
-        public void SetSettings(Map m, bool showG, bool showP, bool showC)
+        private void Control1_MouseClick(Object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - last_start_x) / last_scale), (int)((e.Y - last_start_y) / last_scale), 0);
+                p.SetHelirinState(Physics.FromGraphicalHelirin(gh, true));
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - last_start_x) / last_scale), (int)((e.Y - last_start_y) / last_scale), 0);
+                p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
+            }
+        }
+
+            public void SetSettings(Map m, bool showG, bool showP, bool showC)
         {
             this.m = m;
             this.showG = showG;
@@ -73,8 +92,8 @@ namespace KuruBot
         {
             if (m != null)
             {
-                int width = m.Width * Map.tile_size;
-                int height = m.Height * Map.tile_size;
+                int width = m.WidthPx;
+                int height = m.HeightPx;
 
                 int start_x = 0;
                 int start_y = 0;
@@ -190,6 +209,9 @@ namespace KuruBot
             Refresh();
         }
 
+        int last_start_x = 0;
+        int last_start_y = 0;
+        float last_scale = 0;
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
@@ -210,8 +232,8 @@ namespace KuruBot
 
                 if (showC && cost_map_start_pixel.HasValue)
                 {
-                    start_x = -cost_map_start_pixel.Value.x;
-                    start_y = -cost_map_start_pixel.Value.y;
+                    start_x += -cost_map_start_pixel.Value.x;
+                    start_y += -cost_map_start_pixel.Value.y;
                 }
                 else if (showP)
                 {
@@ -219,6 +241,10 @@ namespace KuruBot
                     start_y += (int)(bmap.Height * scale / 3);
                 }
             }
+
+            last_start_x = start_x;
+            last_start_y = start_y;
+            last_scale = scale;
                 
             if (helirin != null)
             {
