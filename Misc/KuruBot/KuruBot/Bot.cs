@@ -15,6 +15,9 @@ namespace KuruBot
             f = new Flooding(m, start, end);
         }
 
+        public Flooding.Pixel GetPixelStart() { return f.GetPixelStart(); }
+        public Flooding.Pixel GetPixelEnd() { return f.GetPixelEnd(); }
+
         public void ComputeNewCostMaps(float gwb_mult, float wgm_mult, Flooding.WallClipSetting wcs)
         {
             current_cost_map = f.ComputeCostMap(gwb_mult, wgm_mult, wcs);

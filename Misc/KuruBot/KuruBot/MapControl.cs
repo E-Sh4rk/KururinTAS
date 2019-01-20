@@ -34,6 +34,7 @@ namespace KuruBot
         Bitmap bmap = null;
         GraphicalHelirin? helirin = null;
         float[,] cost_map = null;
+        Flooding.Pixel? cost_map_start_pixel = null;
 
         public MapControl(Map m, bool showG, bool showP, bool showC)
         {
@@ -60,9 +61,10 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetCostMap(float[,] cost_map)
+        public void SetCostMap(float[,] cost_map, Flooding.Pixel start_px)
         {
             this.cost_map = cost_map;
+            this.cost_map_start_pixel = start_px;
             if (showC)
                 Redraw();
         }
@@ -78,11 +80,8 @@ namespace KuruBot
                 int start_y = 0;
                 Bitmap bitmap = null;
 
-                if (showC)
-                {
-                    start_x = 0; start_y = 0; // TODO
+                if (showC && cost_map != null)
                     bitmap = new Bitmap(cost_map.GetLength(1), cost_map.GetLength(0), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                }
                 else if (showP)
                 {
                     start_x = width;
@@ -105,7 +104,7 @@ namespace KuruBot
                 Brush phyEndingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0xD0, 0x00));
                 Brush phySpringBrush = new SolidBrush(Color.FromArgb(0x55, 0x80, 0x80, 0x80));
 
-                if (showC)
+                if (showC && cost_map != null)
                 {
                     float max = Flooding.GetMaxWeightExceptInfinity(cost_map);
                     for (int y = 0; y < bitmap.Height; y++)
@@ -208,7 +207,13 @@ namespace KuruBot
                 start_x = (Width - (int)(bmap.Width*scale)) / 2;
                 start_y = (Height - (int)(bmap.Height*scale)) / 2;
                 g.DrawImage(bmap, start_x, start_y, bmap.Width*scale, bmap.Height*scale);
-                if (showP)
+
+                if (showC && cost_map_start_pixel.HasValue)
+                {
+                    start_x = -cost_map_start_pixel.Value.x;
+                    start_y = -cost_map_start_pixel.Value.y;
+                }
+                else if (showP)
                 {
                     start_x += (int)(bmap.Width * scale / 3);
                     start_y += (int)(bmap.Height * scale / 3);

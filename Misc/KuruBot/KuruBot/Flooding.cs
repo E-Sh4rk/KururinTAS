@@ -6,15 +6,15 @@ using Priority_Queue;
 
 namespace KuruBot
 {
-    class Flooding // TODO: apply wgm only after deep_oob_dist? apply wall bonus for all pixels within deep_oob_dist of a wall?
+    public class Flooding
     {
         // All these values must be non-negative
         const float ground_speed = 3;
         const float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
-        const float ground_wall_bonus = 7-ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to simulate the fact that velocity is higher in a wall. Unit: weight/frame.
-        const float ground_wall_bonus_min_dist = 7; // Min weight required for a wall to benefit from full bonus. Unit: dist/frame.
-        const float wall_ground_malus = 3*60; // Malus applied everytime we go from a wall to a free zone, in order to capture the fact that doing the other way could be expensive.
-        const float deep_oob_dist = 4; // Distance from the wall at which the helirin has no control anymore.
+        const float ground_wall_bonus = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to simulate the fact that velocity is higher in a wall. Unit: weight/frame.
+        const float ground_wall_bonus_min_dist = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
+        const float wall_ground_malus = ground_speed * 20; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
+        const float wall_clip_end_dist = 4; // Distance from the wall at which the helirin has no control anymore.
 
         const float sqrt2 = 1.41421356237F;
 
@@ -53,6 +53,19 @@ namespace KuruBot
         Map m;
         bool[,] legal_zones;
         float[,] dist_to_wall;
+
+        public Pixel GetPixelStart() { return start; }
+        public Pixel GetPixelEnd() { return end; }
+
+        public float DistToWall(short x, short y)
+        {
+            return dist_to_wall[y - start.y, x - start.x];
+        }
+
+        public bool IsLegalZone(short x, short y)
+        {
+            return legal_zones[y - start.y, x - start.x];
+        }
 
         Pixel[] DiagNeighbors(Pixel p)
         {
@@ -126,7 +139,7 @@ namespace KuruBot
                 }
             }
 
-            // Graph walk
+            // Graph walk (bread first search)
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
@@ -189,19 +202,7 @@ namespace KuruBot
             return res;
         }
 
-        public float DistToWall(short x, short y)
-        {
-            return dist_to_wall[y - start.y, x - start.x];
-        }
-
-        public enum EndingZoneSettings
-        {
-            AllEndingZones = 0, // Actually, only legal and left ones.
-            LegalEndingZones,
-            LeftEndingZones
-        }
-
-        public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip, bool no_deep_oob, EndingZoneSettings ez)
+        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip)
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
             float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
@@ -213,15 +214,11 @@ namespace KuruBot
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
             // Init
-            bool legal_ending_zones = ez == EndingZoneSettings.AllEndingZones || ez == EndingZoneSettings.LegalEndingZones;
-            bool left_ending_zones = ez == EndingZoneSettings.AllEndingZones || ez == EndingZoneSettings.LeftEndingZones;
             for (short y = start.y; y <= end.y; y++)
             {
                 for (short x = start.x; x <= end.x; x++)
                 {
-                    if (m.IsPixelInZone(x,y) == Map.Zone.Ending &&
-                        ((left_ending_zones && x < 0) ||
-                        (legal_ending_zones && x >= 0 && x < m.WidthPx && y >= 0 && y < m.HeightPx)))
+                    if (m.IsPixelInZone(x,y) == Map.Zone.Ending)
                     {
                         q.Enqueue(new Pixel(x, y), 0);
                         res[y - start.y, x - start.x] = 0;
@@ -237,26 +234,26 @@ namespace KuruBot
                 Pixel p = q.Dequeue();
                 float weight = res[p.y - start.y, p.x - start.x];
                 bool from_wall = m.IsPixelInCollision(p.x, p.y);
+                bool from_near_wall = dist_to_wall[p.y - start.y, p.x - start.x] <= wall_clip_end_dist;
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
                 {
-                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
                     int npy = npd.px.y - start.y;
                     int npx = npd.px.x - start.x;
+                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
+                    bool to_near_wall = dist_to_wall[npy, npx] <= wall_clip_end_dist;
 
                     if (no_wall_clip && to_wall)
                         continue;
-                    if (no_deep_oob && !legal_zones[npy, npx] && dist_to_wall[npy, npx] > deep_oob_dist)
-                        continue;
 
                     float nw = weight;
-                    if (from_wall && to_wall)
+                    if (from_near_wall && !to_near_wall)
+                        nw += npd.dist / ground_speed + wgm;
+                    else if(from_wall && to_wall)
                         nw += npd.dist / wall_speed;
-                    else if (!from_wall)
+                    else 
                         nw += npd.dist / ground_speed;
-                    else
-                        nw += npd.dist / wall_speed + wgm;
 
                     float ow = res[npy, npx];
                     if (nw < ow)
@@ -300,18 +297,11 @@ namespace KuruBot
         public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, WallClipSetting wcs)
         {
             if (wcs == WallClipSetting.NoWallClip)
-                return ComputeCostMap(gwb_multiplier, wgm_multiplier, true, false, EndingZoneSettings.AllEndingZones);
+                return ComputeCostMap(0, 0, true);
             else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(gwb_multiplier, wgm_multiplier, false, false, EndingZoneSettings.AllEndingZones);
+                return ComputeCostMap(gwb_multiplier, wgm_multiplier, false);
             else
-            {
-                float[,] legal = ComputeCostMap(gwb_multiplier, wgm_multiplier, false, true, EndingZoneSettings.LegalEndingZones);
-                float[,] oob = ComputeCostMap(gwb_multiplier, wgm_multiplier, true, false, EndingZoneSettings.LeftEndingZones);
-                for (int y = 0; y < legal.GetLength(0); y++)
-                    for (int x = 0; x < legal.GetLength(1); x++)
-                        legal[y, x] = Math.Min(legal[y, x], oob[y, x]);
-                return legal;
-            }
+                return ComputeCostMap(gwb_multiplier, float.PositiveInfinity, false);
         }
 
         public static float GetMaxWeightExceptInfinity(float[,] map)

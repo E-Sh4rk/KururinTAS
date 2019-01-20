@@ -290,14 +290,14 @@ namespace KuruBot
             if (b != null)
             {
                 b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
-                mapc.SetCostMap(b.GetCurrentCostMap());
+                mapc.SetCostMap(b.GetCurrentCostMap(), b.GetPixelStart());
             }
         }
 
         private void buildSolver_Click(object sender, EventArgs e)
         {
             if (map != null)
-                b = new Bot(map, new Flooding.Pixel(0,0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+                b = new Bot(map, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
         }
     }
 }
