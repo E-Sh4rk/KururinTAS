@@ -67,7 +67,7 @@ namespace KuruBot
         Action[] last_inputs = null;
         HelirinState[] last_positions = null;
         HelirinState[] last_positions_emu = null;
-        private void ExecuteInputs(string[] inputs)
+        private void ExecuteInputs(Action[] inputs)
         {
             if (inputs == null || !hs.HasValue || phy == null)
                 return;
@@ -75,11 +75,10 @@ namespace KuruBot
             List<Action> last_inputs = new List<Action>();
             List<HelirinState> last_positions = new List<HelirinState>();
             last_positions.Add(hs.Value);
-            foreach (string input in inputs)
+            foreach (Action input in inputs)
             {
-                Action a = Controller.effect_to_action(Controller.string_to_effect(input));
-                hs = phy.Next(hs.Value, a);
-                last_inputs.Add(a);
+                hs = phy.Next(hs.Value, input);
+                last_inputs.Add(input);
                 last_positions.Add(hs.Value);
             }
 
@@ -87,6 +86,17 @@ namespace KuruBot
             this.last_positions = last_positions.ToArray();
             last_positions_emu = null;
             mapc.SetHelirin(hs);
+        }
+        private void ExecuteInputsStr(string[] inputs)
+        {
+            if (inputs == null || !hs.HasValue || phy == null)
+                return;
+
+            List<Action> a_inputs = new List<Action>();
+            foreach (string input in inputs)
+                a_inputs.Add(Controller.effect_to_action(Controller.string_to_effect(input)));
+
+            ExecuteInputs(a_inputs.ToArray());
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -143,7 +153,7 @@ namespace KuruBot
             string[] inputs = com.DownloadInputs(out hs);
             this.hs = hs;
             mapc.SetHelirin(hs);
-            ExecuteInputs(inputs);
+            ExecuteInputsStr(inputs);
         }
 
         HelirinState? hs_bkp = null;
@@ -226,7 +236,7 @@ namespace KuruBot
             try
             {
                 if (inputsFileDialog.ShowDialog() == DialogResult.OK)
-                    ExecuteInputs(File.ReadAllLines(inputsFileDialog.FileName));
+                    ExecuteInputsStr(File.ReadAllLines(inputsFileDialog.FileName));
             }
             catch { }
         }
@@ -304,6 +314,21 @@ namespace KuruBot
         {
             if (map != null)
                 b = new Bot(map, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+        }
+
+        private void solve_Click(object sender, EventArgs e)
+        {
+            if (b != null && hs.HasValue)
+            {
+                Action[] res = b.Solve(hs.Value);
+                if (res == null)
+                    MessageBox.Show(this, "No solution found!", "No solution");
+                else
+                {
+                    MessageBox.Show(this, "Solution found!", "Solution");
+                    ExecuteInputs(res);
+                }
+            }
         }
     }
 }

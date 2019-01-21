@@ -27,5 +27,11 @@ namespace KuruBot
         {
             return current_cost_map;
         }
+
+        public Action[] Solve(HelirinState init)
+        {
+            // TODO
+            return null;
+        }
     }
 }

@@ -53,6 +53,7 @@
             this.showCostMap = new System.Windows.Forms.CheckBox();
             this.buildSolver = new System.Windows.Forms.Button();
             this.computeCostMap = new System.Windows.Forms.Button();
+            this.solve = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -295,7 +296,7 @@
             // buildSolver
             // 
             this.buildSolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolver.Location = new System.Drawing.Point(513, 393);
+            this.buildSolver.Location = new System.Drawing.Point(422, 393);
             this.buildSolver.Name = "buildSolver";
             this.buildSolver.Size = new System.Drawing.Size(75, 23);
             this.buildSolver.TabIndex = 20;
@@ -306,7 +307,7 @@
             // computeCostMap
             // 
             this.computeCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMap.Location = new System.Drawing.Point(594, 393);
+            this.computeCostMap.Location = new System.Drawing.Point(503, 393);
             this.computeCostMap.Name = "computeCostMap";
             this.computeCostMap.Size = new System.Drawing.Size(104, 23);
             this.computeCostMap.TabIndex = 21;
@@ -314,11 +315,23 @@
             this.computeCostMap.UseVisualStyleBackColor = true;
             this.computeCostMap.Click += new System.EventHandler(this.computeCostMap_Click);
             // 
+            // solve
+            // 
+            this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.solve.Location = new System.Drawing.Point(613, 393);
+            this.solve.Name = "solve";
+            this.solve.Size = new System.Drawing.Size(71, 23);
+            this.solve.TabIndex = 22;
+            this.solve.Text = "Solve";
+            this.solve.UseVisualStyleBackColor = true;
+            this.solve.Click += new System.EventHandler(this.solve_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 507);
+            this.Controls.Add(this.solve);
             this.Controls.Add(this.computeCostMap);
             this.Controls.Add(this.buildSolver);
             this.Controls.Add(this.showCostMap);
@@ -377,6 +390,7 @@
         private System.Windows.Forms.CheckBox showCostMap;
         private System.Windows.Forms.Button buildSolver;
         private System.Windows.Forms.Button computeCostMap;
+        private System.Windows.Forms.Button solve;
     }
 }
 

@@ -5,6 +5,12 @@ using System.Text;
 
 namespace KuruBot
 {
+    public enum GameState
+    {
+        InGame = 0,
+        Win,
+        Loose
+    }
     // /!\ This should remain a STRUCT
     public struct HelirinState
     {
@@ -17,6 +23,7 @@ namespace KuruBot
             this.rot = rot;
             this.rot_rate = rot_rate;
             this.rot_srate = rot_srate;
+            gs = GameState.InGame;
         }
 
         public int xpos;
@@ -27,6 +34,7 @@ namespace KuruBot
         public short rot_rate;
         public short rot_srate;
 
+        public GameState gs;
         // TODO: Add life and invicibility
     }
 
@@ -137,6 +145,9 @@ namespace KuruBot
 
         public HelirinState Next(HelirinState st, Action a)
         {
+            if (st.gs != GameState.InGame)
+                return st;
+
             ActionEffect e = Controller.action_to_effect(a);
 
             // 1. Set input speed (XS and YS) depending on inputs
@@ -173,7 +184,8 @@ namespace KuruBot
             }
             if (zone == Map.Zone.Ending)
             {
-                // TODO
+                st.gs = GameState.Win;
+                return st;
             }
 
             // From this point we create a new state so that we can still access old values of the state.
