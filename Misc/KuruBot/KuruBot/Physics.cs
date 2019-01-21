@@ -52,7 +52,7 @@ namespace KuruBot
         {
             return px << 16;
         }
-        static short pos_to_px(int pos)
+        public static short pos_to_px(int pos)
         {
             return (short)(pos >> 16);
         }
@@ -65,7 +65,7 @@ namespace KuruBot
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
-        const short default_srate = 182;
+        public const short default_srate = 182;
         public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
         {
             short rot = angle_to_rot_approx(h.angle);
