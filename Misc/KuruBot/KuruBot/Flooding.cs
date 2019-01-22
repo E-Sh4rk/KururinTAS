@@ -42,47 +42,45 @@ namespace KuruBot
         public Flooding(Map m, Pixel start, Pixel end)
         {
             this.m = m;
-            this.start = start;
-            this.end = end;
+            PixelStart = start;
+            PixelEnd = end;
             legal_zones = ComputeLegalZones();
             dist_to_wall = ComputeDistanceToAWall();
         }
 
-        Pixel start;
-        Pixel end;
         Map m;
         bool[,] legal_zones;
         float[,] dist_to_wall;
 
-        public Pixel GetPixelStart() { return start; }
-        public Pixel GetPixelEnd() { return end; }
+        public Pixel PixelStart { get; }
+        public Pixel PixelEnd { get; }
 
         public float DistToWall(short x, short y)
         {
-            return dist_to_wall[y - start.y, x - start.x];
+            return dist_to_wall[y - PixelStart.y, x - PixelStart.x];
         }
 
         public bool IsLegalZone(short x, short y)
         {
-            return legal_zones[y - start.y, x - start.x];
+            return legal_zones[y - PixelStart.y, x - PixelStart.x];
         }
 
         public float Cost(float[,] cost, short x, short y)
         {
-            return cost[y - start.y, x - start.x];
+            return cost[y - PixelStart.y, x - PixelStart.x];
         }
 
         Pixel[] DiagNeighbors(Pixel p)
         {
             List<Pixel> res = new List<Pixel>();
 
-            if (p.y > start.y && p.x > start.x)
+            if (p.y > PixelStart.y && p.x > PixelStart.x)
                 res.Add(p.Add(new Pixel(-1, -1)));
-            if (p.y < end.y && p.x < end.x)
+            if (p.y < PixelEnd.y && p.x < PixelEnd.x)
                 res.Add(p.Add(new Pixel(1, 1)));
-            if (p.y < end.y && p.x > start.x)
+            if (p.y < PixelEnd.y && p.x > PixelStart.x)
                 res.Add(p.Add(new Pixel(-1, 1)));
-            if (p.y > start.y && p.x < end.x)
+            if (p.y > PixelStart.y && p.x < PixelEnd.x)
                 res.Add(p.Add(new Pixel(1, -1)));
 
             return res.ToArray();
@@ -92,13 +90,13 @@ namespace KuruBot
         {
             List<Pixel> res = new List<Pixel>();
 
-            if (p.y > start.y)
+            if (p.y > PixelStart.y)
                 res.Add(p.Add(new Pixel(0,-1)));
-            if (p.y < end.y)
+            if (p.y < PixelEnd.y)
                 res.Add(p.Add(new Pixel(0,1)));
-            if (p.x > start.x)
+            if (p.x > PixelStart.x)
                 res.Add(p.Add(new Pixel(-1,0)));
-            if (p.x < end.x)
+            if (p.x < PixelEnd.x)
                 res.Add(p.Add(new Pixel(1,0)));
 
             return res.ToArray();
@@ -127,17 +125,17 @@ namespace KuruBot
 
         bool[,] ComputeLegalZones()
         {
-            int width = end.x - start.x + 1;
-            int height = end.y - start.y + 1;
+            int width = PixelEnd.x - PixelStart.x + 1;
+            int height = PixelEnd.y - PixelStart.y + 1;
             bool[,] res = new bool[height, width];
             Queue<Pixel> q = new Queue<Pixel>();
 
             // Init
-            for (short y = start.y; y <= end.y; y++)
+            for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
-                for (short x = start.x; x <= end.x; x++)
+                for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
-                    res[y - start.y, x - start.x] = false;
+                    res[y - PixelStart.y, x - PixelStart.x] = false;
                     if (x >= 0 && x < m.WidthPx && y >= 0 && y < m.HeightPx) // We only consider the ending zones in the "legal map"
                         if (m.IsPixelInZone(x, y) == Map.Zone.Ending)
                             q.Enqueue(new Pixel(x, y));
@@ -148,9 +146,9 @@ namespace KuruBot
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
-                if (!res[p.y - start.y, p.x - start.x] && !m.IsPixelInCollision(p.x, p.y))
+                if (!res[p.y - PixelStart.y, p.x - PixelStart.x] && !m.IsPixelInCollision(p.x, p.y))
                 {
-                    res[p.y - start.y, p.x - start.x] = true;
+                    res[p.y - PixelStart.y, p.x - PixelStart.x] = true;
                     Pixel[] neighbors = StraightNeighbors(p);
                     foreach (Pixel np in neighbors)
                         q.Enqueue(np);
@@ -162,23 +160,23 @@ namespace KuruBot
 
         float[,] ComputeDistanceToAWall()
         {
-            int width = end.x - start.x + 1;
-            int height = end.y - start.y + 1;
+            int width = PixelEnd.x - PixelStart.x + 1;
+            int height = PixelEnd.y - PixelStart.y + 1;
             float[,] res = new float[height, width];
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
             // Init
-            for (short y = start.y; y <= end.y; y++)
+            for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
-                for (short x = start.x; x <= end.x; x++)
+                for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
                     if (m.IsPixelInCollision(x,y))
                     {
                         q.Enqueue(new Pixel(x, y), 0);
-                        res[y - start.y, x - start.x] = 0;
+                        res[y - PixelStart.y, x - PixelStart.x] = 0;
                     }
                     else
-                        res[y - start.y, x - start.x] = float.PositiveInfinity;
+                        res[y - PixelStart.y, x - PixelStart.x] = float.PositiveInfinity;
                 }
             }
 
@@ -186,16 +184,16 @@ namespace KuruBot
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
-                float weight = res[p.y - start.y, p.x - start.x];
+                float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
                 {
                     float nw = weight + npd.dist;
-                    float ow = res[npd.px.y - start.y, npd.px.x - start.x];
+                    float ow = res[npd.px.y - PixelStart.y, npd.px.x - PixelStart.x];
                     if (nw < ow)
                     {
-                        res[npd.px.y - start.y, npd.px.x - start.x] = nw;
+                        res[npd.px.y - PixelStart.y, npd.px.x - PixelStart.x] = nw;
                         if (ow < float.PositiveInfinity)
                             q.UpdatePriority(npd.px, nw);
                         else
@@ -213,23 +211,23 @@ namespace KuruBot
             float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
             float wgm = wall_ground_malus * wgm_multiplier;
 
-            int width = end.x - start.x + 1;
-            int height = end.y - start.y + 1;
+            int width = PixelEnd.x - PixelStart.x + 1;
+            int height = PixelEnd.y - PixelStart.y + 1;
             float[,] res = new float[height,width];
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
             // Init
-            for (short y = start.y; y <= end.y; y++)
+            for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
-                for (short x = start.x; x <= end.x; x++)
+                for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
                     if (m.IsPixelInZone(x,y) == Map.Zone.Ending)
                     {
                         q.Enqueue(new Pixel(x, y), 0);
-                        res[y - start.y, x - start.x] = 0;
+                        res[y - PixelStart.y, x - PixelStart.x] = 0;
                     }
                     else
-                        res[y - start.y, x - start.x] = float.PositiveInfinity;
+                        res[y - PixelStart.y, x - PixelStart.x] = float.PositiveInfinity;
                 }
             }
 
@@ -237,15 +235,15 @@ namespace KuruBot
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
-                float weight = res[p.y - start.y, p.x - start.x];
+                float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
                 bool from_wall = m.IsPixelInCollision(p.x, p.y);
-                bool from_near_wall = dist_to_wall[p.y - start.y, p.x - start.x] <= wall_clip_end_dist;
+                bool from_near_wall = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x] <= wall_clip_end_dist;
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
                 {
-                    int npy = npd.px.y - start.y;
-                    int npx = npd.px.x - start.x;
+                    int npy = npd.px.y - PixelStart.y;
+                    int npx = npd.px.x - PixelStart.x;
                     bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
                     bool to_near_wall = dist_to_wall[npy, npx] <= wall_clip_end_dist;
 
@@ -273,18 +271,18 @@ namespace KuruBot
             }
 
             // Post-procedure (bonus for walls)
-            for (short y = start.y; y <= end.y; y++)
+            for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
-                for (short x = start.x; x <= end.x; x++)
+                for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
                     if (m.IsPixelInCollision(x, y))
                     {
-                        float w = res[y - start.y, x - start.x];
+                        float w = res[y - PixelStart.y, x - PixelStart.x];
                         if (w >= gwb_md)
                             w -= gwb;
                         else
                             w -= gwb * w / gwb_md;
-                        res[y - start.y, x - start.x] = w;
+                        res[y - PixelStart.y, x - PixelStart.x] = w;
                     }
                 }
             }

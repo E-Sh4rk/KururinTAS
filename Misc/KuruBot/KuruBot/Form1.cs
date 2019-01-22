@@ -16,7 +16,7 @@ namespace KuruBot
         Map map = null;
         MapControl mapc = null;
         Physics phy = null;
-        HelirinState? hs = null;
+        HelirinState hs = null;
         Bot b = null;
 
         public Form1()
@@ -69,17 +69,17 @@ namespace KuruBot
         HelirinState[] last_positions_emu = null;
         private void ExecuteInputs(Action[] inputs)
         {
-            if (inputs == null || !hs.HasValue || phy == null)
+            if (inputs == null || hs == null || phy == null)
                 return;
 
             List<Action> last_inputs = new List<Action>();
             List<HelirinState> last_positions = new List<HelirinState>();
-            last_positions.Add(hs.Value);
+            last_positions.Add(hs);
             foreach (Action input in inputs)
             {
-                hs = phy.Next(hs.Value, input);
+                hs = phy.Next(hs, input);
                 last_inputs.Add(input);
-                last_positions.Add(hs.Value);
+                last_positions.Add(hs);
             }
 
             this.last_inputs = last_inputs.ToArray();
@@ -89,7 +89,7 @@ namespace KuruBot
         }
         private void ExecuteInputsStr(string[] inputs)
         {
-            if (inputs == null || !hs.HasValue || phy == null)
+            if (inputs == null || hs == null || phy == null)
                 return;
 
             List<Action> a_inputs = new List<Action>();
@@ -139,9 +139,9 @@ namespace KuruBot
                     speed = Speed.Speed1;
                 a = Controller.change_action_speed(a, speed);
 
-                if (hs.HasValue && phy != null)
+                if (hs != null && phy != null)
                 {
-                    hs = phy.Next(hs.Value, a);
+                    hs = phy.Next(hs, a);
                     mapc.SetHelirin(hs);
                 }
             }
@@ -149,14 +149,16 @@ namespace KuruBot
 
         private void downloadInputs_Click(object sender, EventArgs e)
         {
-            HelirinState? hs = null;
+            if (com == null)
+                return;
+            HelirinState hs = null;
             string[] inputs = com.DownloadInputs(out hs);
             this.hs = hs;
             mapc.SetHelirin(hs);
             ExecuteInputsStr(inputs);
         }
 
-        HelirinState? hs_bkp = null;
+        HelirinState hs_bkp = null;
         private void bkpPos_Click(object sender, EventArgs e)
         {
             hs_bkp = hs;
@@ -243,13 +245,13 @@ namespace KuruBot
 
         private void savePos_Click(object sender, EventArgs e)
         {
-            if (!hs.HasValue)
+            if (hs == null)
                 return;
             if (saveLogFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    string res = Com.hs_to_string(hs.Value);
+                    string res = Com.hs_to_string(hs);
                     File.WriteAllText(saveLogFileDialog.FileName, res);
                 }
                 catch { }
@@ -318,9 +320,9 @@ namespace KuruBot
 
         private void solve_Click(object sender, EventArgs e)
         {
-            if (b != null && hs.HasValue)
+            if (b != null && hs != null)
             {
-                Action[] res = b.Solve(hs.Value);
+                Action[] res = b.Solve(hs);
                 if (res == null)
                     MessageBox.Show(this, "No solution found!", "No solution");
                 else

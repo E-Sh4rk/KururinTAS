@@ -11,8 +11,8 @@ namespace KuruBot
         Win,
         Loose
     }
-    // /!\ This should remain a STRUCT
-    public struct HelirinState
+    // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
+    public class HelirinState : IEquatable<HelirinState>
     {
         public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate)
         {
@@ -24,6 +24,43 @@ namespace KuruBot
             this.rot_rate = rot_rate;
             this.rot_srate = rot_srate;
             gs = GameState.InGame;
+        }
+
+        public HelirinState ShallowCopy()
+        {
+            return (HelirinState)MemberwiseClone();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as HelirinState);
+        }
+
+        public bool Equals(HelirinState other)
+        {
+            return other != null &&
+                   xpos == other.xpos &&
+                   ypos == other.ypos &&
+                   rot == other.rot &&
+                   xb == other.xb &&
+                   yb == other.yb &&
+                   rot_rate == other.rot_rate &&
+                   rot_srate == other.rot_srate &&
+                   gs == other.gs;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -393727226;
+            hashCode = hashCode * -1521134295 + xpos.GetHashCode();
+            hashCode = hashCode * -1521134295 + ypos.GetHashCode();
+            hashCode = hashCode * -1521134295 + rot.GetHashCode();
+            hashCode = hashCode * -1521134295 + xb.GetHashCode();
+            hashCode = hashCode * -1521134295 + yb.GetHashCode();
+            hashCode = hashCode * -1521134295 + rot_rate.GetHashCode();
+            hashCode = hashCode * -1521134295 + rot_srate.GetHashCode();
+            hashCode = hashCode * -1521134295 + gs.GetHashCode();
+            return hashCode;
         }
 
         public int xpos;
@@ -59,6 +96,8 @@ namespace KuruBot
 
         public static MapControl.GraphicalHelirin ToGraphicalHelirin(HelirinState h)
         {
+            if (h == null)
+                return new MapControl.GraphicalHelirin();
             float angle = rot_to_angle_approx(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
@@ -145,10 +184,13 @@ namespace KuruBot
 
         public HelirinState Next(HelirinState st, Action a)
         {
+            if (st == null)
+                return null;
             if (st.gs != GameState.InGame)
                 return st;
 
             ActionEffect e = Controller.action_to_effect(a);
+            st = st.ShallowCopy();
 
             // 1. Set input speed (XS and YS) depending on inputs
             int[] speeds = input_speeds;
@@ -189,7 +231,7 @@ namespace KuruBot
             }
 
             // From this point we create a new state so that we can still access old values of the state.
-            HelirinState new_st = st;
+            HelirinState new_st = st.ShallowCopy();
 
             // 5. Action of springs
             bool invert_rotation = false;

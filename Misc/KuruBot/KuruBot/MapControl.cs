@@ -71,10 +71,10 @@ namespace KuruBot
             Redraw();
         }
 
-        public void SetHelirin(HelirinState? st)
+        public void SetHelirin(HelirinState st)
         {
-            if (st.HasValue)
-                helirin = Physics.ToGraphicalHelirin(st.Value);
+            if (st != null)
+                helirin = Physics.ToGraphicalHelirin(st);
             else
                 helirin = null;
             Refresh();

@@ -77,7 +77,7 @@ namespace KuruBot
             return null;
         }
 
-        public static HelirinState? parse_hs(string content)
+        public static HelirinState parse_hs(string content)
         {
             string[] headers = content.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             uint xpos = Convert.ToUInt32(headers[0]);
@@ -102,7 +102,7 @@ namespace KuruBot
             return xpos_str + " " + ypos_str + " " + xb_str + " " + yb_str + " " + rot_str + " " + rot_rate_str + " " + rot_srate_str + "\n";
         }
 
-        public HelirinState? GetHelirin()
+        public HelirinState GetHelirin()
         {
             string in_path = this.in_path.Replace("@", "1");
             string out_path = this.out_path.Replace("@", "1");
@@ -151,7 +151,7 @@ namespace KuruBot
                     foreach (string line in res)
                     {
                         if (!String.IsNullOrEmpty(line))
-                            hs_res.Add(parse_hs(line).Value);
+                            hs_res.Add(parse_hs(line));
                     }
                 }
                 catch { }
@@ -161,7 +161,7 @@ namespace KuruBot
             return null;
         }
 
-        public string[] DownloadInputs(out HelirinState? hs)
+        public string[] DownloadInputs(out HelirinState hs)
         {
             hs = null;
             string in_path = this.in_path.Replace("@", "2");

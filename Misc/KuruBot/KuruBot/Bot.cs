@@ -6,7 +6,6 @@ using System.Text;
 
 namespace KuruBot
 {
-    // TODO: optimize copies of HelirinState (use 'in' keyword, or convert to class BUT make copies when needed)
     class Bot
     {
         Flooding f = null;
@@ -19,8 +18,8 @@ namespace KuruBot
             this.p = p;
         }
 
-        public Flooding.Pixel GetPixelStart() { return f.GetPixelStart(); }
-        public Flooding.Pixel GetPixelEnd() { return f.GetPixelEnd(); }
+        public Flooding.Pixel GetPixelStart() { return f.PixelStart; }
+        public Flooding.Pixel GetPixelEnd() { return f.PixelEnd; }
 
         public void ComputeNewCostMaps(float gwb_mult, float wgm_mult, Flooding.WallClipSetting wcs)
         {
@@ -32,9 +31,10 @@ namespace KuruBot
             return current_cost_map;
         }
 
+        // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
         class StateData
         {
-            public StateData(HelirinState es, float w, float c, Action? a, HelirinState? ps)
+            public StateData(HelirinState es, float w, float c, Action? a, HelirinState ps)
             {
                 exact_state = es;
                 weight = w;
@@ -46,7 +46,7 @@ namespace KuruBot
             public float weight;
             public float cost;
             public Action? action;
-            public HelirinState? previous_state;
+            public HelirinState previous_state;
         }
 
         const int pos_reduction = 0x10000 / 64; // 1/64 px
@@ -56,6 +56,8 @@ namespace KuruBot
 
         HelirinState NormaliseState (HelirinState st)
         {
+            st = st.ShallowCopy();
+
             int wall_dist = (int)f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) / Map.tile_size + 1;
             int pos_reduction = Bot.pos_reduction * wall_dist;
             int bump_reduction = Bot.bump_reduction * wall_dist;
@@ -77,6 +79,13 @@ namespace KuruBot
             return f.Cost(current_cost_map, xpix, ypix);
         }
 
+        bool IsOutOfSearchSpace(int xpos, int ypos)
+        {
+            short xpix = Physics.pos_to_px(xpos);
+            short ypix = Physics.pos_to_px(ypos);
+            return xpix < f.PixelStart.x || xpix > f.PixelEnd.x || ypix < f.PixelStart.y || ypix > f.PixelEnd.y;
+        }
+
         public Action[] Solve (HelirinState init)
         {
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
@@ -90,8 +99,8 @@ namespace KuruBot
             data.Add(norm_init, new StateData(init, weight, cost, null, null));
 
             // A*
-            HelirinState? result = null;
-            while (q.Count > 0 && !result.HasValue)
+            HelirinState result = null;
+            while (q.Count > 0 && result == null)
             {
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
@@ -103,10 +112,7 @@ namespace KuruBot
                     HelirinState norm_nst = NormaliseState(nst);
 
                     // Out of search space / Loose ?
-                    short xpix = Physics.pos_to_px(nst.xpos);
-                    short ypix = Physics.pos_to_px(nst.ypos);
-                    if (nst.gs == GameState.Loose || xpix < f.GetPixelStart().x || xpix > f.GetPixelEnd().x
-                        || ypix < f.GetPixelStart().y || ypix > f.GetPixelEnd().y)
+                    if (nst.gs == GameState.Loose || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
                     // Add/update ?
@@ -138,9 +144,9 @@ namespace KuruBot
             if (result == null)
                 return null;
             List<Action> res = new List<Action>();
-            while (result.HasValue)
+            while (result != null)
             {
-                StateData sd = data[result.Value];
+                StateData sd = data[result];
                 if (sd.action.HasValue)
                     res.Add(sd.action.Value);
                 result = sd.previous_state;
