@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Priority_Queue;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace KuruBot
 {
-    // TODO: optimize copies of HelirinState (use 'in' keyword, etc)
+    // TODO: optimize copies of HelirinState (use 'in' keyword, or convert to class BUT make copies when needed)
     class Bot
     {
         Flooding f = null;
@@ -31,9 +32,15 @@ namespace KuruBot
 
         class StateData
         {
-            HelirinState exact_state;
-            Action action;
-            HelirinState previous_state;
+            public StateData(HelirinState es, Action? a, HelirinState? ps)
+            {
+                exact_state = es;
+                action = a;
+                previous_state = ps;
+            }
+            public HelirinState exact_state;
+            public Action? action;
+            public HelirinState? previous_state;
         }
 
         const int pos_reduction = 0x10000 / 64; // 1/64 px
@@ -43,7 +50,7 @@ namespace KuruBot
 
         HelirinState NormaliseState (HelirinState st)
         {
-            int wall_dist = (int)f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) + 1;
+            int wall_dist = (int)f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) / Map.tile_size + 1;
             int pos_reduction = Bot.pos_reduction * wall_dist;
             int bump_reduction = Bot.bump_reduction * wall_dist;
 
@@ -57,8 +64,23 @@ namespace KuruBot
             return st;
         }
 
+        float GetCost(int xpos, int ypos)
+        {
+            short xpix = Physics.pos_to_px(xpos);
+            short ypix = Physics.pos_to_px(ypos);
+            return f.Cost(current_cost_map, xpix, ypix);
+        }
+
         public Action[] Solve (HelirinState init)
         {
+            SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
+            Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
+
+            // Init
+            HelirinState norm_init = NormaliseState(init);
+            q.Enqueue(norm_init, GetCost(init.xpos, init.ypos));
+            data.Add(norm_init, new StateData(init, null, null));
+
             // TODO
             throw new NotImplementedException();
         }

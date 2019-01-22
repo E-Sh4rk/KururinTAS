@@ -67,6 +67,11 @@ namespace KuruBot
             return legal_zones[y - start.y, x - start.x];
         }
 
+        public float Cost(float[,] cost, short x, short y)
+        {
+            return cost[y - start.y, x - start.x];
+        }
+
         Pixel[] DiagNeighbors(Pixel p)
         {
             List<Pixel> res = new List<Pixel>();
