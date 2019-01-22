@@ -312,8 +312,8 @@ namespace KuruBot
 
         private void buildSolver_Click(object sender, EventArgs e)
         {
-            if (map != null)
-                b = new Bot(map, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+            if (map != null && phy != null)
+                b = new Bot(map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
         }
 
         private void solve_Click(object sender, EventArgs e)

@@ -10,11 +10,13 @@ namespace KuruBot
     class Bot
     {
         Flooding f = null;
+        Physics p = null;
         float[,] current_cost_map = null;
 
-        public Bot(Map m, Flooding.Pixel start, Flooding.Pixel end)
+        public Bot(Map m, Physics p, Flooding.Pixel start, Flooding.Pixel end)
         {
             f = new Flooding(m, start, end);
+            this.p = p;
         }
 
         public Flooding.Pixel GetPixelStart() { return f.GetPixelStart(); }
@@ -32,13 +34,17 @@ namespace KuruBot
 
         class StateData
         {
-            public StateData(HelirinState es, Action? a, HelirinState? ps)
+            public StateData(HelirinState es, float w, float c, Action? a, HelirinState? ps)
             {
                 exact_state = es;
+                weight = w;
+                cost = c;
                 action = a;
                 previous_state = ps;
             }
             public HelirinState exact_state;
+            public float weight;
+            public float cost;
             public Action? action;
             public HelirinState? previous_state;
         }
@@ -78,9 +84,56 @@ namespace KuruBot
 
             // Init
             HelirinState norm_init = NormaliseState(init);
-            q.Enqueue(norm_init, GetCost(init.xpos, init.ypos));
-            data.Add(norm_init, new StateData(init, null, null));
+            float cost = GetCost(init.xpos, init.ypos);
+            float weight = 0;
+            q.Enqueue(norm_init, cost);
+            data.Add(norm_init, new StateData(init, weight, cost, null, null));
 
+            // A*
+            HelirinState? result = null;
+            while (q.Count > 0 && !result.HasValue)
+            {
+                HelirinState norm_st = q.Dequeue();
+                StateData d = data[norm_st];
+
+                weight = d.weight + 1;
+                for (int i = 0; i < 25; i++)
+                {
+                    Action a = (Action)i;
+                    HelirinState nst = p.Next(d.exact_state, a);
+                    HelirinState norm_nst = NormaliseState(nst);
+
+                    // Out of search space / Loose ?
+                    if (nst.gs == GameState.Loose || nst.xpos < f.GetPixelStart().x || nst.xpos > f.GetPixelEnd().x
+                        || nst.ypos < f.GetPixelStart().y || nst.ypos > f.GetPixelEnd().y)
+                        continue;
+
+                    // Add/update ?
+                    cost = GetCost(nst.xpos, nst.ypos);
+                    float total_cost = cost + weight;
+                    StateData old = null;
+                    data.TryGetValue(norm_nst, out old);
+                    if (old == null || total_cost < old.cost + old.weight)
+                    {
+                        StateData nst_data = new StateData(nst, weight, cost, a, norm_st);
+                        data.Add(norm_nst, nst_data);
+
+                        // Win?
+                        if (nst.gs == GameState.Win)
+                        {
+                            result = norm_nst;
+                            break;
+                        }
+
+                        if (old == null)
+                            q.Enqueue(norm_nst, total_cost);
+                        else
+                            q.UpdatePriority(norm_nst, total_cost);
+                    }
+                }
+            }
+
+            // End
             // TODO
             throw new NotImplementedException();
         }
