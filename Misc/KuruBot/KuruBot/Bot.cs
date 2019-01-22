@@ -117,7 +117,7 @@ namespace KuruBot
                     if (old == null || total_cost < old.cost + old.weight)
                     {
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st);
-                        data.Add(norm_nst, nst_data);
+                        data[norm_nst] = nst_data;
 
                         // Win?
                         if (nst.gs == GameState.Win)
