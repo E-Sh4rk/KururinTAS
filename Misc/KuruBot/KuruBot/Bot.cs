@@ -133,9 +133,19 @@ namespace KuruBot
                 }
             }
 
-            // End
-            // TODO
-            throw new NotImplementedException();
+            // Retrieve full path
+            if (result == null)
+                return null;
+            List<Action> res = new List<Action>();
+            while (result.HasValue)
+            {
+                StateData sd = data[result.Value];
+                if (sd.action.HasValue)
+                    res.Add(sd.action.Value);
+                result = sd.previous_state;
+            }
+            res.Reverse();
+            return res.ToArray();
         }
     }
 }
