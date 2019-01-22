@@ -94,18 +94,19 @@ namespace KuruBot
             while (q.Count > 0 && !result.HasValue)
             {
                 HelirinState norm_st = q.Dequeue();
-                StateData d = data[norm_st];
-
-                weight = d.weight + 1;
+                StateData st_data = data[norm_st];
+                weight = st_data.weight + 1;
                 for (int i = 0; i < 25; i++)
                 {
                     Action a = (Action)i;
-                    HelirinState nst = p.Next(d.exact_state, a);
+                    HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 
                     // Out of search space / Loose ?
-                    if (nst.gs == GameState.Loose || nst.xpos < f.GetPixelStart().x || nst.xpos > f.GetPixelEnd().x
-                        || nst.ypos < f.GetPixelStart().y || nst.ypos > f.GetPixelEnd().y)
+                    short xpix = Physics.pos_to_px(nst.xpos);
+                    short ypix = Physics.pos_to_px(nst.ypos);
+                    if (nst.gs == GameState.Loose || xpix < f.GetPixelStart().x || xpix > f.GetPixelEnd().x
+                        || ypix < f.GetPixelStart().y || ypix > f.GetPixelEnd().y)
                         continue;
 
                     // Add/update ?
