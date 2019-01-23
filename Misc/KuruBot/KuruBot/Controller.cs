@@ -227,6 +227,7 @@ namespace KuruBot
         }
         public static string[] to_bz2_format(string[] lines)
         {
+            // TODO
             throw new NotImplementedException();
         }
     }

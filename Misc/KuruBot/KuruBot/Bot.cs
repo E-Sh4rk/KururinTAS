@@ -62,12 +62,12 @@ namespace KuruBot
             int pos_reduction = Bot.pos_reduction * wall_dist;
             int bump_reduction = Bot.bump_reduction * wall_dist;
 
-            st.xpos = (st.xpos / pos_reduction) * pos_reduction;
-            st.ypos = (st.ypos / pos_reduction) * pos_reduction;
-            st.xb   = (st.xb / bump_reduction) * bump_reduction;
-            st.yb   = (st.yb / bump_reduction) * bump_reduction;
-            st.rot  = (short)((st.rot / rot_reduction) * rot_reduction);
-            st.rot_rate = (short)((st.rot_rate / rot_rate_reduction) * rot_rate_reduction);
+            st.xpos = (int)Math.Round((float)st.xpos / pos_reduction) * pos_reduction;
+            st.ypos = (int)Math.Round((float)st.ypos / pos_reduction) * pos_reduction;
+            st.xb   = (int)Math.Round((float)st.xb / bump_reduction) * bump_reduction;
+            st.yb   = (int)Math.Round((float)st.yb / bump_reduction) * bump_reduction;
+            st.rot  = (short)((int)Math.Round((float)st.rot / rot_reduction) * rot_reduction);
+            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_reduction) * rot_rate_reduction);
 
             return st;
         }
