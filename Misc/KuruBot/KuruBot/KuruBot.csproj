@@ -93,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bot.txt" />
+    <Content Include="Resources\bk2_headers.txt" />
+    <Content Include="Resources\bk2_line.txt" />
     <None Include="Resources\void_sprites.txt" />
     <None Include="Resources\sprites.png" />
   </ItemGroup>

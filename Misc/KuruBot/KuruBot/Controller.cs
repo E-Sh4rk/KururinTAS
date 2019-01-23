@@ -225,5 +225,9 @@ namespace KuruBot
             }
             return res.ToArray();
         }
+        public static string[] to_bz2_format(string[] lines)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

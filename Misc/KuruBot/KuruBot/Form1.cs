@@ -170,7 +170,7 @@ namespace KuruBot
             mapc.SetHelirin(hs);
         }
 
-        private void convertInputs_Click(object sender, EventArgs e)
+        private void convertInputsFromBk2_Click(object sender, EventArgs e)
         {
             try
             {
@@ -180,6 +180,21 @@ namespace KuruBot
                     string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
                     new_filename += "_conv.txt";
                     File.WriteAllLines(new_filename, Controller.from_bz2_format(File.ReadAllLines(filename)));
+                }
+            }
+            catch { }
+        }
+
+        private void convertInputsToBk2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = inputsFileDialog.FileName;
+                    string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
+                    new_filename += "_conv.txt";
+                    File.WriteAllLines(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename)));
                 }
             }
             catch { }
@@ -332,5 +347,6 @@ namespace KuruBot
                 }
             }
         }
+
     }
 }

@@ -1,0 +1,4 @@
+﻿[Input]
+LogKey:#Tilt X|Tilt Y|Tilt Z|Light Sensor|Up|Down|Left|Right|Start|Select|B|A|L|R|Power|
+$CONTENT$
+[/Input]
