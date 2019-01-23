@@ -80,10 +80,10 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetCostMap(float[,] cost_map, Flooding.Pixel start_px)
+        public void SetCostMap(float[,] cost_map, Flooding.Pixel? start_px)
         {
             this.cost_map = cost_map;
-            this.cost_map_start_pixel = start_px;
+            cost_map_start_pixel = start_px;
             if (showC)
                 Redraw();
         }
@@ -232,8 +232,8 @@ namespace KuruBot
 
                 if (showC && cost_map_start_pixel.HasValue)
                 {
-                    start_x += -cost_map_start_pixel.Value.x;
-                    start_y += -cost_map_start_pixel.Value.y;
+                    start_x += -(int)(cost_map_start_pixel.Value.x*scale);
+                    start_y += -(int)(cost_map_start_pixel.Value.y*scale);
                 }
                 else if (showP)
                 {

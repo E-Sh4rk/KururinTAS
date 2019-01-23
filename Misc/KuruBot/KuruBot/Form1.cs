@@ -333,6 +333,12 @@ namespace KuruBot
                 b = new Bot(map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
         }
 
+        private void buildSolverAny_Click(object sender, EventArgs e)
+        {
+            if (map != null && phy != null)
+                b = new Bot(map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel(map.WidthPx, (short)(2*map.HeightPx)));
+        }
+
         private void solve_Click(object sender, EventArgs e)
         {
             if (b != null && hs != null)

@@ -55,6 +55,7 @@
             this.computeCostMap = new System.Windows.Forms.Button();
             this.solve = new System.Windows.Forms.Button();
             this.convertInputsToBk2 = new System.Windows.Forms.Button();
+            this.buildSolverAny = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -297,18 +298,18 @@
             // buildSolver
             // 
             this.buildSolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolver.Location = new System.Drawing.Point(422, 393);
+            this.buildSolver.Location = new System.Drawing.Point(202, 393);
             this.buildSolver.Name = "buildSolver";
-            this.buildSolver.Size = new System.Drawing.Size(75, 23);
+            this.buildSolver.Size = new System.Drawing.Size(144, 23);
             this.buildSolver.TabIndex = 20;
-            this.buildSolver.Text = "Build solver";
+            this.buildSolver.Text = "Build solver (legal ending)";
             this.buildSolver.UseVisualStyleBackColor = true;
             this.buildSolver.Click += new System.EventHandler(this.buildSolver_Click);
             // 
             // computeCostMap
             // 
             this.computeCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMap.Location = new System.Drawing.Point(503, 393);
+            this.computeCostMap.Location = new System.Drawing.Point(490, 393);
             this.computeCostMap.Name = "computeCostMap";
             this.computeCostMap.Size = new System.Drawing.Size(104, 23);
             this.computeCostMap.TabIndex = 21;
@@ -319,9 +320,9 @@
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(613, 393);
+            this.solve.Location = new System.Drawing.Point(600, 393);
             this.solve.Name = "solve";
-            this.solve.Size = new System.Drawing.Size(71, 23);
+            this.solve.Size = new System.Drawing.Size(77, 23);
             this.solve.TabIndex = 22;
             this.solve.Text = "Solve";
             this.solve.UseVisualStyleBackColor = true;
@@ -338,11 +339,23 @@
             this.convertInputsToBk2.UseVisualStyleBackColor = true;
             this.convertInputsToBk2.Click += new System.EventHandler(this.convertInputsToBk2_Click);
             // 
+            // buildSolverAny
+            // 
+            this.buildSolverAny.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buildSolverAny.Location = new System.Drawing.Point(352, 393);
+            this.buildSolverAny.Name = "buildSolverAny";
+            this.buildSolverAny.Size = new System.Drawing.Size(132, 23);
+            this.buildSolverAny.TabIndex = 24;
+            this.buildSolverAny.Text = "Build solver (any ending)";
+            this.buildSolverAny.UseVisualStyleBackColor = true;
+            this.buildSolverAny.Click += new System.EventHandler(this.buildSolverAny_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 507);
+            this.Controls.Add(this.buildSolverAny);
             this.Controls.Add(this.convertInputsToBk2);
             this.Controls.Add(this.solve);
             this.Controls.Add(this.computeCostMap);
@@ -405,6 +418,7 @@
         private System.Windows.Forms.Button computeCostMap;
         private System.Windows.Forms.Button solve;
         private System.Windows.Forms.Button convertInputsToBk2;
+        private System.Windows.Forms.Button buildSolverAny;
     }
 }
 

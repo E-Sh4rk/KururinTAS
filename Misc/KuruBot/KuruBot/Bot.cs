@@ -31,22 +31,25 @@ namespace KuruBot
             return current_cost_map;
         }
 
-        // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
+        // /!\ For efficiency reason, we use a class instead of a struct.
+        // It avoid useless copies and allows us to modify some values without accessing again the dictionnary.
         class StateData
         {
-            public StateData(HelirinState es, float w, float c, Action? a, HelirinState ps)
+            public StateData(HelirinState es, float w, float c, Action? a, HelirinState ps, bool at)
             {
                 exact_state = es;
                 weight = w;
                 cost = c;
                 action = a;
                 previous_state = ps;
+                already_treated = at;
             }
             public HelirinState exact_state;
             public float weight;
             public float cost;
             public Action? action;
             public HelirinState previous_state;
+            public bool already_treated;
         }
 
         const int pos_reduction = 0x10000 / 64; // 1/64 px
@@ -86,6 +89,9 @@ namespace KuruBot
             return xpix < f.PixelStart.x || xpix > f.PixelEnd.x || ypix < f.PixelStart.y || ypix > f.PixelEnd.y;
         }
 
+        const bool allow_state_multiple_visits = false; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
+        // TODO: optimisation parameter for lives system (see bot.txt)
+
         public Action[] Solve (HelirinState init)
         {
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
@@ -96,7 +102,7 @@ namespace KuruBot
             float cost = GetCost(init.xpos, init.ypos);
             float weight = 0;
             q.Enqueue(norm_init, cost);
-            data.Add(norm_init, new StateData(init, weight, cost, null, null));
+            data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
 
             // A*
             HelirinState result = null;
@@ -104,6 +110,7 @@ namespace KuruBot
             {
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
+                st_data.already_treated = true;
                 weight = st_data.weight + 1;
                 for (int i = 0; i < 25; i++)
                 {
@@ -115,14 +122,18 @@ namespace KuruBot
                     if (nst.gs == GameState.Loose || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
-                    // Add/update ?
-                    cost = GetCost(nst.xpos, nst.ypos);
-                    float total_cost = cost + weight;
+                    // Already visited ?
                     StateData old = null;
                     data.TryGetValue(norm_nst, out old);
+                    if (!allow_state_multiple_visits && old != null && old.already_treated)
+                        continue;
+
+                    // Better cost ?
+                    cost = GetCost(nst.xpos, nst.ypos);
+                    float total_cost = cost + weight;
                     if (old == null || total_cost < old.cost + old.weight)
                     {
-                        StateData nst_data = new StateData(nst, weight, cost, a, norm_st);
+                        StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
 
                         // Win?
@@ -131,8 +142,8 @@ namespace KuruBot
                             result = norm_nst;
                             break;
                         }
-
-                        if (old == null)
+                        
+                        if (old == null || old.already_treated)
                             q.Enqueue(norm_nst, total_cost);
                         else
                             q.UpdatePriority(norm_nst, total_cost);
