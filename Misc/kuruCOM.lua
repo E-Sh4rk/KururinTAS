@@ -15,7 +15,8 @@ local addr_ys     = 0x4558
 local addr_rotation     = 0x4572
 local addr_rotation_rate   = 0x4574
 local addr_rotation_srate   = 0x4576
-
+local addr_lives   = 0x4582
+local addr_invul   = 0x4585
 
 local in_file = working_dir .. "/" .. in_filename
 local out_file = working_dir .. "/" .. out_filename
@@ -132,6 +133,8 @@ do
 						memory.write_u16_le(addr_rotation, rot, "IWRAM")
 						memory.write_s16_le(addr_rotation_rate, rot_rate, "IWRAM")
 						memory.write_s16_le(addr_rotation_srate, rot_srate, "IWRAM")
+						memory.write_u8(addr_lives, 3, "IWRAM")
+						memory.write_u8(addr_invul, 0, "IWRAM")
 						-- Play inputs
 						current_play = content
 						current_play_index = 3
