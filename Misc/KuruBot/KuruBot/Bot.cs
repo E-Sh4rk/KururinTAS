@@ -6,7 +6,7 @@ using System.Text;
 
 namespace KuruBot
 {
-    class Bot
+    class Bot // TODO: Work on a thread, add a progression bar
     {
         Flooding f = null;
         Physics p = null;

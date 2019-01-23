@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KuruBot.Properties;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -225,10 +226,21 @@ namespace KuruBot
             }
             return res.ToArray();
         }
-        public static string[] to_bz2_format(string[] lines)
+        public static string to_bz2_format(string[] lines)
         {
-            // TODO
-            throw new NotImplementedException();
+            char[] keys = new char[] { 'A', 'B', 'U', 'D', 'L', 'R' };
+            StringBuilder sb = new StringBuilder();
+            foreach (string line in lines)
+            {
+                string str = Resources.bk2_line;
+                foreach (char k in keys)
+                {
+                    if (!line.Contains(k))
+                        str = str.Replace(k, '.');
+                }
+                sb.AppendLine(str);
+            }
+            return Resources.bk2_headers.Replace("$CONTENT$", sb.ToString());
         }
     }
 }

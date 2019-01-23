@@ -61,6 +61,27 @@ namespace KuruBot.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à [Input]
+        ///LogKey:#Tilt X|Tilt Y|Tilt Z|Light Sensor|Up|Down|Left|Right|Start|Select|B|A|L|R|Power|
+        ///$CONTENT$
+        ///[/Input].
+        /// </summary>
+        internal static string bk2_headers {
+            get {
+                return ResourceManager.GetString("bk2_headers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à |    0,    0,    0,  100,UDLR..BA...|.
+        /// </summary>
+        internal static string bk2_line {
+            get {
+                return ResourceManager.GetString("bk2_line", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap sprites {

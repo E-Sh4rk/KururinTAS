@@ -194,7 +194,7 @@ namespace KuruBot
                     string filename = inputsFileDialog.FileName;
                     string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
                     new_filename += "_conv.txt";
-                    File.WriteAllLines(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename)));
+                    File.WriteAllText(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename)));
                 }
             }
             catch { }
