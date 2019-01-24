@@ -6,16 +6,18 @@ using System.Text;
 
 namespace KuruBot
 {
-    class Bot // TODO: Work on a thread, add a progression bar and a preview of the visited positions on the map.
+    class Bot // TODO: Add a preview of the visited positions on the map.
     {
         Flooding f = null;
         Physics p = null;
+        Form1 parent = null;
         float[,] current_cost_map = null;
 
-        public Bot(Map m, Physics p, Flooding.Pixel start, Flooding.Pixel end)
+        public Bot(Form1 parent, Map m, Physics p, Flooding.Pixel start, Flooding.Pixel end)
         {
-            f = new Flooding(m, start, end);
+            this.parent = parent;
             this.p = p;
+            f = new Flooding(m, start, end);
         }
 
         public Flooding.Pixel GetPixelStart() { return f.PixelStart; }
@@ -91,6 +93,7 @@ namespace KuruBot
 
         const bool allow_state_multiple_visits = false; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
         // TODO: optimisation parameter for lives system (see bot.txt)
+        const int number_iterations_before_ui_update = 10000;
 
         public Action[] Solve (HelirinState init)
         {
@@ -104,6 +107,10 @@ namespace KuruBot
             q.Enqueue(norm_init, cost);
             data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
 
+            // ProgressBar settings
+            float init_cost = cost;
+            int since_last_update = 0;
+
             // A*
             HelirinState result = null;
             while (q.Count > 0 && result == null)
@@ -112,6 +119,15 @@ namespace KuruBot
                 StateData st_data = data[norm_st];
                 st_data.already_treated = true;
                 weight = st_data.weight + 1;
+
+                // ProgressBar settings
+                since_last_update++;
+                if (since_last_update >= number_iterations_before_ui_update)
+                {
+                    since_last_update = 0;
+                    parent.UpdateProgressBar(100 - st_data.cost * 100 / init_cost);
+                }
+
                 for (int i = 0; i < 25; i++)
                 {
                     Action a = (Action)i;

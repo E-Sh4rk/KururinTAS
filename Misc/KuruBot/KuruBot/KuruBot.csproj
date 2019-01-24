@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="Com.cs" />
+    <Compile Include="ControlExtension.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Flooding.cs" />
     <Compile Include="Form1.cs">

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace KuruBot
@@ -18,6 +19,7 @@ namespace KuruBot
         Physics phy = null;
         HelirinState hs = null;
         Bot b = null;
+        Thread thread = null;
 
         public Form1()
         {
@@ -27,10 +29,57 @@ namespace KuruBot
             main_panel.Controls.Add(mapc);
         }
 
+        bool controls_enabled = true;
+        private void DisableControls()
+        {
+            controls_enabled = false;
+            foreach (Control c in Controls)
+                c.Enabled = false;
+            abort.Enabled = true;
+        }
+        private void EnableControls()
+        {
+            controls_enabled = true;
+            foreach (Control c in Controls)
+                c.Enabled = true;
+            abort.Enabled = false;
+        }
+
+        private void TaskStarted()
+        {
+            this.UIThread(() => { DisableControls(); progressBar.Value = 0; });
+        }
+        private void TaskEnded()
+        {
+            this.UIThread(() => { EnableControls(); progressBar.Value = 0; thread = null; });
+        }
+        private void SolverEnd(Action[] res)
+        {
+            this.UIThread(() => {
+                if (res == null)
+                    MessageBox.Show(this, "No solution found!", "No solution");
+                else
+                {
+                    MessageBox.Show(this, "Solution found!", "Solution");
+                    ExecuteInputs(res);
+                }
+            });
+        }
+
         public void SetHelirinState(HelirinState st)
         {
-            hs = st;
-            mapc.SetHelirin(hs);
+            this.UIThread(() => { hs = st; mapc.SetHelirin(hs); } );   
+        }
+        public void UpdateProgressBar(float value)
+        {
+            this.UIThread(() => {
+                if (value < 0)
+                    progressBar.Value = 0;
+                else if (value > 100)
+                    progressBar.Value = 100;
+                else
+                    progressBar.Value = (int)value;
+            });
         }
 
         private void connect_Click(object sender, EventArgs e)
@@ -101,6 +150,8 @@ namespace KuruBot
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (!controls_enabled)
+                return;
             if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
             {
                 e.Handled = true;
@@ -322,37 +373,67 @@ namespace KuruBot
         {
             if (b != null)
             {
-                b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
-                mapc.SetCostMap(b.GetCurrentCostMap(), b.GetPixelStart());
+                thread = new Thread(delegate () {
+                    TaskStarted();
+                    b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
+                    mapc.SetCostMap(b.GetCurrentCostMap(), b.GetPixelStart());
+                    TaskEnded();
+                });
+                thread.Start();
             }
         }
 
         private void buildSolver_Click(object sender, EventArgs e)
         {
             if (map != null && phy != null)
-                b = new Bot(map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+            {
+                thread = new Thread(delegate () {
+                    TaskStarted();
+                    b = new Bot(this, map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+                    TaskEnded();
+                });
+                thread.Start();
+               
+            }
         }
 
         private void buildSolverAny_Click(object sender, EventArgs e)
         {
             if (map != null && phy != null)
-                b = new Bot(map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel(map.WidthPx, (short)(2*map.HeightPx)));
+            {
+                thread = new Thread(delegate () {
+                    TaskStarted();
+                    b = new Bot(this, map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel(map.WidthPx, (short)(2 * map.HeightPx)));
+                    TaskEnded();
+                });
+                thread.Start();
+            }
         }
 
         private void solve_Click(object sender, EventArgs e)
         {
             if (b != null && hs != null)
             {
-                Action[] res = b.Solve(hs);
-                if (res == null)
-                    MessageBox.Show(this, "No solution found!", "No solution");
-                else
-                {
-                    MessageBox.Show(this, "Solution found!", "Solution");
-                    ExecuteInputs(res);
-                }
+                thread = new Thread(delegate () {
+                    TaskStarted();
+                    SolverEnd(b.Solve(hs));
+                    TaskEnded();
+                });
+                thread.Start();
             }
         }
 
+        private void abort_Click(object sender, EventArgs e)
+        {
+            if (thread != null)
+            {
+                try
+                {
+                    thread.Abort(); 
+                    TaskEnded();
+                }
+                catch { }
+            }
+        }
     }
 }
