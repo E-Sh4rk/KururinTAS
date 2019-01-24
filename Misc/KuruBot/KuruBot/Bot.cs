@@ -6,7 +6,7 @@ using System.Text;
 
 namespace KuruBot
 {
-    class Bot // TODO: Work on a thread, add a progression bar
+    class Bot // TODO: Work on a thread, add a progression bar and a preview of the visited positions on the map.
     {
         Flooding f = null;
         Physics p = null;

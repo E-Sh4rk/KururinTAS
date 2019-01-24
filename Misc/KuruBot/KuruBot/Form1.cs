@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace KuruBot
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form // TODO: When the user click on the cost map, he can increase/decrease the weight.
     {
         Com com = null;
         Map map = null;
