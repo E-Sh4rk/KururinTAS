@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace KuruBot
 {
-    public partial class MapControl : Control
+    public partial class MapControl : Control // TODO: Fix display of highligh (start position should change depending on current mode)
     {
 
         public struct GraphicalHelirin
@@ -44,6 +44,8 @@ namespace KuruBot
 
         int last_start_x = 0;
         int last_start_y = 0;
+        int last_bmp_start_x = 0;
+        int last_bmp_start_y = 0;
         float last_scale = 0;
 
         public MapControl(Form1 p, Map m, bool showG, bool showP, bool showC)
@@ -115,12 +117,11 @@ namespace KuruBot
                 if (highlight_map != null)
                 {
                     highlight_map = null;
-                    if (showC)
-                        Refresh();
+                    Refresh();
                 }
             }
             else if (!c.Equals(highlight_color) || highlight_map == null || map.GetLength(0) != highlight_map.GetLength(0)
-                || map.GetLength(1) != highlight_map.GetLength(1) || highlight_map == null)
+                    || map.GetLength(1) != highlight_map.GetLength(1))
             {
                 highlight_map = new bool[map.GetLength(0), map.GetLength(1)];
                 for (int i = 0; i < map.GetLength(0); i++)
@@ -129,16 +130,13 @@ namespace KuruBot
                         highlight_map[i, j] = map[i,j];
                 }
                 highlight_color = c;
-                if (showC)
-                    Refresh();
+                Refresh();
             }
             else
             {
                 Graphics g = CreateGraphics();
                 Brush b = new SolidBrush(highlight_color);
                 int size = (int)Math.Ceiling(last_scale);
-                int start_x = last_start_x + (int)(cost_map_start_pixel.Value.x * last_scale);
-                int start_y = last_start_y + (int)(cost_map_start_pixel.Value.y * last_scale);
                 for (int i = 0; i < map.GetLength(0); i++)
                 {
                     for (int j = 0; j < map.GetLength(1); j++)
@@ -146,7 +144,7 @@ namespace KuruBot
                         if (map[i, j] && !highlight_map[i, j])
                         {
                             highlight_map[i, j] = true;
-                            Rectangle dest = new Rectangle((int)(start_x+ j*last_scale), (int)(start_y+i*last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(last_bmp_start_x + j*last_scale), (int)(last_bmp_start_y + i*last_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }
@@ -165,6 +163,7 @@ namespace KuruBot
             this.showG = showG;
             this.showP = showP;
             this.showC = showC;
+            highlight_map = null;
             Redraw();
         }
 
@@ -317,6 +316,8 @@ namespace KuruBot
             int start_x = 0;
             int start_y = 0;
             float scale = 1;
+            last_bmp_start_x = 0;
+            last_bmp_start_y = 0;
 
             if (bmap != null)
             {
@@ -324,6 +325,9 @@ namespace KuruBot
                 start_x = (Width - (int)(bmap.Width*scale)) / 2;
                 start_y = (Height - (int)(bmap.Height*scale)) / 2;
                 g.DrawImage(bmap, start_x, start_y, bmap.Width*scale, bmap.Height*scale);
+
+                last_bmp_start_x = start_x;
+                last_bmp_start_y = start_y;
 
                 if (showC && cost_map_start_pixel.HasValue)
                 {
@@ -341,19 +345,17 @@ namespace KuruBot
             last_start_y = start_y;
             last_scale = scale;
 
-            if (showC && highlight_map != null)
+            if (highlight_map != null)
             {
                 Brush b = new SolidBrush(highlight_color);
                 int size = (int)Math.Ceiling(last_scale);
-                int start_x_ = last_start_x + (int)(cost_map_start_pixel.Value.x * last_scale);
-                int start_y_ = last_start_y + (int)(cost_map_start_pixel.Value.y * last_scale);
                 for (int i = 0; i < highlight_map.GetLength(0); i++)
                 {
                     for (int j = 0; j < highlight_map.GetLength(1); j++)
                     {
                         if (highlight_map[i, j])
                         {
-                            Rectangle dest = new Rectangle((int)(start_x_ + j * last_scale), (int)(start_y_ + i * last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(last_bmp_start_x + j * last_scale), (int)(last_bmp_start_y + i * last_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }

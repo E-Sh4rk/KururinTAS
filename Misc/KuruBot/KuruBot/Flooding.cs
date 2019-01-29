@@ -270,20 +270,22 @@ namespace KuruBot
                 }
             }
 
-            // Post-procedure (bonus for walls)
+            // Post-procedure (bonus for walls + ensure that all costs are non-zero if not on an ending)
             for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
                 for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
+                    float w = res[y - PixelStart.y, x - PixelStart.x];
                     if (m.IsPixelInCollision(x, y))
                     {
-                        float w = res[y - PixelStart.y, x - PixelStart.x];
                         if (w >= gwb_md)
                             w -= gwb;
                         else
                             w -= gwb * w / gwb_md;
-                        res[y - PixelStart.y, x - PixelStart.x] = w;
                     }
+                    if (w <= 0 && m.IsPixelInZone(x, y) != Map.Zone.Ending)
+                        w = float.Epsilon;
+                    res[y - PixelStart.y, x - PixelStart.x] = w;
                 }
             }
 

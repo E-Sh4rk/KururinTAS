@@ -96,7 +96,7 @@ namespace KuruBot
             return xpix < f.PixelStart.x || xpix > f.PixelEnd.x || ypix < f.PixelStart.y || ypix > f.PixelEnd.y;
         }
 
-        const bool allow_state_multiple_visits = false; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
+        const bool allow_state_multiple_visits = true; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
         // TODO: optimisation parameter for lives system (see bot.txt)
         const int number_iterations_before_ui_update = 10000;
 
@@ -159,8 +159,8 @@ namespace KuruBot
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
 
-                        // Win?
-                        if (nst.gs == GameState.Win)
+                        // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
+                        if (cost <= 0)
                         {
                             result = norm_nst;
                             break;
