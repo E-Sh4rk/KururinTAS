@@ -447,5 +447,25 @@ namespace KuruBot
         {
             AbortTask();
         }
+
+        private void drawOnMap_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mapc == null || mapc.GetBackground() == null)
+            {
+                drawOnMap.Checked = false;
+                return;
+            }
+                
+            if (drawOnMap.Checked)
+            {
+                mapc.ResetHighlight();
+                mapc.SetDrawMode(true, Color.Blue);
+            }
+            else
+            {
+                mapc.SetDrawMode(false);
+                mapc.ResetHighlight();
+            }
+        }
     }
 }

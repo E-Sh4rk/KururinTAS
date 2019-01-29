@@ -385,6 +385,7 @@
             this.drawOnMap.TabIndex = 27;
             this.drawOnMap.Text = "Draw";
             this.drawOnMap.UseVisualStyleBackColor = true;
+            this.drawOnMap.CheckedChanged += new System.EventHandler(this.drawOnMap_CheckedChanged);
             // 
             // Form1
             // 

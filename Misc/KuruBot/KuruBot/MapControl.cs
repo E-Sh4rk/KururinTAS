@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace KuruBot
 {
-    public partial class MapControl : Control // TODO: Fix display of highligh (start position should change depending on current mode)
+    public partial class MapControl : Control // TODO: Fix display of highlighting (start position should change depending on current mode)
     {
 
         public struct GraphicalHelirin
@@ -58,6 +58,11 @@ namespace KuruBot
             MouseClick += Control1_MouseClick;
         }
 
+        public Bitmap GetBackground()
+        {
+            return bmap;
+        }
+
         public void SetDrawMode(bool draw_mode, Color? color = null)
         {
             if (draw_mode != drawMode)
@@ -66,15 +71,17 @@ namespace KuruBot
                 if (draw_mode)
                 {
                     MouseClick -= Control1_MouseClick;
+                    MouseMove += Control1_MouseMove;
                     MouseDown += Control1_MouseDown;
                 }
                 else
                 {
+                    MouseMove -= Control1_MouseMove;
                     MouseDown -= Control1_MouseDown;
                     MouseClick += Control1_MouseClick;
                 }
             }
-                
+
             if (color.HasValue)
                 SetHighlight(color.Value, highlight_map);
         }
@@ -98,15 +105,37 @@ namespace KuruBot
             }
         }
 
-        private void Control1_MouseDown(Object sender, MouseEventArgs e)
+        private int euclidian_dist_squared(int x1, int y1, int x2, int y2)
         {
-            // TODO
+            return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+        }
+
+        const int brush_radius_squared = 64;
+        private void Control1_MouseMove(Object sender, MouseEventArgs e)
+        {
+            if (highlight_map == null)
+                highlight_map = new bool[bmap.Height,bmap.Width];
+
             if (e.Button == MouseButtons.Left)
             {
+                int x = (int)((e.X - last_bmp_start_x) / last_scale);
+                int y = (int)((e.Y - last_bmp_start_y) / last_scale);
+                bool[,] new_map = new bool[highlight_map.GetLength(0), highlight_map.GetLength(1)];
+                for (int i = 0; i < new_map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < new_map.GetLength(1); j++)
+                    {
+                        if (highlight_map[i, j] || euclidian_dist_squared(x, y, j, i) <= brush_radius_squared)
+                            new_map[i, j] = true;
+                    }
+                }
+                SetHighlight(highlight_color, new_map);
             }
+        }
+        private void Control1_MouseDown(Object sender, MouseEventArgs e)
+        {
             if (e.Button == MouseButtons.Right)
-            {
-            }
+                ResetHighlight();
         }
 
         public void SetHighlight(Color c, bool[,] map)
@@ -120,8 +149,8 @@ namespace KuruBot
                     Refresh();
                 }
             }
-            else if (!c.Equals(highlight_color) || highlight_map == null || map.GetLength(0) != highlight_map.GetLength(0)
-                    || map.GetLength(1) != highlight_map.GetLength(1))
+            else if (!c.Equals(highlight_color) || highlight_map == null
+                  || map.GetLength(0) != highlight_map.GetLength(0) || map.GetLength(1) != highlight_map.GetLength(1))
             {
                 highlight_map = new bool[map.GetLength(0), map.GetLength(1)];
                 for (int i = 0; i < map.GetLength(0); i++)
