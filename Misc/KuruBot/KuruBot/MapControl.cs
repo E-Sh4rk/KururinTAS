@@ -28,6 +28,7 @@ namespace KuruBot
         }
 
         Form1 p;
+        bool drawMode = false;
 
         Map m = null;
         bool showC = false;
@@ -55,6 +56,32 @@ namespace KuruBot
             MouseClick += Control1_MouseClick;
         }
 
+        public void SetDrawMode(bool draw_mode, Color? color = null)
+        {
+            if (draw_mode != drawMode)
+            {
+                drawMode = draw_mode;
+                if (draw_mode)
+                {
+                    MouseClick -= Control1_MouseClick;
+                    MouseDown += Control1_MouseDown;
+                }
+                else
+                {
+                    MouseDown -= Control1_MouseDown;
+                    MouseClick += Control1_MouseClick;
+                }
+            }
+                
+            if (color.HasValue)
+                SetHighlight(color.Value, highlight_map);
+        }
+
+        public bool[,] GetHighlightMap()
+        {
+            return highlight_map;
+        }
+
         private void Control1_MouseClick(Object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -66,6 +93,17 @@ namespace KuruBot
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - last_start_x) / last_scale), (int)((e.Y - last_start_y) / last_scale), 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
+            }
+        }
+
+        private void Control1_MouseDown(Object sender, MouseEventArgs e)
+        {
+            // TODO
+            if (e.Button == MouseButtons.Left)
+            {
+            }
+            if (e.Button == MouseButtons.Right)
+            {
             }
         }
 

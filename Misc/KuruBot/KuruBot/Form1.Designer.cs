@@ -58,6 +58,7 @@
             this.buildSolverAny = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.abort = new System.Windows.Forms.Button();
+            this.drawOnMap = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // connect
@@ -373,11 +374,24 @@
             this.abort.UseVisualStyleBackColor = true;
             this.abort.Click += new System.EventHandler(this.abort_Click);
             // 
+            // drawOnMap
+            // 
+            this.drawOnMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.drawOnMap.Appearance = System.Windows.Forms.Appearance.Button;
+            this.drawOnMap.AutoSize = true;
+            this.drawOnMap.Location = new System.Drawing.Point(93, 435);
+            this.drawOnMap.Name = "drawOnMap";
+            this.drawOnMap.Size = new System.Drawing.Size(42, 23);
+            this.drawOnMap.TabIndex = 27;
+            this.drawOnMap.Text = "Draw";
+            this.drawOnMap.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 549);
+            this.Controls.Add(this.drawOnMap);
             this.Controls.Add(this.abort);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buildSolverAny);
@@ -447,6 +461,7 @@
         private System.Windows.Forms.Button buildSolverAny;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button abort;
+        private System.Windows.Forms.CheckBox drawOnMap;
     }
 }
 
