@@ -99,6 +99,8 @@ namespace KuruBot
                 Graphics g = CreateGraphics();
                 Brush b = new SolidBrush(highlight_color);
                 int size = (int)Math.Ceiling(last_scale);
+                int start_x = last_start_x + (int)(cost_map_start_pixel.Value.x * last_scale);
+                int start_y = last_start_y + (int)(cost_map_start_pixel.Value.y * last_scale);
                 for (int i = 0; i < map.GetLength(0); i++)
                 {
                     for (int j = 0; j < map.GetLength(1); j++)
@@ -106,7 +108,7 @@ namespace KuruBot
                         if (map[i, j] && !highlight_map[i, j])
                         {
                             highlight_map[i, j] = true;
-                            Rectangle dest = new Rectangle((int)(last_start_x+j*last_scale), (int)(last_start_y+i*last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(start_x+ j*last_scale), (int)(start_y+i*last_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }
@@ -305,13 +307,15 @@ namespace KuruBot
             {
                 Brush b = new SolidBrush(highlight_color);
                 int size = (int)Math.Ceiling(last_scale);
+                int start_x_ = last_start_x + (int)(cost_map_start_pixel.Value.x * last_scale);
+                int start_y_ = last_start_y + (int)(cost_map_start_pixel.Value.y * last_scale);
                 for (int i = 0; i < highlight_map.GetLength(0); i++)
                 {
                     for (int j = 0; j < highlight_map.GetLength(1); j++)
                     {
                         if (highlight_map[i, j])
                         {
-                            Rectangle dest = new Rectangle((int)(last_start_x + j * last_scale), (int)(last_start_y + i * last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(start_x_ + j * last_scale), (int)(start_y_ + i * last_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }

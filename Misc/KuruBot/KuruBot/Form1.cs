@@ -47,11 +47,11 @@ namespace KuruBot
 
         private void TaskStarted()
         {
-            this.UIThread(() => { DisableControls(); progressBar.Value = 0; });
+            this.UIThread(() => { DisableControls(); mapc.ResetHighlight(); progressBar.Value = 0; });
         }
         private void TaskEnded()
         {
-            this.UIThread(() => { EnableControls(); progressBar.Value = 0; thread = null; });
+            this.UIThread(() => { EnableControls(); mapc.ResetHighlight(); progressBar.Value = 0; thread = null; });
         }
         private void SolverEnd(Action[] res)
         {

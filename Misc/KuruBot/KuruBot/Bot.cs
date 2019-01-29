@@ -56,6 +56,8 @@ namespace KuruBot
 
         const int pos_reduction = 0x10000 / 64; // 1/64 px
         const int bump_reduction = 0x10000 / 64; // 1/64 px/frame
+        const int reduction_factor_in_wall = 64;
+        const int max_reduction_factor = 64;
         const short rot_reduction = Physics.default_srate;
         const short rot_rate_reduction = Physics.default_srate;
 
@@ -63,9 +65,12 @@ namespace KuruBot
         {
             st = st.ShallowCopy();
 
-            int wall_dist = (int)f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) / Map.tile_size + 1;
-            int pos_reduction = Bot.pos_reduction * wall_dist;
-            int bump_reduction = Bot.bump_reduction * wall_dist;
+            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos));
+            int red_factor = wall_dist == 0 ? reduction_factor_in_wall :  (int)wall_dist + 1;
+            if (red_factor > max_reduction_factor)
+                red_factor = max_reduction_factor;
+            int pos_reduction = Bot.pos_reduction * red_factor;
+            int bump_reduction = Bot.bump_reduction * red_factor;
 
             st.xpos = (int)Math.Round((float)st.xpos / pos_reduction) * pos_reduction;
             st.ypos = (int)Math.Round((float)st.ypos / pos_reduction) * pos_reduction;
@@ -122,7 +127,7 @@ namespace KuruBot
                 weight = st_data.weight + 1;
 
                 // ProgressBar and preview settings
-                preview[Physics.pos_to_px(st_data.exact_state.ypos), Physics.pos_to_px(st_data.exact_state.xpos)] = true;
+                preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
                 since_last_update++;
                 if (since_last_update >= number_iterations_before_ui_update)
                 {
