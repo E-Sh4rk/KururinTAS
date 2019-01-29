@@ -70,7 +70,7 @@ namespace KuruBot
         {
             this.UIThread(() => { hs = st; mapc.SetHelirin(hs); } );   
         }
-        public void UpdateProgressBar(float value)
+        public void UpdateProgressBarAndHighlight(float value, bool[,] highlight)
         {
             this.UIThread(() => {
                 if (value < 0)
@@ -79,6 +79,8 @@ namespace KuruBot
                     progressBar.Value = 100;
                 else
                     progressBar.Value = (int)value;
+                if (mapc != null)
+                    mapc.SetHighlight(Color.Red, highlight);
             });
         }
 
@@ -376,7 +378,7 @@ namespace KuruBot
                 thread = new Thread(delegate () {
                     TaskStarted();
                     b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
-                    mapc.SetCostMap(b.GetCurrentCostMap(), b.GetPixelStart());
+                    this.UIThread(() => mapc.SetCostMap(b.GetCurrentCostMap(), b.GetPixelStart()));
                     TaskEnded();
                 });
                 thread.Start();
@@ -423,17 +425,27 @@ namespace KuruBot
             }
         }
 
-        private void abort_Click(object sender, EventArgs e)
+        private void AbortTask()
         {
             if (thread != null)
             {
                 try
                 {
-                    thread.Abort(); 
+                    thread.Abort();
                     TaskEnded();
                 }
                 catch { }
             }
+        }
+
+        private void abort_Click(object sender, EventArgs e)
+        {
+            AbortTask();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            AbortTask();
         }
     }
 }

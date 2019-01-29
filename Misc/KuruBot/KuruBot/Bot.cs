@@ -6,7 +6,7 @@ using System.Text;
 
 namespace KuruBot
 {
-    class Bot // TODO: Add a preview of the visited positions on the map.
+    class Bot
     {
         Flooding f = null;
         Physics p = null;
@@ -107,8 +107,9 @@ namespace KuruBot
             q.Enqueue(norm_init, cost);
             data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
 
-            // ProgressBar settings
+            // ProgressBar and preview settings
             float init_cost = cost;
+            bool[,] preview = new bool[current_cost_map.GetLength(0), current_cost_map.GetLength(1)];
             int since_last_update = 0;
 
             // A*
@@ -120,12 +121,13 @@ namespace KuruBot
                 st_data.already_treated = true;
                 weight = st_data.weight + 1;
 
-                // ProgressBar settings
+                // ProgressBar and preview settings
+                preview[Physics.pos_to_px(st_data.exact_state.ypos), Physics.pos_to_px(st_data.exact_state.xpos)] = true;
                 since_last_update++;
                 if (since_last_update >= number_iterations_before_ui_update)
                 {
                     since_last_update = 0;
-                    parent.UpdateProgressBar(100 - st_data.cost * 100 / init_cost);
+                    parent.UpdateProgressBarAndHighlight(100 - st_data.cost * 100 / init_cost, preview);
                 }
 
                 for (int i = 0; i < 25; i++)

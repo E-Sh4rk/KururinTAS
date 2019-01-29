@@ -408,6 +408,7 @@
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "KuruBot";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -35,8 +35,15 @@ namespace KuruBot
         bool showP = false;
         Bitmap bmap = null;
         GraphicalHelirin? helirin = null;
+
         float[,] cost_map = null;
         Flooding.Pixel? cost_map_start_pixel = null;
+        Color highlight_color = Color.Red;
+        bool[,] highlight_map = null;
+
+        int last_start_x = 0;
+        int last_start_y = 0;
+        float last_scale = 0;
 
         public MapControl(Form1 p, Map m, bool showG, bool showP, bool showC)
         {
@@ -62,7 +69,57 @@ namespace KuruBot
             }
         }
 
-            public void SetSettings(Map m, bool showG, bool showP, bool showC)
+        public void SetHighlight(Color c, bool[,] map)
+        {
+            if (map == null)
+            {
+                highlight_color = c;
+                if (highlight_map != null)
+                {
+                    highlight_map = null;
+                    if (showC)
+                        Refresh();
+                }
+            }
+            else if (!c.Equals(highlight_color) || highlight_map == null || map.GetLength(0) != highlight_map.GetLength(0)
+                || map.GetLength(1) != highlight_map.GetLength(1) || highlight_map == null)
+            {
+                highlight_map = new bool[map.GetLength(0), map.GetLength(1)];
+                for (int i = 0; i < map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < map.GetLength(1); j++)
+                        highlight_map[i, j] = map[i,j];
+                }
+                highlight_color = c;
+                if (showC)
+                    Refresh();
+            }
+            else
+            {
+                Graphics g = CreateGraphics();
+                Brush b = new SolidBrush(highlight_color);
+                int size = (int)Math.Ceiling(last_scale);
+                for (int i = 0; i < map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < map.GetLength(1); j++)
+                    {
+                        if (map[i, j] && !highlight_map[i, j])
+                        {
+                            highlight_map[i, j] = true;
+                            Rectangle dest = new Rectangle((int)(last_start_x+j*last_scale), (int)(last_start_y+i*last_scale), size, size);
+                            g.FillRectangle(b, dest);
+                        }
+                    }
+                }
+            }
+        }
+        public void ResetHighlight()
+        {
+            highlight_map = null;
+            Refresh();
+        }
+
+        public void SetSettings(Map m, bool showG, bool showP, bool showC)
         {
             this.m = m;
             this.showG = showG;
@@ -83,6 +140,7 @@ namespace KuruBot
         public void SetCostMap(float[,] cost_map, Flooding.Pixel? start_px)
         {
             this.cost_map = cost_map;
+            highlight_map = null;
             cost_map_start_pixel = start_px;
             if (showC)
                 Redraw();
@@ -209,9 +267,6 @@ namespace KuruBot
             Refresh();
         }
 
-        int last_start_x = 0;
-        int last_start_y = 0;
-        float last_scale = 0;
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
@@ -245,6 +300,23 @@ namespace KuruBot
             last_start_x = start_x;
             last_start_y = start_y;
             last_scale = scale;
+
+            if (showC && highlight_map != null)
+            {
+                Brush b = new SolidBrush(highlight_color);
+                int size = (int)Math.Ceiling(last_scale);
+                for (int i = 0; i < highlight_map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < highlight_map.GetLength(1); j++)
+                    {
+                        if (highlight_map[i, j])
+                        {
+                            Rectangle dest = new Rectangle((int)(last_start_x + j * last_scale), (int)(last_start_y + i * last_scale), size, size);
+                            g.FillRectangle(b, dest);
+                        }
+                    }
+                }
+            }
                 
             if (helirin != null)
             {
