@@ -102,6 +102,8 @@ namespace KuruBot
 
         public Action[] Solve (HelirinState init)
         {
+            if (current_cost_map == null)
+                return null;
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
             Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
 

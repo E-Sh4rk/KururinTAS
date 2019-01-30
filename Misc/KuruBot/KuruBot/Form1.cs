@@ -36,6 +36,10 @@ namespace KuruBot
             foreach (Control c in Controls)
                 c.Enabled = false;
             abort.Enabled = true;
+
+            showCostMap.Enabled = true;
+            showPMap.Enabled = true;
+            showGMap.Enabled = true;
         }
         private void EnableControls()
         {
@@ -391,7 +395,7 @@ namespace KuruBot
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b = new Bot(this, map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel(map.WidthPx, map.HeightPx));
+                    b = new Bot(this, map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel((short)(map.WidthPx-1), (short)(map.HeightPx-1)));
                     TaskEnded();
                 });
                 thread.Start();
@@ -405,7 +409,7 @@ namespace KuruBot
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b = new Bot(this, map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel(map.WidthPx, (short)(2 * map.HeightPx)));
+                    b = new Bot(this, map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1)));
                     TaskEnded();
                 });
                 thread.Start();
@@ -466,6 +470,19 @@ namespace KuruBot
                 mapc.SetDrawMode(false);
                 mapc.ResetHighlight();
             }
+        }
+
+        bool[] constraints = null;
+        bool[] target = null;
+
+        private void setConstraints_Click(object sender, EventArgs e)
+        {
+            // TODO
+        }
+
+        private void setTarget_Click(object sender, EventArgs e)
+        {
+            // TODO
         }
     }
 }

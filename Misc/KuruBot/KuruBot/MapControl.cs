@@ -140,7 +140,7 @@ namespace KuruBot
 
         public void SetHighlight(Color c, bool[,] map)
         {
-            if (map == null)
+            if (map == null || map.GetLength(0) != bmap.Height || map.GetLength(1) != bmap.Width)
             {
                 highlight_color = c;
                 if (highlight_map != null)
