@@ -63,6 +63,11 @@ namespace KuruBot
             return bmap;
         }
 
+        public void SetFixedWindow(Flooding.Pixel? start, Flooding.Pixel? end)
+        {
+            // TODO
+        }
+
         public void SetDrawMode(bool draw_mode, Color? color = null)
         {
             if (draw_mode != drawMode)

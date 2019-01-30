@@ -389,31 +389,32 @@ namespace KuruBot
             }
         }
 
-        private void buildSolver_Click(object sender, EventArgs e)
+        private void makeSolver(Flooding.Pixel start, Flooding.Pixel end)
         {
             if (map != null && phy != null)
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b = new Bot(this, map, phy, new Flooding.Pixel(0, 0), new Flooding.Pixel((short)(map.WidthPx-1), (short)(map.HeightPx-1)));
+                    b = new Bot(this, map, phy, start, end);
+                    this.UIThread(() => mapc.SetFixedWindow(start, end));
                     TaskEnded();
                 });
                 thread.Start();
-               
             }
+        }
+
+        private void buildSolver_Click(object sender, EventArgs e)
+        {
+            Flooding.Pixel start = new Flooding.Pixel(0, 0);
+            Flooding.Pixel end = new Flooding.Pixel((short)(map.WidthPx - 1), (short)(map.HeightPx - 1));
+            makeSolver(start, end);
         }
 
         private void buildSolverAny_Click(object sender, EventArgs e)
         {
-            if (map != null && phy != null)
-            {
-                thread = new Thread(delegate () {
-                    TaskStarted();
-                    b = new Bot(this, map, phy, new Flooding.Pixel((short)(-map.WidthPx), 0), new Flooding.Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1)));
-                    TaskEnded();
-                });
-                thread.Start();
-            }
+            Flooding.Pixel start = new Flooding.Pixel((short)(-map.WidthPx), 0);
+            Flooding.Pixel end = new Flooding.Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1));
+            makeSolver(start, end);
         }
 
         private void solve_Click(object sender, EventArgs e)
@@ -472,8 +473,6 @@ namespace KuruBot
             }
         }
 
-        // TODO: When solver is created, impose mapc width and height to match solver. When solver is destroyed, cancel that.
-
         private void setConstraints_Click(object sender, EventArgs e)
         {
             if (mapc == null || b == null)
@@ -491,6 +490,8 @@ namespace KuruBot
         private void destroySolver_Click(object sender, EventArgs e)
         {
             b = null;
+            if (mapc != null)
+                mapc.SetFixedWindow(null, null);
         }
     }
 }
