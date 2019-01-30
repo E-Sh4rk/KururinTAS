@@ -54,32 +54,32 @@ namespace KuruBot
             public bool already_treated;
         }
 
-        // TODO: use byte shift reduction
-        const int pos_reduction = 0x10000 / 64; // 1/64 px
-        const int bump_reduction = 0x10000 / 64; // 1/64 px/frame
-        const int reduction_factor_in_wall = 64;
-        const float reduction_dist_multiplier = 2;
-        const int max_reduction_factor = 64;
-        const short rot_reduction = Physics.default_srate;
-        const short rot_rate_reduction = Physics.default_srate;
+        const int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
+        const int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
+        const int additional_reduction_in_wall = 6; // 64
+        const float reduction_dist_multiplier = 1f/8f; // 1/8 shift/pixel
+        const int max_additional_reduction = 6; // 64
+
+        const short rot_precision = Physics.default_srate;
+        const short rot_rate_precision = Physics.default_srate;
 
         HelirinState NormaliseState (HelirinState st)
         {
             st = st.ShallowCopy();
 
             float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * reduction_dist_multiplier;
-            int red_factor = wall_dist == 0 ? reduction_factor_in_wall :  (int)wall_dist + 1;
-            if (red_factor > max_reduction_factor)
-                red_factor = max_reduction_factor;
-            int pos_reduction = Bot.pos_reduction * red_factor;
-            int bump_reduction = Bot.bump_reduction * red_factor;
+            int add_red = wall_dist == 0 ? additional_reduction_in_wall :  (int)wall_dist;
+            if (add_red > max_additional_reduction)
+                add_red = max_additional_reduction;
+            int pos_reduction = Bot.pos_reduction + add_red;
+            int bump_reduction = Bot.bump_reduction + add_red;
 
-            st.xpos = (int)Math.Round((float)st.xpos / pos_reduction) * pos_reduction;
-            st.ypos = (int)Math.Round((float)st.ypos / pos_reduction) * pos_reduction;
-            st.xb   = (int)Math.Round((float)st.xb / bump_reduction) * bump_reduction;
-            st.yb   = (int)Math.Round((float)st.yb / bump_reduction) * bump_reduction;
-            st.rot  = (short)((int)Math.Round((float)st.rot / rot_reduction) * rot_reduction);
-            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_reduction) * rot_rate_reduction);
+            st.xpos = (st.xpos >> pos_reduction) << pos_reduction;
+            st.ypos = (st.ypos >> pos_reduction) << pos_reduction;
+            st.xb   = (st.xb >> bump_reduction) << bump_reduction;
+            st.yb   = (st.yb >> bump_reduction) << bump_reduction;
+            st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
+            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
 
             return st;
         }
