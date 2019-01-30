@@ -220,7 +220,7 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetCostMap(float[,] cost_map, Flooding.Pixel? start_px)
+        public void SetCostMap(float[,] cost_map)
         {
             this.cost_map = cost_map;
             highlight_map = null;
@@ -322,9 +322,15 @@ namespace KuruBot
                         {
                             for (int x = 0; x < bitmap.Width; x+=Map.tile_size)
                             {
-                                ushort tile = m.TileAt((x+start_x)/Map.tile_size, (y+start_y)/Map.tile_size);
+                                int tile_x = x + start_x;
+                                int tile_y = y + start_y;
+                                if (tile_x < 0 || tile_y < 0 || tile_x >= m.WidthPx || tile_y >= m.HeightPx)
+                                    continue;
+                                ushort tile = m.TileAt(tile_x / Map.tile_size, tile_y / Map.tile_size);
 
-                                Rectangle dest = new Rectangle(x * Map.tile_size, y * Map.tile_size, Map.tile_size, Map.tile_size);
+                                int x_offset = tile_x % Map.tile_size;
+                                int y_offset = tile_y % Map.tile_size;
+                                Rectangle dest = new Rectangle(x-x_offset, y-y_offset, Map.tile_size, Map.tile_size);
                                 Rectangle? sprite = m.GetTileSprite(tile);
                                 if (sprite.HasValue)
                                     g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
