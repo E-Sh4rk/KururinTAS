@@ -38,15 +38,15 @@ namespace KuruBot
         GraphicalHelirin? helirin = null;
 
         float[,] cost_map = null;
-        Flooding.Pixel? cost_map_start_pixel = null;
+        Flooding.Pixel? start_pixel = null;
+        Flooding.Pixel? end_pixel = null;
         Color highlight_color = Color.Red;
         bool[,] highlight_map = null;
 
-        int last_start_x = 0;
-        int last_start_y = 0;
-        int last_bmp_start_x = 0;
-        int last_bmp_start_y = 0;
-        float last_scale = 0;
+        Flooding.Pixel computed_start_pixel;
+        int computed_bmp_start_x = 0;
+        int computed_bmp_start_y = 0;
+        float computed_scale = 0;
 
         public MapControl(Form1 p, Map m, bool showG, bool showP, bool showC)
         {
@@ -65,7 +65,9 @@ namespace KuruBot
 
         public void SetFixedWindow(Flooding.Pixel? start, Flooding.Pixel? end)
         {
-            // TODO
+            start_pixel = start;
+            end_pixel = end;
+            Redraw();
         }
 
         public void SetDrawMode(bool draw_mode, Color? color = null)
@@ -111,12 +113,14 @@ namespace KuruBot
         {
             if (e.Button == MouseButtons.Left)
             {
-                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - last_start_x) / last_scale), (int)((e.Y - last_start_y) / last_scale), 0);
+                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, true));
             }
             if (e.Button == MouseButtons.Right)
             {
-                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - last_start_x) / last_scale), (int)((e.Y - last_start_y) / last_scale), 0);
+                GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
             }
         }
@@ -134,8 +138,8 @@ namespace KuruBot
 
             if (e.Button == MouseButtons.Left)
             {
-                int x = (int)((e.X - last_bmp_start_x) / last_scale);
-                int y = (int)((e.Y - last_bmp_start_y) / last_scale);
+                int x = (int)((e.X - computed_bmp_start_x) / computed_scale);
+                int y = (int)((e.Y - computed_bmp_start_y) / computed_scale);
                 bool[,] new_map = new bool[highlight_map.GetLength(0), highlight_map.GetLength(1)];
                 for (int i = 0; i < new_map.GetLength(0); i++)
                 {
@@ -176,7 +180,7 @@ namespace KuruBot
             {
                 Graphics g = CreateGraphics();
                 Brush b = new SolidBrush(highlight_color);
-                int size = (int)Math.Ceiling(last_scale);
+                int size = (int)Math.Ceiling(computed_scale);
                 for (int i = 0; i < map.GetLength(0); i++)
                 {
                     for (int j = 0; j < map.GetLength(1); j++)
@@ -184,7 +188,7 @@ namespace KuruBot
                         if (map[i, j] && !highlight_map[i, j])
                         {
                             highlight_map[i, j] = true;
-                            Rectangle dest = new Rectangle((int)(last_bmp_start_x + j*last_scale), (int)(last_bmp_start_y + i*last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(computed_bmp_start_x + j*computed_scale), (int)(computed_bmp_start_y + i*computed_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }
@@ -220,7 +224,6 @@ namespace KuruBot
         {
             this.cost_map = cost_map;
             highlight_map = null;
-            cost_map_start_pixel = start_px;
             if (showC)
                 Redraw();
         }
@@ -229,23 +232,29 @@ namespace KuruBot
         {
             if (m != null)
             {
-                int width = m.WidthPx;
-                int height = m.HeightPx;
-
-                int start_x = 0;
-                int start_y = 0;
                 Bitmap bitmap = null;
+                int width = showP ? 3* m.WidthPx : m.WidthPx;
+                int height = showP ? 3 * m.HeightPx : m.HeightPx;
+                int start_x = showP ? -m.WidthPx : 0;
+                int start_y = showP ? -m.HeightPx : 0;
 
-                if (showC && cost_map != null)
-                    bitmap = new Bitmap(cost_map.GetLength(1), cost_map.GetLength(0), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                else if (showP)
+                if (start_pixel.HasValue)
                 {
-                    start_x = width;
-                    start_y = height;
-                    bitmap = new Bitmap(3 * width, 3 * height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    start_x = start_pixel.Value.x;
+                    start_y = start_pixel.Value.y;
                 }
-                else
-                    bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                if (start_pixel.HasValue && end_pixel.HasValue)
+                {
+                    width = end_pixel.Value.x - start_pixel.Value.x + 1;
+                    height = end_pixel.Value.y - start_pixel.Value.y + 1;
+                }
+                if (showC && cost_map != null)
+                {
+                    width = Math.Min(width,cost_map.GetLength(1));
+                    height = Math.Min(height,cost_map.GetLength(0));
+                }
+                bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                computed_start_pixel = new Flooding.Pixel((short)start_x, (short)start_y);
 
                 Graphics g = Graphics.FromImage(bitmap);
                 g.Clear(BackColor);
@@ -285,8 +294,8 @@ namespace KuruBot
                         {
                             for (int x = 0; x < bitmap.Width; x++)
                             {
-                                short xp = (short)(x - start_x);
-                                short yp = (short)(y - start_y);
+                                short xp = (short)(x + start_x);
+                                short yp = (short)(y + start_y);
 
                                 Rectangle dest = new Rectangle(x, y, 1, 1);
                                 if (m.IsPixelInCollision(xp, yp))
@@ -309,13 +318,13 @@ namespace KuruBot
 
                     if (showG)
                     {
-                        for (int y = 0; y < m.Height; y++)
+                        for (int y = 0; y < bitmap.Height; y+=Map.tile_size)
                         {
-                            for (int x = 0; x < m.Width; x++)
+                            for (int x = 0; x < bitmap.Width; x+=Map.tile_size)
                             {
-                                ushort tile = m.TileAt(x, y);
+                                ushort tile = m.TileAt((x+start_x)/Map.tile_size, (y+start_y)/Map.tile_size);
 
-                                Rectangle dest = new Rectangle(start_x + x * Map.tile_size, start_y + y * Map.tile_size, Map.tile_size, Map.tile_size);
+                                Rectangle dest = new Rectangle(x * Map.tile_size, y * Map.tile_size, Map.tile_size, Map.tile_size);
                                 Rectangle? sprite = m.GetTileSprite(tile);
                                 if (sprite.HasValue)
                                     g.DrawImage(Resources.sprites, dest, sprite.Value, GraphicsUnit.Pixel);
@@ -356,8 +365,6 @@ namespace KuruBot
             int start_x = 0;
             int start_y = 0;
             float scale = 1;
-            last_bmp_start_x = 0;
-            last_bmp_start_y = 0;
 
             if (bmap != null)
             {
@@ -366,36 +373,25 @@ namespace KuruBot
                 start_y = (Height - (int)(bmap.Height*scale)) / 2;
                 g.DrawImage(bmap, start_x, start_y, bmap.Width*scale, bmap.Height*scale);
 
-                last_bmp_start_x = start_x;
-                last_bmp_start_y = start_y;
-
-                if (showC && cost_map_start_pixel.HasValue)
-                {
-                    start_x += -(int)(cost_map_start_pixel.Value.x*scale);
-                    start_y += -(int)(cost_map_start_pixel.Value.y*scale);
-                }
-                else if (showP)
-                {
-                    start_x += (int)(bmap.Width * scale / 3);
-                    start_y += (int)(bmap.Height * scale / 3);
-                }
+                computed_bmp_start_x = start_x;
+                computed_bmp_start_y = start_y;
             }
 
-            last_start_x = start_x;
-            last_start_y = start_y;
-            last_scale = scale;
+            computed_bmp_start_x = start_x;
+            computed_bmp_start_y = start_y;
+            computed_scale = scale;
 
             if (highlight_map != null)
             {
                 Brush b = new SolidBrush(highlight_color);
-                int size = (int)Math.Ceiling(last_scale);
+                int size = (int)Math.Ceiling(computed_scale);
                 for (int i = 0; i < highlight_map.GetLength(0); i++)
                 {
                     for (int j = 0; j < highlight_map.GetLength(1); j++)
                     {
                         if (highlight_map[i, j])
                         {
-                            Rectangle dest = new Rectangle((int)(last_bmp_start_x + j * last_scale), (int)(last_bmp_start_y + i * last_scale), size, size);
+                            Rectangle dest = new Rectangle((int)(computed_bmp_start_x + j * computed_scale), (int)(computed_bmp_start_y + i * computed_scale), size, size);
                             g.FillRectangle(b, dest);
                         }
                     }
@@ -410,14 +406,16 @@ namespace KuruBot
                 int offset_x = h.pixelX - Map.helirin_radius;
                 int offset_y = h.pixelY - Map.helirin_radius;
                 int size = Map.helirin_radius * 2;
-                g.DrawEllipse(myPen, start_x + offset_x*scale, start_y + offset_y*scale, size*scale, size*scale);
+                int real_start_x = start_x - (int)(computed_start_pixel.x*scale);
+                int real_start_y = start_y - (int)(computed_start_pixel.y*scale);
+                g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
 
                 offset_x = h.pixelX - 2;
                 offset_y = h.pixelY - 2;
                 size = 4;
-                g.DrawEllipse(myPen, start_x + offset_x * scale, start_y + offset_y * scale, size * scale, size * scale);
+                g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
 
-                Size o = new Size(start_x, start_y);
+                Size o = new Size(real_start_x, real_start_y);
                 Point p1 = new Point((int)(h.pixelX + Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY - Math.Cos(h.angle) * Map.helirin_radius));
                 Point p2 = new Point((int)(h.pixelX - Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY + Math.Cos(h.angle) * Map.helirin_radius));
                 p1 = new Point((int)(p1.X * scale), (int)(p1.Y * scale));
