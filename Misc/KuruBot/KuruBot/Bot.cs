@@ -54,9 +54,11 @@ namespace KuruBot
             public bool already_treated;
         }
 
+        // TODO: use byte shift reduction
         const int pos_reduction = 0x10000 / 64; // 1/64 px
         const int bump_reduction = 0x10000 / 64; // 1/64 px/frame
         const int reduction_factor_in_wall = 64;
+        const float reduction_dist_multiplier = 2;
         const int max_reduction_factor = 64;
         const short rot_reduction = Physics.default_srate;
         const short rot_rate_reduction = Physics.default_srate;
@@ -65,7 +67,7 @@ namespace KuruBot
         {
             st = st.ShallowCopy();
 
-            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos));
+            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * reduction_dist_multiplier;
             int red_factor = wall_dist == 0 ? reduction_factor_in_wall :  (int)wall_dist + 1;
             if (red_factor > max_reduction_factor)
                 red_factor = max_reduction_factor;
