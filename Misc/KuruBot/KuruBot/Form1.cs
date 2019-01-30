@@ -472,17 +472,25 @@ namespace KuruBot
             }
         }
 
-        bool[] constraints = null;
-        bool[] target = null;
+        // TODO: When solver is created, impose mapc width and height to match solver. When solver is destroyed, cancel that.
 
         private void setConstraints_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (mapc == null || b == null)
+                return;
+            b.SetConstraints(mapc.GetHighlightMap());
         }
 
         private void setTarget_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (mapc == null || b == null)
+                return;
+            b.SetTarget(mapc.GetHighlightMap());
+        }
+
+        private void destroySolver_Click(object sender, EventArgs e)
+        {
+            b = null;
         }
     }
 }

@@ -52,6 +52,19 @@ namespace KuruBot
         bool[,] legal_zones;
         float[,] dist_to_wall;
 
+        public void SetTarget(bool[,] target)
+        {
+            // TODO: check dimensions match, set to null otherwise
+            this.target = target;
+        }
+        public void SetConstraints(bool[,] constraints)
+        {
+            // TODO: check dimensions match, set to null otherwise
+            this.constraints = constraints;
+        }
+
+        bool[,] target = null; bool[,] constraints = null;
+
         public Pixel PixelStart { get; }
         public Pixel PixelEnd { get; }
 
@@ -205,7 +218,7 @@ namespace KuruBot
             return res;
         }
 
-        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip)
+        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip) // TODO: take target and constraints parameters into account
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
             float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;

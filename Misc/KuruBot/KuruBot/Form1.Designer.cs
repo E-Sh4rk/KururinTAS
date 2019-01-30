@@ -61,6 +61,7 @@
             this.drawOnMap = new System.Windows.Forms.CheckBox();
             this.setConstraints = new System.Windows.Forms.Button();
             this.setTarget = new System.Windows.Forms.Button();
+            this.destroySolver = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connect
@@ -411,11 +412,23 @@
             this.setTarget.UseVisualStyleBackColor = true;
             this.setTarget.Click += new System.EventHandler(this.setTarget_Click);
             // 
+            // destroySolver
+            // 
+            this.destroySolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.destroySolver.Location = new System.Drawing.Point(108, 480);
+            this.destroySolver.Name = "destroySolver";
+            this.destroySolver.Size = new System.Drawing.Size(88, 23);
+            this.destroySolver.TabIndex = 30;
+            this.destroySolver.Text = "Destroy solver";
+            this.destroySolver.UseVisualStyleBackColor = true;
+            this.destroySolver.Click += new System.EventHandler(this.destroySolver_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 594);
+            this.Controls.Add(this.destroySolver);
             this.Controls.Add(this.setTarget);
             this.Controls.Add(this.setConstraints);
             this.Controls.Add(this.drawOnMap);
@@ -491,6 +504,7 @@
         private System.Windows.Forms.CheckBox drawOnMap;
         private System.Windows.Forms.Button setConstraints;
         private System.Windows.Forms.Button setTarget;
+        private System.Windows.Forms.Button destroySolver;
     }
 }
 

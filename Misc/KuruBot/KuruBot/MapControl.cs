@@ -86,9 +86,20 @@ namespace KuruBot
                 SetHighlight(color.Value, highlight_map);
         }
 
+        bool[,] CopyBidimArray(bool[,] arr)
+        {
+            if (arr == null)
+                return null;
+            bool[,] res = new bool[arr.GetLength(0), arr.GetLength(1)];
+            for (int i = 0; i < arr.GetLength(0); i++)
+                for (int j = 0; j < arr.GetLength(1); j++)
+                    res[i, j] = arr[i, j];
+            return res;
+        }
+
         public bool[,] GetHighlightMap()
         {
-            return highlight_map;
+            return CopyBidimArray(highlight_map);
         }
 
         private void Control1_MouseClick(Object sender, MouseEventArgs e)
@@ -152,12 +163,7 @@ namespace KuruBot
             else if (!c.Equals(highlight_color) || highlight_map == null
                   || map.GetLength(0) != highlight_map.GetLength(0) || map.GetLength(1) != highlight_map.GetLength(1))
             {
-                highlight_map = new bool[map.GetLength(0), map.GetLength(1)];
-                for (int i = 0; i < map.GetLength(0); i++)
-                {
-                    for (int j = 0; j < map.GetLength(1); j++)
-                        highlight_map[i, j] = map[i,j];
-                }
+                highlight_map = CopyBidimArray(map);
                 highlight_color = c;
                 Refresh();
             }
