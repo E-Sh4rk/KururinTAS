@@ -273,6 +273,8 @@ namespace KuruBot
                 if (showC && cost_map != null)
                 {
                     float max = Flooding.GetMaxWeightExceptInfinity(cost_map);
+                    if (max <= 0)
+                        max = float.Epsilon;
                     for (int y = 0; y < bitmap.Height; y++)
                     {
                         for (int x = 0; x < bitmap.Width; x++)

@@ -226,7 +226,7 @@ namespace KuruBot
             return res;
         }
 
-        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip) // TODO: take constraints parameters into account
+        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip)
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
             float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
@@ -237,6 +237,7 @@ namespace KuruBot
             float[,] res = new float[height,width];
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
+            // Init target
             bool[,] target = this.target;
             if (target == null)
             {
@@ -274,28 +275,31 @@ namespace KuruBot
                 {
                     int npy = npd.px.y - PixelStart.y;
                     int npx = npd.px.x - PixelStart.x;
-                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
-                    bool to_near_wall = dist_to_wall[npy, npx] <= wall_clip_end_dist;
-
-                    if (no_wall_clip && to_wall)
-                        continue;
-
-                    float nw = weight;
-                    if (from_near_wall && !to_near_wall)
-                        nw += npd.dist / ground_speed + wgm;
-                    else if(from_wall && to_wall)
-                        nw += npd.dist / wall_speed;
-                    else 
-                        nw += npd.dist / ground_speed;
-
-                    float ow = res[npy, npx];
-                    if (nw < ow)
+                    if (constraints == null || !constraints[npy,npx])
                     {
-                        res[npy, npx] = nw;
-                        if (ow < float.PositiveInfinity)
-                            q.UpdatePriority(npd.px, nw);
+                        bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
+                        bool to_near_wall = dist_to_wall[npy, npx] <= wall_clip_end_dist;
+
+                        if (no_wall_clip && to_wall)
+                            continue;
+
+                        float nw = weight;
+                        if (from_near_wall && !to_near_wall)
+                            nw += npd.dist / ground_speed + wgm;
+                        else if (from_wall && to_wall)
+                            nw += npd.dist / wall_speed;
                         else
-                            q.Enqueue(npd.px, nw);
+                            nw += npd.dist / ground_speed;
+
+                        float ow = res[npy, npx];
+                        if (nw < ow)
+                        {
+                            res[npy, npx] = nw;
+                            if (ow < float.PositiveInfinity)
+                                q.UpdatePriority(npd.px, nw);
+                            else
+                                q.Enqueue(npd.px, nw);
+                        }
                     }
                 }
             }
