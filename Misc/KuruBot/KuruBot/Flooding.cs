@@ -267,31 +267,32 @@ namespace KuruBot
                 {
                     int npy = npd.px.y - PixelStart.y;
                     int npx = npd.px.x - PixelStart.x;
-                    if (constraints == null || !constraints[npy,npx])
+
+                    if (constraints != null && constraints[npy, npx])
+                        continue;
+
+                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
+                    bool to_near_wall = dist_to_wall[npy, npx] <= Settings.wall_clip_end_dist;
+
+                    if (no_wall_clip && to_wall)
+                        continue;
+
+                    float nw = weight;
+                    if (from_near_wall && !to_near_wall)
+                        nw += npd.dist / Settings.ground_speed + wgm;
+                    else if (from_wall && to_wall)
+                        nw += npd.dist / Settings.wall_speed;
+                    else
+                        nw += npd.dist / Settings.ground_speed;
+
+                    float ow = res[npy, npx];
+                    if (nw < ow)
                     {
-                        bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
-                        bool to_near_wall = dist_to_wall[npy, npx] <= Settings.wall_clip_end_dist;
-
-                        if (no_wall_clip && to_wall)
-                            continue;
-
-                        float nw = weight;
-                        if (from_near_wall && !to_near_wall)
-                            nw += npd.dist / Settings.ground_speed + wgm;
-                        else if (from_wall && to_wall)
-                            nw += npd.dist / Settings.wall_speed;
+                        res[npy, npx] = nw;
+                        if (ow < float.PositiveInfinity)
+                            q.UpdatePriority(npd.px, nw);
                         else
-                            nw += npd.dist / Settings.ground_speed;
-
-                        float ow = res[npy, npx];
-                        if (nw < ow)
-                        {
-                            res[npy, npx] = nw;
-                            if (ow < float.PositiveInfinity)
-                                q.UpdatePriority(npd.px, nw);
-                            else
-                                q.Enqueue(npd.px, nw);
-                        }
+                            q.Enqueue(npd.px, nw);
                     }
                 }
             }
@@ -325,12 +326,12 @@ namespace KuruBot
             Allow
         }
 
-        public float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, WallClipSetting wcs)
+        public float[,] ComputeCostMap(float gwb_multiplier, WallClipSetting wcs)
         {
             if (wcs == WallClipSetting.NoWallClip)
                 return ComputeCostMap(0, 0, true);
             else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(gwb_multiplier, wgm_multiplier, false);
+                return ComputeCostMap(gwb_multiplier, 1, false);
             else
                 return ComputeCostMap(gwb_multiplier, float.PositiveInfinity, false);
         }

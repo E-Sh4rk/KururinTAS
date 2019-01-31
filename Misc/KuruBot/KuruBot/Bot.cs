@@ -32,9 +32,9 @@ namespace KuruBot
             f.SetConstraints(constraints);
         }
 
-        public void ComputeNewCostMaps(float gwb_mult, float wgm_mult, Flooding.WallClipSetting wcs)
+        public void ComputeNewCostMaps(float gwb_mult, Flooding.WallClipSetting wcs)
         {
-            current_cost_map = f.ComputeCostMap(gwb_mult, wgm_mult, wcs);
+            current_cost_map = f.ComputeCostMap(gwb_mult, wcs);
         }
 
         public float[,] GetCurrentCostMap()
@@ -68,9 +68,7 @@ namespace KuruBot
             st = st.ShallowCopy();
 
             float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * Settings.reduction_dist_multiplier;
-            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall :  (int)wall_dist;
-            if (add_red > Settings.max_additional_reduction)
-                add_red = Settings.max_additional_reduction;
+            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, Settings.max_additional_reduction);
             int pos_reduction = Settings.pos_reduction + add_red;
             int bump_reduction = Settings.bump_reduction + add_red;
 

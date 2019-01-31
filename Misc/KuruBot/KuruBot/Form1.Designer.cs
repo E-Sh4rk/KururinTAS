@@ -427,6 +427,7 @@
             // 
             // brushRadius
             // 
+            this.brushRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.brushRadius.Location = new System.Drawing.Point(250, 454);
             this.brushRadius.Maximum = new decimal(new int[] {
             50,
@@ -482,7 +483,7 @@
             this.Controls.Add(this.connect);
             this.KeyPreview = true;
             this.Name = "Form1";
-            this.Text = "KuruBot";
+            this.Text = "KuruBot 1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();

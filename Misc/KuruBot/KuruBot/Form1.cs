@@ -381,7 +381,7 @@ namespace KuruBot
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b.ComputeNewCostMaps(40, 1, Flooding.WallClipSetting.Allow);
+                    b.ComputeNewCostMaps(40, Flooding.WallClipSetting.Allow);
                     this.UIThread(() => mapc.SetCostMap(b.GetCurrentCostMap()));
                     TaskEnded();
                 });
