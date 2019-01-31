@@ -63,32 +63,23 @@ namespace KuruBot
             public bool already_treated;
         }
 
-        const int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
-        const int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
-        const int additional_reduction_in_wall = 6; // 64
-        const float reduction_dist_multiplier = 1f/8f; // 1/8 shift/pixel
-        const int max_additional_reduction = 6; // 64
-
-        const short rot_precision = Physics.default_srate;
-        const short rot_rate_precision = Physics.default_srate;
-
         HelirinState NormaliseState (HelirinState st)
         {
             st = st.ShallowCopy();
 
-            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * reduction_dist_multiplier;
-            int add_red = wall_dist == 0 ? additional_reduction_in_wall :  (int)wall_dist;
-            if (add_red > max_additional_reduction)
-                add_red = max_additional_reduction;
-            int pos_reduction = Bot.pos_reduction + add_red;
-            int bump_reduction = Bot.bump_reduction + add_red;
+            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * Settings.reduction_dist_multiplier;
+            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall :  (int)wall_dist;
+            if (add_red > Settings.max_additional_reduction)
+                add_red = Settings.max_additional_reduction;
+            int pos_reduction = Settings.pos_reduction + add_red;
+            int bump_reduction = Settings.bump_reduction + add_red;
 
             st.xpos = (st.xpos >> pos_reduction) << pos_reduction;
             st.ypos = (st.ypos >> pos_reduction) << pos_reduction;
             st.xb   = (st.xb >> bump_reduction) << bump_reduction;
             st.yb   = (st.yb >> bump_reduction) << bump_reduction;
-            st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
-            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
+            st.rot  = (short)((int)Math.Round((float)st.rot / Settings.rot_precision) * Settings.rot_precision);
+            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / Settings.rot_rate_precision) * Settings.rot_rate_precision);
 
             return st;
         }
@@ -106,10 +97,6 @@ namespace KuruBot
             short ypix = Physics.pos_to_px(ypos);
             return xpix < f.PixelStart.x || xpix > f.PixelEnd.x || ypix < f.PixelStart.y || ypix > f.PixelEnd.y;
         }
-
-        const bool allow_state_multiple_visits = true; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
-        // TODO: optimisation parameter for lives system (see bot.txt)
-        const int number_iterations_before_ui_update = 10000;
 
         public Action[] Solve (HelirinState init)
         {
@@ -142,7 +129,7 @@ namespace KuruBot
                 // ProgressBar and preview settings
                 preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
                 since_last_update++;
-                if (since_last_update >= number_iterations_before_ui_update)
+                if (since_last_update >= Settings.number_iterations_before_ui_update)
                 {
                     since_last_update = 0;
                     parent.UpdateProgressBarAndHighlight(100 - st_data.cost * 100 / init_cost, preview);
@@ -161,7 +148,7 @@ namespace KuruBot
                     // Already visited ?
                     StateData old = null;
                     data.TryGetValue(norm_nst, out old);
-                    if (!allow_state_multiple_visits && old != null && old.already_treated)
+                    if (!Settings.allow_state_multiple_visits && old != null && old.already_treated)
                         continue;
 
                     // Better cost ?

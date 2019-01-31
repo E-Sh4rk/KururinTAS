@@ -8,19 +8,6 @@ namespace KuruBot
 {
     public class Flooding
     {
-        // All these values must be non-negative
-        const float ground_speed = 3;
-        const float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
-        const float ground_wall_bonus = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
-        const float ground_wall_bonus_min_dist = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
-        const float wall_ground_malus = ground_speed * 20; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
-        const float wall_clip_end_dist = 4; // Distance from the wall at which the helirin has no control anymore.
-
-        const float sqrt2 = 1.41421356237F;
-
-        // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
-        // Instead, it will be applied after to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
-
         public struct Pixel
         {
             public Pixel(short x, short y)
@@ -123,6 +110,7 @@ namespace KuruBot
             return res.ToArray();
         }
 
+        const float sqrt2 = 1.41421356237F;
         PixelDist[] Neighbors(Pixel p)
         {
             List<PixelDist> res = new List<PixelDist>();
@@ -228,9 +216,13 @@ namespace KuruBot
 
         float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip)
         {
-            float gwb = ground_wall_bonus * gwb_multiplier;
-            float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
-            float wgm = wall_ground_malus * wgm_multiplier;
+            // Simple Dijkstra algorithm with some extra parameters.
+            // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
+            // Instead, it will be applied after to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
+
+            float gwb = Settings.ground_wall_bonus * gwb_multiplier;
+            float gwb_md = Settings.ground_wall_bonus_min_dist * gwb_multiplier;
+            float wgm = Settings.wall_ground_malus * wgm_multiplier;
 
             int width = PixelEnd.x - PixelStart.x + 1;
             int height = PixelEnd.y - PixelStart.y + 1;
@@ -268,7 +260,7 @@ namespace KuruBot
                 Pixel p = q.Dequeue();
                 float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
                 bool from_wall = m.IsPixelInCollision(p.x, p.y);
-                bool from_near_wall = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x] <= wall_clip_end_dist;
+                bool from_near_wall = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x] <= Settings.wall_clip_end_dist;
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
@@ -278,18 +270,18 @@ namespace KuruBot
                     if (constraints == null || !constraints[npy,npx])
                     {
                         bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
-                        bool to_near_wall = dist_to_wall[npy, npx] <= wall_clip_end_dist;
+                        bool to_near_wall = dist_to_wall[npy, npx] <= Settings.wall_clip_end_dist;
 
                         if (no_wall_clip && to_wall)
                             continue;
 
                         float nw = weight;
                         if (from_near_wall && !to_near_wall)
-                            nw += npd.dist / ground_speed + wgm;
+                            nw += npd.dist / Settings.ground_speed + wgm;
                         else if (from_wall && to_wall)
-                            nw += npd.dist / wall_speed;
+                            nw += npd.dist / Settings.wall_speed;
                         else
-                            nw += npd.dist / ground_speed;
+                            nw += npd.dist / Settings.ground_speed;
 
                         float ow = res[npy, npx];
                         if (nw < ow)
