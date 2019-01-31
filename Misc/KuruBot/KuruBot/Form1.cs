@@ -11,8 +11,8 @@ using System.Windows.Forms;
 
 namespace KuruBot
 {
-    public partial class Form1 : Form // TODO: Allow the user to change the cost map by drawing walls
-    { // TODO: Allow the user to change the target (not ending zone but custom zone)
+    public partial class Form1 : Form
+    {
         Com com = null;
         Map map = null;
         MapControl mapc = null;

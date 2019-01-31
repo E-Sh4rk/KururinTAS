@@ -18,7 +18,7 @@ namespace KuruBot
 
         const float sqrt2 = 1.41421356237F;
 
-        // Ground wall bonus is not applied during the Djikstra algorithm because it would generate negative weights.
+        // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
         // Instead, it will be applied after to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
 
         public struct Pixel
@@ -54,12 +54,20 @@ namespace KuruBot
 
         public void SetTarget(bool[,] target)
         {
-            // TODO: check dimensions match, set to null otherwise
+            if (target != null)
+            {
+                if (target.GetLength(0) != PixelEnd.y - PixelStart.y + 1 || target.GetLength(1) != PixelEnd.x - PixelStart.x + 1)
+                    target = null;
+            }
             this.target = target;
         }
         public void SetConstraints(bool[,] constraints)
         {
-            // TODO: check dimensions match, set to null otherwise
+            if (constraints != null)
+            {
+                if (constraints.GetLength(0) != PixelEnd.y - PixelStart.y + 1 || constraints.GetLength(1) != PixelEnd.x - PixelStart.x + 1)
+                    constraints = null;
+            }
             this.constraints = constraints;
         }
 
@@ -155,7 +163,7 @@ namespace KuruBot
                 }
             }
 
-            // Graph walk (bread first search)
+            // Graph walk (breadth first search)
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
@@ -193,7 +201,7 @@ namespace KuruBot
                 }
             }
 
-            // Djikstra
+            // Dijkstra
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
@@ -218,7 +226,7 @@ namespace KuruBot
             return res;
         }
 
-        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip) // TODO: take target and constraints parameters into account
+        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip) // TODO: take constraints parameters into account
         {
             float gwb = ground_wall_bonus * gwb_multiplier;
             float gwb_md = ground_wall_bonus_min_dist * gwb_multiplier;
@@ -229,12 +237,21 @@ namespace KuruBot
             float[,] res = new float[height,width];
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
+            bool[,] target = this.target;
+            if (target == null)
+            {
+                target = new bool[height,width];
+                for (short y = PixelStart.y; y <= PixelEnd.y; y++)
+                    for (short x = PixelStart.x; x <= PixelEnd.x; x++)
+                        target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+            }
+
             // Init
             for (short y = PixelStart.y; y <= PixelEnd.y; y++)
             {
                 for (short x = PixelStart.x; x <= PixelEnd.x; x++)
                 {
-                    if (m.IsPixelInZone(x,y) == Map.Zone.Ending)
+                    if (target[y - PixelStart.y, x - PixelStart.x])
                     {
                         q.Enqueue(new Pixel(x, y), 0);
                         res[y - PixelStart.y, x - PixelStart.x] = 0;
@@ -244,7 +261,7 @@ namespace KuruBot
                 }
             }
 
-            // Djikstra
+            // Dijkstra
             while (q.Count > 0)
             {
                 Pixel p = q.Dequeue();
@@ -296,7 +313,7 @@ namespace KuruBot
                         else
                             w -= gwb * w / gwb_md;
                     }
-                    if (w <= 0 && m.IsPixelInZone(x, y) != Map.Zone.Ending)
+                    if (w <= 0 && !target[y - PixelStart.y, x - PixelStart.x])
                         w = float.Epsilon;
                     res[y - PixelStart.y, x - PixelStart.x] = w;
                 }
