@@ -62,6 +62,8 @@
             this.setConstraints = new System.Windows.Forms.Button();
             this.setTarget = new System.Windows.Forms.Button();
             this.destroySolver = new System.Windows.Forms.Button();
+            this.brushRadius = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             this.SuspendLayout();
             // 
             // connect
@@ -382,7 +384,7 @@
             this.drawOnMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.drawOnMap.Appearance = System.Windows.Forms.Appearance.Button;
             this.drawOnMap.AutoSize = true;
-            this.drawOnMap.Location = new System.Drawing.Point(304, 451);
+            this.drawOnMap.Location = new System.Drawing.Point(202, 451);
             this.drawOnMap.Name = "drawOnMap";
             this.drawOnMap.Size = new System.Drawing.Size(42, 23);
             this.drawOnMap.TabIndex = 27;
@@ -423,11 +425,30 @@
             this.destroySolver.UseVisualStyleBackColor = true;
             this.destroySolver.Click += new System.EventHandler(this.destroySolver_Click);
             // 
+            // brushRadius
+            // 
+            this.brushRadius.Location = new System.Drawing.Point(250, 454);
+            this.brushRadius.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.brushRadius.Name = "brushRadius";
+            this.brushRadius.Size = new System.Drawing.Size(96, 20);
+            this.brushRadius.TabIndex = 31;
+            this.brushRadius.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.brushRadius.ValueChanged += new System.EventHandler(this.brushRadius_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 594);
+            this.Controls.Add(this.brushRadius);
             this.Controls.Add(this.destroySolver);
             this.Controls.Add(this.setTarget);
             this.Controls.Add(this.setConstraints);
@@ -464,6 +485,7 @@
             this.Text = "KuruBot";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -505,6 +527,7 @@
         private System.Windows.Forms.Button setConstraints;
         private System.Windows.Forms.Button setTarget;
         private System.Windows.Forms.Button destroySolver;
+        private System.Windows.Forms.NumericUpDown brushRadius;
     }
 }
 

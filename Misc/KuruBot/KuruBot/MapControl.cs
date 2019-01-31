@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace KuruBot
 {
-    public partial class MapControl : Control // TODO: Fix display of highlighting (start position should change depending on current mode)
+    public partial class MapControl : Control
     {
 
         public struct GraphicalHelirin
@@ -130,7 +130,7 @@ namespace KuruBot
             return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
         }
 
-        const int brush_radius_squared = 64;
+        public int brush_radius_squared = 64;
         private void Control1_MouseMove(Object sender, MouseEventArgs e)
         {
             if (highlight_map == null)
@@ -207,7 +207,8 @@ namespace KuruBot
             this.showG = showG;
             this.showP = showP;
             this.showC = showC;
-            highlight_map = null;
+            if (!start_pixel.HasValue || !end_pixel.HasValue)
+                highlight_map = null;
             Redraw();
         }
 

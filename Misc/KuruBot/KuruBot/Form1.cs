@@ -496,5 +496,11 @@ namespace KuruBot
                 mapc.SetCostMap(null);
             }
         }
+
+        private void brushRadius_ValueChanged(object sender, EventArgs e)
+        {
+            if (mapc != null)
+                mapc.brush_radius_squared = (int)(brushRadius.Value * brushRadius.Value);
+        }
     }
 }
