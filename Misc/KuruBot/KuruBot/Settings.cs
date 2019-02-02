@@ -28,6 +28,7 @@ namespace KuruBot
         public const short rot_precision = Physics.default_srate;
         public const short rot_rate_precision = Physics.default_srate;
 
+        public const float cost_multiplier = 1;
         public const bool allow_state_multiple_visits = true; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
         // TODO: optimisation parameter for lives system (see bot.txt)
         public const int number_iterations_before_ui_update = 10000;

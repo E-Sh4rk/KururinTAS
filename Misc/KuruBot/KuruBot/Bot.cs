@@ -86,7 +86,9 @@ namespace KuruBot
         {
             short xpix = Physics.pos_to_px(xpos);
             short ypix = Physics.pos_to_px(ypos);
-            return f.Cost(current_cost_map, xpix, ypix);
+            float cost = f.Cost(current_cost_map, xpix, ypix);
+            float mult_cost = cost * Settings.cost_multiplier;
+            return cost > 0 && mult_cost <= 0 ? float.Epsilon : mult_cost;
         }
 
         bool IsOutOfSearchSpace(int xpos, int ypos)
