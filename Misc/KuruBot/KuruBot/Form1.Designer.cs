@@ -67,6 +67,7 @@
             this.saveConfig = new System.Windows.Forms.Button();
             this.saveIniDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadIniDialog = new System.Windows.Forms.OpenFileDialog();
+            this.computeCostMapNoWC = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             this.SuspendLayout();
             // 
@@ -146,7 +147,7 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 522);
             this.label1.Name = "label1";
@@ -309,9 +310,9 @@
             // buildSolver
             // 
             this.buildSolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolver.Location = new System.Drawing.Point(202, 480);
+            this.buildSolver.Location = new System.Drawing.Point(106, 480);
             this.buildSolver.Name = "buildSolver";
-            this.buildSolver.Size = new System.Drawing.Size(144, 23);
+            this.buildSolver.Size = new System.Drawing.Size(138, 23);
             this.buildSolver.TabIndex = 20;
             this.buildSolver.Text = "Build solver (legal ending)";
             this.buildSolver.UseVisualStyleBackColor = true;
@@ -320,20 +321,20 @@
             // computeCostMap
             // 
             this.computeCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMap.Location = new System.Drawing.Point(490, 480);
+            this.computeCostMap.Location = new System.Drawing.Point(394, 480);
             this.computeCostMap.Name = "computeCostMap";
-            this.computeCostMap.Size = new System.Drawing.Size(104, 23);
+            this.computeCostMap.Size = new System.Drawing.Size(80, 23);
             this.computeCostMap.TabIndex = 21;
-            this.computeCostMap.Text = "Compute cost map";
+            this.computeCostMap.Text = "Cost map";
             this.computeCostMap.UseVisualStyleBackColor = true;
             this.computeCostMap.Click += new System.EventHandler(this.computeCostMap_Click);
             // 
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(600, 480);
+            this.solve.Location = new System.Drawing.Point(615, 480);
             this.solve.Name = "solve";
-            this.solve.Size = new System.Drawing.Size(77, 23);
+            this.solve.Size = new System.Drawing.Size(62, 23);
             this.solve.TabIndex = 22;
             this.solve.Text = "Solve";
             this.solve.UseVisualStyleBackColor = true;
@@ -353,9 +354,9 @@
             // buildSolverAny
             // 
             this.buildSolverAny.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolverAny.Location = new System.Drawing.Point(352, 480);
+            this.buildSolverAny.Location = new System.Drawing.Point(250, 480);
             this.buildSolverAny.Name = "buildSolverAny";
-            this.buildSolverAny.Size = new System.Drawing.Size(132, 23);
+            this.buildSolverAny.Size = new System.Drawing.Size(138, 23);
             this.buildSolverAny.TabIndex = 24;
             this.buildSolverAny.Text = "Build solver (any ending)";
             this.buildSolverAny.UseVisualStyleBackColor = true;
@@ -365,18 +366,18 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(174, 422);
+            this.progressBar.Location = new System.Drawing.Point(187, 422);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(629, 23);
+            this.progressBar.Size = new System.Drawing.Size(616, 23);
             this.progressBar.TabIndex = 25;
             // 
             // abort
             // 
             this.abort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.abort.Enabled = false;
-            this.abort.Location = new System.Drawing.Point(12, 480);
+            this.abort.Location = new System.Drawing.Point(12, 451);
             this.abort.Name = "abort";
-            this.abort.Size = new System.Drawing.Size(75, 23);
+            this.abort.Size = new System.Drawing.Size(88, 23);
             this.abort.TabIndex = 26;
             this.abort.Text = "Abort";
             this.abort.UseVisualStyleBackColor = true;
@@ -387,7 +388,7 @@
             this.drawOnMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.drawOnMap.Appearance = System.Windows.Forms.Appearance.Button;
             this.drawOnMap.AutoSize = true;
-            this.drawOnMap.Location = new System.Drawing.Point(202, 451);
+            this.drawOnMap.Location = new System.Drawing.Point(250, 451);
             this.drawOnMap.Name = "drawOnMap";
             this.drawOnMap.Size = new System.Drawing.Size(42, 23);
             this.drawOnMap.TabIndex = 27;
@@ -398,9 +399,9 @@
             // setConstraints
             // 
             this.setConstraints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.setConstraints.Location = new System.Drawing.Point(352, 451);
+            this.setConstraints.Location = new System.Drawing.Point(394, 451);
             this.setConstraints.Name = "setConstraints";
-            this.setConstraints.Size = new System.Drawing.Size(242, 23);
+            this.setConstraints.Size = new System.Drawing.Size(215, 23);
             this.setConstraints.TabIndex = 28;
             this.setConstraints.Text = "Set constraints to current drawing";
             this.setConstraints.UseVisualStyleBackColor = true;
@@ -409,9 +410,9 @@
             // setTarget
             // 
             this.setTarget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.setTarget.Location = new System.Drawing.Point(600, 451);
+            this.setTarget.Location = new System.Drawing.Point(615, 451);
             this.setTarget.Name = "setTarget";
-            this.setTarget.Size = new System.Drawing.Size(203, 23);
+            this.setTarget.Size = new System.Drawing.Size(188, 23);
             this.setTarget.TabIndex = 29;
             this.setTarget.Text = "Set target to current drawing";
             this.setTarget.UseVisualStyleBackColor = true;
@@ -420,7 +421,7 @@
             // destroySolver
             // 
             this.destroySolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.destroySolver.Location = new System.Drawing.Point(108, 480);
+            this.destroySolver.Location = new System.Drawing.Point(12, 480);
             this.destroySolver.Name = "destroySolver";
             this.destroySolver.Size = new System.Drawing.Size(88, 23);
             this.destroySolver.TabIndex = 30;
@@ -431,14 +432,14 @@
             // brushRadius
             // 
             this.brushRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.brushRadius.Location = new System.Drawing.Point(250, 454);
+            this.brushRadius.Location = new System.Drawing.Point(298, 454);
             this.brushRadius.Maximum = new decimal(new int[] {
             50,
             0,
             0,
             0});
             this.brushRadius.Name = "brushRadius";
-            this.brushRadius.Size = new System.Drawing.Size(96, 20);
+            this.brushRadius.Size = new System.Drawing.Size(90, 20);
             this.brushRadius.TabIndex = 31;
             this.brushRadius.Value = new decimal(new int[] {
             8,
@@ -452,7 +453,7 @@
             this.loadConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.loadConfig.Location = new System.Drawing.Point(12, 422);
             this.loadConfig.Name = "loadConfig";
-            this.loadConfig.Size = new System.Drawing.Size(75, 23);
+            this.loadConfig.Size = new System.Drawing.Size(88, 23);
             this.loadConfig.TabIndex = 32;
             this.loadConfig.Text = "Load config";
             this.loadConfig.UseVisualStyleBackColor = true;
@@ -461,7 +462,7 @@
             // saveConfig
             // 
             this.saveConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.saveConfig.Location = new System.Drawing.Point(93, 422);
+            this.saveConfig.Location = new System.Drawing.Point(106, 422);
             this.saveConfig.Name = "saveConfig";
             this.saveConfig.Size = new System.Drawing.Size(75, 23);
             this.saveConfig.TabIndex = 33;
@@ -474,15 +475,27 @@
             this.saveIniDialog.Filter = "INI File|*.ini";
             this.saveIniDialog.Title = "Save INI";
             // 
-            // loadIniFileDialog
+            // loadIniDialog
             // 
             this.loadIniDialog.Filter = "INI File|*.ini";
+            // 
+            // computeCostMapNoWC
+            // 
+            this.computeCostMapNoWC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.computeCostMapNoWC.Location = new System.Drawing.Point(480, 480);
+            this.computeCostMapNoWC.Name = "computeCostMapNoWC";
+            this.computeCostMapNoWC.Size = new System.Drawing.Size(129, 23);
+            this.computeCostMapNoWC.TabIndex = 34;
+            this.computeCostMapNoWC.Text = "Cost map (no wall clip)";
+            this.computeCostMapNoWC.UseVisualStyleBackColor = true;
+            this.computeCostMapNoWC.Click += new System.EventHandler(this.computeCostMapNoWC_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 594);
+            this.Controls.Add(this.computeCostMapNoWC);
             this.Controls.Add(this.saveConfig);
             this.Controls.Add(this.loadConfig);
             this.Controls.Add(this.brushRadius);
@@ -518,8 +531,9 @@
             this.Controls.Add(this.dlMap);
             this.Controls.Add(this.connect);
             this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(831, 39);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.1";
+            this.Text = "KuruBot 1.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
@@ -569,6 +583,7 @@
         private System.Windows.Forms.Button saveConfig;
         private System.Windows.Forms.SaveFileDialog saveIniDialog;
         private System.Windows.Forms.OpenFileDialog loadIniDialog;
+        private System.Windows.Forms.Button computeCostMapNoWC;
     }
 }
 

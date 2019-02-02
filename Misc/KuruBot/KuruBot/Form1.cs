@@ -382,18 +382,28 @@ namespace KuruBot
             catch { }
         }
 
-        private void computeCostMap_Click(object sender, EventArgs e)
+        private void computeCM(float gwb_mult, Flooding.WallClipSetting wcs)
         {
             if (b != null)
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b.ComputeNewCostMaps(40, Flooding.WallClipSetting.Allow);
+                    b.ComputeNewCostMaps(gwb_mult, wcs);
                     this.UIThread(() => mapc.SetCostMap(b.GetCurrentCostMap()));
                     TaskEnded();
                 });
                 thread.Start();
             }
+        }
+
+        private void computeCostMap_Click(object sender, EventArgs e)
+        {
+            computeCM(40, Flooding.WallClipSetting.Allow);
+        }
+
+        private void computeCostMapNoWC_Click(object sender, EventArgs e)
+        {
+            computeCM(0, Flooding.WallClipSetting.NoWallClip);
         }
 
         private void makeSolver(Flooding.Pixel start, Flooding.Pixel end)
@@ -521,5 +531,6 @@ namespace KuruBot
             if (saveIniDialog.ShowDialog() == DialogResult.OK)
                 Settings.SaveConfig(saveIniDialog.FileName);
         }
+
     }
 }
