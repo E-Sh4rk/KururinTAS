@@ -67,7 +67,7 @@ namespace KuruBot
         {
             st = st.ShallowCopy();
 
-            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * Settings.reduction_dist_multiplier;
+            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * Settings.additional_reduction_dist_multiplier;
             int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, Settings.max_additional_reduction);
             int pos_reduction = Settings.pos_reduction + add_red;
             int bump_reduction = Settings.bump_reduction + add_red;

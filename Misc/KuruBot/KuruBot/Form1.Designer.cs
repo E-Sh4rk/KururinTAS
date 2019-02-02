@@ -38,7 +38,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.enterInputString = new System.Windows.Forms.Button();
             this.downloadInputs = new System.Windows.Forms.Button();
-            this.inputsFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.loadFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.backupPos = new System.Windows.Forms.Button();
             this.restorePos = new System.Windows.Forms.Button();
             this.convertInputs = new System.Windows.Forms.Button();
@@ -63,6 +63,10 @@
             this.setTarget = new System.Windows.Forms.Button();
             this.destroySolver = new System.Windows.Forms.Button();
             this.brushRadius = new System.Windows.Forms.NumericUpDown();
+            this.loadConfig = new System.Windows.Forms.Button();
+            this.saveConfig = new System.Windows.Forms.Button();
+            this.saveIniDialog = new System.Windows.Forms.SaveFileDialog();
+            this.loadIniDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             this.SuspendLayout();
             // 
@@ -172,10 +176,9 @@
             this.downloadInputs.UseVisualStyleBackColor = true;
             this.downloadInputs.Click += new System.EventHandler(this.downloadInputs_Click);
             // 
-            // inputsFileDialog
+            // loadFileDialog
             // 
-            this.inputsFileDialog.FileName = "inputs.txt";
-            this.inputsFileDialog.Filter = "Text file|*.txt";
+            this.loadFileDialog.Filter = "Text file|*.txt";
             // 
             // backupPos
             // 
@@ -362,9 +365,9 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 422);
+            this.progressBar.Location = new System.Drawing.Point(174, 422);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(791, 23);
+            this.progressBar.Size = new System.Drawing.Size(629, 23);
             this.progressBar.TabIndex = 25;
             // 
             // abort
@@ -444,11 +447,44 @@
             0});
             this.brushRadius.ValueChanged += new System.EventHandler(this.brushRadius_ValueChanged);
             // 
+            // loadConfig
+            // 
+            this.loadConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.loadConfig.Location = new System.Drawing.Point(12, 422);
+            this.loadConfig.Name = "loadConfig";
+            this.loadConfig.Size = new System.Drawing.Size(75, 23);
+            this.loadConfig.TabIndex = 32;
+            this.loadConfig.Text = "Load config";
+            this.loadConfig.UseVisualStyleBackColor = true;
+            this.loadConfig.Click += new System.EventHandler(this.loadConfig_Click);
+            // 
+            // saveConfig
+            // 
+            this.saveConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.saveConfig.Location = new System.Drawing.Point(93, 422);
+            this.saveConfig.Name = "saveConfig";
+            this.saveConfig.Size = new System.Drawing.Size(75, 23);
+            this.saveConfig.TabIndex = 33;
+            this.saveConfig.Text = "Save config";
+            this.saveConfig.UseVisualStyleBackColor = true;
+            this.saveConfig.Click += new System.EventHandler(this.saveConfig_Click);
+            // 
+            // saveIniDialog
+            // 
+            this.saveIniDialog.Filter = "INI File|*.ini";
+            this.saveIniDialog.Title = "Save INI";
+            // 
+            // loadIniFileDialog
+            // 
+            this.loadIniDialog.Filter = "INI File|*.ini";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 594);
+            this.Controls.Add(this.saveConfig);
+            this.Controls.Add(this.loadConfig);
             this.Controls.Add(this.brushRadius);
             this.Controls.Add(this.destroySolver);
             this.Controls.Add(this.setTarget);
@@ -483,7 +519,7 @@
             this.Controls.Add(this.connect);
             this.KeyPreview = true;
             this.Name = "Form1";
-            this.Text = "KuruBot 1.0+";
+            this.Text = "KuruBot 1.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
@@ -504,7 +540,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button enterInputString;
         private System.Windows.Forms.Button downloadInputs;
-        private System.Windows.Forms.OpenFileDialog inputsFileDialog;
+        private System.Windows.Forms.OpenFileDialog loadFileDialog;
         private System.Windows.Forms.Button backupPos;
         private System.Windows.Forms.Button restorePos;
         private System.Windows.Forms.Button convertInputs;
@@ -529,6 +565,10 @@
         private System.Windows.Forms.Button setTarget;
         private System.Windows.Forms.Button destroySolver;
         private System.Windows.Forms.NumericUpDown brushRadius;
+        private System.Windows.Forms.Button loadConfig;
+        private System.Windows.Forms.Button saveConfig;
+        private System.Windows.Forms.SaveFileDialog saveIniDialog;
+        private System.Windows.Forms.OpenFileDialog loadIniDialog;
     }
 }
 

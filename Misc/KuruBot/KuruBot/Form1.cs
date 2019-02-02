@@ -21,9 +21,16 @@ namespace KuruBot
         Bot b = null;
         Thread thread = null;
 
+        const string config_default_file = "config.ini";
         public Form1()
         {
             InitializeComponent();
+            
+            if (File.Exists(config_default_file))
+                Settings.LoadConfig(config_default_file);
+            else
+                Settings.SaveConfig(config_default_file);
+
             mapc = new MapControl(this, null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
@@ -231,9 +238,9 @@ namespace KuruBot
         {
             try
             {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                if (loadFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string filename = inputsFileDialog.FileName;
+                    string filename = loadFileDialog.FileName;
                     string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
                     new_filename += "_conv.txt";
                     File.WriteAllLines(new_filename, Controller.from_bz2_format(File.ReadAllLines(filename)));
@@ -246,9 +253,9 @@ namespace KuruBot
         {
             try
             {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                if (loadFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string filename = inputsFileDialog.FileName;
+                    string filename = loadFileDialog.FileName;
                     string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
                     new_filename += "_conv.txt";
                     File.WriteAllText(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename)));
@@ -309,8 +316,8 @@ namespace KuruBot
         {
             try
             {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
-                    ExecuteInputsStr(File.ReadAllLines(inputsFileDialog.FileName));
+                if (loadFileDialog.ShowDialog() == DialogResult.OK)
+                    ExecuteInputsStr(File.ReadAllLines(loadFileDialog.FileName));
             }
             catch { }
         }
@@ -334,9 +341,9 @@ namespace KuruBot
         {
             try
             {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                if (loadFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    hs = Com.parse_hs(File.ReadAllLines(inputsFileDialog.FileName)[0]);
+                    hs = Com.parse_hs(File.ReadAllLines(loadFileDialog.FileName)[0]);
                     mapc.SetHelirin(hs);
                 }
                    
@@ -363,9 +370,9 @@ namespace KuruBot
         {
             try
             {
-                if (inputsFileDialog.ShowDialog() == DialogResult.OK)
+                if (loadFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    map = Com.parse_map(File.ReadAllLines(inputsFileDialog.FileName));
+                    map = Com.parse_map(File.ReadAllLines(loadFileDialog.FileName));
                     if (map != null)
                         phy = new Physics(map);
                     mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
@@ -501,6 +508,18 @@ namespace KuruBot
         {
             if (mapc != null)
                 mapc.brush_radius_squared = (int)(brushRadius.Value * brushRadius.Value);
+        }
+
+        private void loadConfig_Click(object sender, EventArgs e)
+        {
+            if (loadIniDialog.ShowDialog() == DialogResult.OK)
+                Settings.LoadConfig(loadIniDialog.FileName);
+        }
+
+        private void saveConfig_Click(object sender, EventArgs e)
+        {
+            if (saveIniDialog.ShowDialog() == DialogResult.OK)
+                Settings.SaveConfig(saveIniDialog.FileName);
         }
     }
 }
