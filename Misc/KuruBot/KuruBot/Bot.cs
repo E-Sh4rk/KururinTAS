@@ -42,22 +42,26 @@ namespace KuruBot
             else
             {
                 int total_op = 1 + (Physics.full_life - 1) * Settings.nb_cost_maps_per_life;
-                cost_maps = new float[Physics.full_life][][,];
-                cost_maps[Physics.full_life - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Physics.full_life-1), Flooding.WallClipSetting.Allow) };
+                cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Physics.full_life : 1][][,];
+                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Physics.full_life-1), Flooding.WallClipSetting.Allow) };
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
-                int current_op = 1;
-                for (int i = 0; i < Physics.full_life-1; i++)
+
+                if (Settings.nb_cost_maps_per_life > 0)
                 {
-                    float[][,] current_cm = new float[Settings.nb_cost_maps_per_life][,];
-                    int min_invul = i * Physics.invul_frames;
-                    for (int j = 0; j < current_cm.Length; j++)
+                    int current_op = 1;
+                    for (int i = 0; i < Physics.full_life - 1; i++)
                     {
-                        int current_invul = min_invul + j * Physics.invul_frames / current_cm.Length;
-                        current_cm[i] = f.ComputeCostMap(current_invul, i > 0 ? Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
-                        current_op++;
-                        parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
+                        float[][,] current_cm = new float[Settings.nb_cost_maps_per_life][,];
+                        int min_invul = i * Physics.invul_frames;
+                        for (int j = 0; j < current_cm.Length; j++)
+                        {
+                            int current_invul = min_invul + j * Physics.invul_frames / current_cm.Length;
+                            current_cm[i] = f.ComputeCostMap(current_invul, i > 0 ? Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
+                            current_op++;
+                            parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
+                        }
+                        cost_maps[i] = current_cm;
                     }
-                    cost_maps[i] = current_cm;
                 }
 
             }
