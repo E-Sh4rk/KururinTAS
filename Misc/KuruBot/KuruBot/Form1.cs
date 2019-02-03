@@ -382,14 +382,14 @@ namespace KuruBot
             catch { }
         }
 
-        private void computeCM(float gwb_mult, Flooding.WallClipSetting wcs)
+        private void computeCM(bool no_wc)
         {
             if (b != null)
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b.ComputeNewCostMaps(gwb_mult, wcs);
-                    this.UIThread(() => mapc.SetCostMap(b.GetCurrentCostMap()));
+                    b.ComputeNewCostMaps(no_wc);
+                    this.UIThread(() => mapc.SetCostMap(b.GetPreviewCostMap()));
                     TaskEnded();
                 });
                 thread.Start();
@@ -398,12 +398,12 @@ namespace KuruBot
 
         private void computeCostMap_Click(object sender, EventArgs e)
         {
-            computeCM(40, Flooding.WallClipSetting.Allow);
+            computeCM(false);
         }
 
         private void computeCostMapNoWC_Click(object sender, EventArgs e)
         {
-            computeCM(0, Flooding.WallClipSetting.NoWallClip);
+            computeCM(true);
         }
 
         private void makeSolver(Flooding.Pixel start, Flooding.Pixel end)

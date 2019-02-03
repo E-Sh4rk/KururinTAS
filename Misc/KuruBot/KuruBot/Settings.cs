@@ -21,6 +21,8 @@ namespace KuruBot
 
         // ---------- SOLVER SETTINGS ----------
 
+        public static byte nb_cost_maps_per_life = 1;
+
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
         public static int additional_reduction_in_wall = 6; // 64
@@ -33,7 +35,7 @@ namespace KuruBot
         public static float cost_multiplier = 1;
         public static bool allow_state_multiple_visits = true; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
         // TODO: optimisation parameter for lives system (see bot.txt)
-        public static int number_iterations_before_ui_update = 10000;
+        public static int nb_iterations_before_ui_update = 10000;
 
         // ---------- SAVE/LOAD METHODS ----------
 
@@ -70,6 +72,7 @@ namespace KuruBot
                 wall_ground_malus = parseFloat(data, "Flooding", "wall_ground_malus", wall_ground_malus);
                 wall_clip_end_dist = parseFloat(data, "Flooding", "wall_clip_end_dist", wall_clip_end_dist);
 
+                nb_cost_maps_per_life = (byte)parseInt(data, "Solver", "nb_cost_maps_per_life", nb_cost_maps_per_life);
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
                 additional_reduction_in_wall = parseInt(data, "Solver", "additional_reduction_in_wall", additional_reduction_in_wall);
@@ -79,7 +82,7 @@ namespace KuruBot
                 rot_rate_precision = (short)parseInt(data, "Solver", "rot_rate_precision", rot_rate_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
                 allow_state_multiple_visits = parseBool(data, "Solver", "allow_state_multiple_visits", allow_state_multiple_visits);
-                number_iterations_before_ui_update = parseInt(data, "Solver", "number_iterations_before_ui_update", number_iterations_before_ui_update);
+                nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
             }
             catch { }
         }
@@ -99,6 +102,7 @@ namespace KuruBot
                 data["Flooding"]["wall_ground_malus"] = wall_ground_malus.ToString();
                 data["Flooding"]["wall_clip_end_dist"] = wall_clip_end_dist.ToString();
 
+                data["Solver"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
                 data["Solver"]["pos_reduction"] = pos_reduction.ToString();
                 data["Solver"]["bump_reduction"] = bump_reduction.ToString();
                 data["Solver"]["additional_reduction_in_wall"] = additional_reduction_in_wall.ToString();
@@ -108,7 +112,7 @@ namespace KuruBot
                 data["Solver"]["rot_rate_precision"] = rot_rate_precision.ToString();
                 data["Solver"]["cost_multiplier"] = cost_multiplier.ToString();
                 data["Solver"]["allow_state_multiple_visits"] = allow_state_multiple_visits.ToString();
-                data["Solver"]["number_iterations_before_ui_update"] = number_iterations_before_ui_update.ToString();
+                data["Solver"]["nb_iterations_before_ui_update"] = nb_iterations_before_ui_update.ToString();
 
                 FileIniDataParser parser = new FileIniDataParser();
                 parser.WriteFile(filename, data);
