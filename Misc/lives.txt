@@ -1,5 +1,5 @@
 
-at each frame:
+at each frame, after ending check and before bump:
 	if invul > 0: invul--
-	if collision && not healing or ending zone:
+	if collision && not healing zone:
 		if invul = 0 then life-- ; invul = 20

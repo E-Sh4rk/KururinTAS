@@ -80,7 +80,7 @@ function get_pos()
 	local rot = tostring(memory.read_s16_le(addr_rotation, "IWRAM"))
 	local rot_rate = tostring(memory.read_s16_le(addr_rotation_rate, "IWRAM"))
 	local rot_srate = tostring(memory.read_s16_le(addr_rotation_srate, "IWRAM"))
-	local lives = tostring(memory.read_s8_le(addr_lives, "IWRAM"))
+	local lives = tostring(memory.read_u8_le(addr_lives, "IWRAM"))
 	local invul = tostring(memory.read_s8_le(addr_invul, "IWRAM"))
 	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. "\n"
 end
@@ -138,7 +138,7 @@ do
 						memory.write_s16_le(addr_rotation, rot, "IWRAM")
 						memory.write_s16_le(addr_rotation_rate, rot_rate, "IWRAM")
 						memory.write_s16_le(addr_rotation_srate, rot_srate, "IWRAM")
-						memory.write_s8(addr_lives, lives, "IWRAM")
+						memory.write_u8(addr_lives, lives, "IWRAM")
 						memory.write_s8(addr_invul, invul, "IWRAM")
 						-- Play inputs
 						current_play = content

@@ -87,7 +87,7 @@ namespace KuruBot
             short rot = Convert.ToInt16(headers[4]);
             short rot_rate = Convert.ToInt16(headers[5]);
             short rot_srate = Convert.ToInt16(headers[6]);
-            sbyte life = Convert.ToSByte(headers[7]);
+            byte life = Convert.ToByte(headers[7]);
             sbyte invul = Convert.ToSByte(headers[8]);
             return new HelirinState(xpos, ypos, xb, yb, rot, rot_rate, rot_srate, life, invul);
         }

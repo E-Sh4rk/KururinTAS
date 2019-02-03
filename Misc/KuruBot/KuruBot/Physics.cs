@@ -14,7 +14,7 @@ namespace KuruBot
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
     {
-        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, sbyte life, sbyte invul)
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -77,7 +77,7 @@ namespace KuruBot
         public short rot_rate;
         public short rot_srate;
 
-        public sbyte life;
+        public byte life;
         public sbyte invul;
         public GameState gs;
 
@@ -127,7 +127,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, default_life, 0);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, full_life, 0);
         }
 
         Map map = null;
@@ -136,7 +136,7 @@ namespace KuruBot
         // Public constants
         public const short default_srate = 182;
         public const sbyte invul_frames = 20;
-        public const sbyte default_life = 3;
+        public const byte full_life = 3;
 
         // Input speed constants
         const int speed0 = (3 * 0x10000) / 2;
@@ -221,7 +221,7 @@ namespace KuruBot
             int xs = (int)e.x * speed;
             int ys = (int)e.y * speed;
 
-            // 2. Reduce bump speed / bump rotation (XB, YB and Rot_rate)
+            // 2. Reduce bump speed / bump rotation (XB, YB and Rot_rate) / invulnerability
             short rot_diff = (short)(st.rot_srate - st.rot_rate);
             if (rot_diff < -rotation_rate_decr)
                 rot_diff = -rotation_rate_decr;
@@ -230,6 +230,8 @@ namespace KuruBot
             st.rot_rate = (short)(st.rot_rate + rot_diff);
             st.xb = DecreaseBumpSpeed(st.xb);
             st.yb = DecreaseBumpSpeed(st.yb);
+            if (st.invul > 0)
+                st.invul--;
 
             // 3. Move depending on speed (bump+input), rotate depending on rotation rate (Rot_rate)
             st.xpos += xs + st.xb;
@@ -238,12 +240,14 @@ namespace KuruBot
 
             // 4. Detection of healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
+            bool safe_zone = false;
             short xpix = pos_to_px(st.xpos);
             short ypix = pos_to_px(st.ypos);
             Map.Zone zone = map.IsPixelInZone(xpix, ypix);
             if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
             {
-                // TODO
+                safe_zone = true;
+                st.life = full_life;
             }
             if (zone == Map.Zone.Ending)
             {
@@ -332,12 +336,28 @@ namespace KuruBot
                     collision_mask = collision_mask | ((uint)1 << i);
             }
 
-            // 7. If collision:
-            //  - Substract input speed (XS and YS) to position
-            //  - Modify bump speed and rot rate (XB, YB and Rot_rate) accordingly if relevant
-            //  - If modified, apply this newly computed bump speed to position
-            if (collision_mask != 0)
+            if (collision_mask != 0) // If collision
             {
+                // 7. Damage
+                if (!safe_zone)
+                {
+                    if (new_st.invul == 0)
+                    {
+                        new_st.invul = invul_frames;
+                        new_st.life--;
+
+                        if (new_st.life == 0)
+                        {
+                            new_st.gs = GameState.Loose;
+                            return new_st;
+                        }
+                    }
+                }
+
+                // 8. Bump action
+                //  - Substract input speed (XS and YS) to position
+                //  - Modify bump speed and rot rate (XB, YB and Rot_rate) accordingly if relevant
+                //  - If modified, apply this newly computed bump speed to position
                 new_st.xpos -= xs;
                 new_st.ypos -= ys;
                 bool up_side = (collision_mask & up_mask) != 0;
@@ -361,7 +381,7 @@ namespace KuruBot
                     new_st.ypos += new_st.yb;
                 }
 
-                // 8. If mask has collision at one of the 3 lowest bits :
+                // 9. If mask has collision at one of the 3 lowest bits :
                 //  - Modify bump speed (XB and YB) depending on input (if any)
                 //  - If modified, apply this newly computed bump speed to position
                 if ((collision_mask & middle_mask) != 0 && (e.x != Direction1.None || e.y != Direction1.None))
