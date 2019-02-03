@@ -227,7 +227,7 @@ namespace KuruBot
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
                         if (life_data != null)
-                            life_data.Add(cleared_nst, life_score);
+                            life_data[cleared_nst] = life_score;
 
                         // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
                         if (cost <= 0)
