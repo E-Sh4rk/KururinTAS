@@ -1,0 +1,5 @@
+
+at each frame:
+	if invul > 0: invul--
+	if collision && not healing or ending zone:
+		if invul = 0 then life-- ; invul = 20

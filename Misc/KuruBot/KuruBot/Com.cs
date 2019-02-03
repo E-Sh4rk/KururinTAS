@@ -80,26 +80,31 @@ namespace KuruBot
         public static HelirinState parse_hs(string content)
         {
             string[] headers = content.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            uint xpos = Convert.ToUInt32(headers[0]);
-            uint ypos = Convert.ToUInt32(headers[1]);
+            int xpos = Convert.ToInt32(headers[0]);
+            int ypos = Convert.ToInt32(headers[1]);
             int xb = Convert.ToInt32(headers[2]);
             int yb = Convert.ToInt32(headers[3]);
-            ushort rot = Convert.ToUInt16(headers[4]);
+            short rot = Convert.ToInt16(headers[4]);
             short rot_rate = Convert.ToInt16(headers[5]);
             short rot_srate = Convert.ToInt16(headers[6]);
-            return new HelirinState((int)xpos, (int)ypos, xb, yb, (short)rot, rot_rate, rot_srate);
+            sbyte life = Convert.ToSByte(headers[7]);
+            sbyte invul = Convert.ToSByte(headers[8]);
+            return new HelirinState(xpos, ypos, xb, yb, rot, rot_rate, rot_srate, life, invul);
         }
 
         public static string hs_to_string(HelirinState hs)
         {
-            string xpos_str = ((uint)hs.xpos).ToString();
-            string ypos_str = ((uint)hs.ypos).ToString();
+            string xpos_str = hs.xpos.ToString();
+            string ypos_str = hs.ypos.ToString();
             string xb_str = hs.xb.ToString();
             string yb_str = hs.yb.ToString();
-            string rot_str = ((ushort)hs.rot).ToString();
+            string rot_str = hs.rot.ToString();
             string rot_rate_str = hs.rot_rate.ToString();
             string rot_srate_str = hs.rot_srate.ToString();
-            return xpos_str + " " + ypos_str + " " + xb_str + " " + yb_str + " " + rot_str + " " + rot_rate_str + " " + rot_srate_str + "\n";
+            string life_str = hs.life.ToString();
+            string invul_str = hs.invul.ToString();
+            return xpos_str + " " + ypos_str + " " + xb_str + " " + yb_str + " " + rot_str + " " + rot_rate_str + " " + rot_srate_str
+                    + " " + life_str + " " + invul_str + "\n";
         }
 
         public HelirinState GetHelirin()

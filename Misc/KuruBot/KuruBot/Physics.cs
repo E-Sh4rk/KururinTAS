@@ -14,7 +14,7 @@ namespace KuruBot
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
     {
-        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate)
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, sbyte life, sbyte invul)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -23,6 +23,8 @@ namespace KuruBot
             this.rot = rot;
             this.rot_rate = rot_rate;
             this.rot_srate = rot_srate;
+            this.life = life;
+            this.invul = invul;
             gs = GameState.InGame;
         }
 
@@ -46,12 +48,14 @@ namespace KuruBot
                    yb == other.yb &&
                    rot_rate == other.rot_rate &&
                    rot_srate == other.rot_srate &&
+                   invul == other.invul &&
+                   life == other.life &&
                    gs == other.gs;
         }
 
         public override int GetHashCode()
         {
-            var hashCode = -393727226;
+            var hashCode = 2000477822;
             hashCode = hashCode * -1521134295 + xpos.GetHashCode();
             hashCode = hashCode * -1521134295 + ypos.GetHashCode();
             hashCode = hashCode * -1521134295 + rot.GetHashCode();
@@ -59,6 +63,8 @@ namespace KuruBot
             hashCode = hashCode * -1521134295 + yb.GetHashCode();
             hashCode = hashCode * -1521134295 + rot_rate.GetHashCode();
             hashCode = hashCode * -1521134295 + rot_srate.GetHashCode();
+            hashCode = hashCode * -1521134295 + invul.GetHashCode();
+            hashCode = hashCode * -1521134295 + life.GetHashCode();
             hashCode = hashCode * -1521134295 + gs.GetHashCode();
             return hashCode;
         }
@@ -71,8 +77,19 @@ namespace KuruBot
         public short rot_rate;
         public short rot_srate;
 
+        public sbyte life;
+        public sbyte invul;
         public GameState gs;
-        // TODO: Add life and invicibility
+
+        public static bool operator ==(HelirinState state1, HelirinState state2)
+        {
+            return EqualityComparer<HelirinState>.Default.Equals(state1, state2);
+        }
+
+        public static bool operator !=(HelirinState state1, HelirinState state2)
+        {
+            return !(state1 == state2);
+        }
     }
 
     class Physics
@@ -104,18 +121,22 @@ namespace KuruBot
             return new MapControl.GraphicalHelirin(xpix, ypix, angle);
         }
 
-        public const short default_srate = 182;
         public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
         {
             short rot = angle_to_rot_approx(h.angle);
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, default_life, 0);
         }
 
         Map map = null;
         KuruMath math = null;
+
+        // Public constants
+        public const short default_srate = 182;
+        public const sbyte invul_frames = 20;
+        public const sbyte default_life = 3;
 
         // Input speed constants
         const int speed0 = (3 * 0x10000) / 2;

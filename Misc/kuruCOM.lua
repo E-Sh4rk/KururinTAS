@@ -73,14 +73,16 @@ local long_task_in_file = ""
 local long_task_out_file = ""
 
 function get_pos()
-	local xpos = memory.read_u32_le(addr_x_pos, "IWRAM")
-	local ypos = memory.read_u32_le(addr_y_pos, "IWRAM")
-	local xb = memory.read_s32_le(addr_xb, "IWRAM")
-	local yb = memory.read_s32_le(addr_yb, "IWRAM")
-	local rot = memory.read_u16_le(addr_rotation, "IWRAM")
-	local rot_rate = memory.read_s16_le(addr_rotation_rate, "IWRAM")
-	local rot_srate = memory.read_s16_le(addr_rotation_srate, "IWRAM")
-	return tostring(xpos) .. " " .. tostring(ypos) .. " " .. tostring(xb) .. " " .. tostring(yb) .. " " .. tostring(rot) .. " " .. tostring(rot_rate) .. " " .. tostring(rot_srate) .. "\n"
+	local xpos = tostring(memory.read_s32_le(addr_x_pos, "IWRAM"))
+	local ypos = tostring(memory.read_s32_le(addr_y_pos, "IWRAM"))
+	local xb = tostring(memory.read_s32_le(addr_xb, "IWRAM"))
+	local yb = tostring(memory.read_s32_le(addr_yb, "IWRAM"))
+	local rot = tostring(memory.read_s16_le(addr_rotation, "IWRAM"))
+	local rot_rate = tostring(memory.read_s16_le(addr_rotation_rate, "IWRAM"))
+	local rot_srate = tostring(memory.read_s16_le(addr_rotation_srate, "IWRAM"))
+	local lives = tostring(memory.read_s8_le(addr_lives, "IWRAM"))
+	local invul = tostring(memory.read_s8_le(addr_invul, "IWRAM"))
+	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. "\n"
 end
 
 while true
@@ -117,24 +119,27 @@ do
 					if #content >= 2 then
 						-- Init
 						local init = bizstring.split(normalize_str(content[2]), " ")
-						local xpos = tonumber(init[1]) % 0x100000000
-						local ypos = tonumber(init[2]) % 0x100000000
+						local xpos = tonumber(init[1])
+						local ypos = tonumber(init[2])
 						local xb = tonumber(init[3])
 						local yb = tonumber(init[4])
-						local rot = tonumber(init[5]) % 0x10000
+						local rot = tonumber(init[5])
 						local rot_rate = tonumber(init[6])
 						local rot_srate = tonumber(init[7])
-						memory.write_u32_le(addr_x_pos, xpos, "IWRAM")
-						memory.write_u32_le(addr_y_pos, ypos, "IWRAM")
+						local lives = tonumber(init[8])
+						local invul = tonumber(init[9])
+						
+						memory.write_s32_le(addr_x_pos, xpos, "IWRAM")
+						memory.write_s32_le(addr_y_pos, ypos, "IWRAM")
 						memory.write_s32_le(addr_xb, xb, "IWRAM")
 						memory.write_s32_le(addr_yb, yb, "IWRAM")
-						memory.write_u32_le(addr_xs, 0, "IWRAM")
-						memory.write_u32_le(addr_ys, 0, "IWRAM")
-						memory.write_u16_le(addr_rotation, rot, "IWRAM")
+						memory.write_s32_le(addr_xs, 0, "IWRAM")
+						memory.write_s32_le(addr_ys, 0, "IWRAM")
+						memory.write_s16_le(addr_rotation, rot, "IWRAM")
 						memory.write_s16_le(addr_rotation_rate, rot_rate, "IWRAM")
 						memory.write_s16_le(addr_rotation_srate, rot_srate, "IWRAM")
-						memory.write_u8(addr_lives, 3, "IWRAM")
-						memory.write_u8(addr_invul, 0, "IWRAM")
+						memory.write_s8(addr_lives, lives, "IWRAM")
+						memory.write_s8(addr_invul, invul, "IWRAM")
 						-- Play inputs
 						current_play = content
 						current_play_index = 3
