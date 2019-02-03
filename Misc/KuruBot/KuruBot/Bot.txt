@@ -28,7 +28,7 @@ For position, precision could be proportionnal to the "distance to a wall".
 Invicibility time could be rounded to 5 frames.
 
 An optional optimisation could remember the max lives/invicibility reached for each [state - lives/invicibility], and reject a state if it is smaller
-(prevent some go and back that are onlydecreasing the lives).
+(prevent some go and back that are only decreasing the lives).
 
 ----- COST FUNCTION (for A*) -----
 

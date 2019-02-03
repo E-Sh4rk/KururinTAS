@@ -115,8 +115,22 @@ namespace KuruBot
             return st;
         }
 
+        HelirinState ClearLifeDataOfState(HelirinState st)
+        {
+            st = st.ShallowCopy();
+            st.life = 0;
+            st.invul = 0;
+            return st;
+        }
+        int GetLifeScore(HelirinState st)
+        {
+            return (st.life-1) * (Physics.invul_frames + 1) + st.invul;
+        }
+
         float GetCost(int xpos, int ypos, byte life, sbyte invul)
         {
+            if (life == 0)
+                return float.PositiveInfinity;
             float[][,] cm1 = cost_maps[Math.Min(cost_maps.Length-1,life-1)];
             int invul_index = (invul < 0 ? Physics.invul_frames : invul) * cm1.Length / Physics.invul_frames;
             float[,] cm2 = cm1[Math.Min(cm1.Length-1,invul_index)];
@@ -136,10 +150,13 @@ namespace KuruBot
 
         public Action[] Solve (HelirinState init)
         {
-            if (cost_maps == null)
+            if (cost_maps == null || init == null)
                 return null;
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
             Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
+            Dictionary<HelirinState, int> life_data = null;
+            if (!Settings.allow_state_visit_with_less_life && init.invul >= 0)
+                life_data = new Dictionary<HelirinState, int>();
 
             // Init
             HelirinState norm_init = NormaliseState(init);
@@ -147,6 +164,8 @@ namespace KuruBot
             float weight = 0;
             q.Enqueue(norm_init, cost);
             data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
+            if (life_data != null)
+                life_data.Add(ClearLifeDataOfState(norm_init), GetLifeScore(init));
 
             // ProgressBar and preview settings
             float init_cost = cost;
@@ -181,6 +200,19 @@ namespace KuruBot
                     if (nst.gs == GameState.Loose || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
+                    // Already enqueued with more life ?
+                    int life_score = -1;
+                    HelirinState cleared_nst = null;
+                    if (life_data!= null)
+                    {
+                        life_score = GetLifeScore(nst);
+                        cleared_nst = ClearLifeDataOfState(norm_nst);
+                        int old_life_score = -1;
+                        life_data.TryGetValue(cleared_nst, out old_life_score);
+                        if (old_life_score >= life_score)
+                            continue;
+                    }
+
                     // Already visited ?
                     StateData old = null;
                     data.TryGetValue(norm_nst, out old);
@@ -194,6 +226,8 @@ namespace KuruBot
                     {
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
+                        if (life_data != null)
+                            life_data.Add(cleared_nst, life_score);
 
                         // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
                         if (cost <= 0)
