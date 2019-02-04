@@ -56,7 +56,7 @@ namespace KuruBot
                         for (int j = 0; j < current_cm.Length; j++)
                         {
                             int current_invul = min_invul + j * Physics.invul_frames / current_cm.Length;
-                            current_cm[j] = f.ComputeCostMap(current_invul, i > 0 ? Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
+                            current_cm[j] = f.ComputeCostMap(current_invul, current_invul >= Settings.allow_complete_wall_clip_threshold ? Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
                             current_op++;
                             parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
                         }
@@ -67,12 +67,13 @@ namespace KuruBot
             }
         }
 
-        public float[,] GetPreviewCostMap()
+        public float[,] GetPreviewCostMap(int life, int nb)
         {
-            if (cost_maps == null)
+            if (cost_maps == null || life < 1 || nb < 1)
                 return null;
-            float[][,] cost_map_full_life = cost_maps[cost_maps.Length - 1];
-            return cost_map_full_life[cost_map_full_life.Length-1];
+            
+            float[][,] cm = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
+            return cm[Math.Min(cm.Length - 1, nb - 1)];
         }
 
         // /!\ For efficiency reason, we use a class instead of a struct.
@@ -169,7 +170,7 @@ namespace KuruBot
 
             // ProgressBar and preview settings
             float init_cost = cost;
-            bool[,] preview = new bool[GetPreviewCostMap().GetLength(0), GetPreviewCostMap().GetLength(1)];
+            bool[,] preview = new bool[GetPreviewCostMap(1,1).GetLength(0), GetPreviewCostMap(1,1).GetLength(1)];
             int since_last_update = 0;
 
             // A*

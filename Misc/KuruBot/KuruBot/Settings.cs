@@ -21,7 +21,8 @@ namespace KuruBot
 
         // ---------- SOLVER SETTINGS ----------
 
-        public static byte nb_cost_maps_per_life = 1;
+        public static byte nb_cost_maps_per_life = 2;
+        public static byte allow_complete_wall_clip_threshold = 10;
 
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
@@ -74,6 +75,7 @@ namespace KuruBot
                 wall_clip_end_dist = parseFloat(data, "Flooding", "wall_clip_end_dist", wall_clip_end_dist);
 
                 nb_cost_maps_per_life = (byte)parseInt(data, "Solver", "nb_cost_maps_per_life", nb_cost_maps_per_life);
+                allow_complete_wall_clip_threshold = (byte)parseInt(data, "Solver", "allow_complete_wall_clip_threshold", allow_complete_wall_clip_threshold);
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
                 additional_reduction_in_wall = parseInt(data, "Solver", "additional_reduction_in_wall", additional_reduction_in_wall);
@@ -105,6 +107,7 @@ namespace KuruBot
                 data["Flooding"]["wall_clip_end_dist"] = wall_clip_end_dist.ToString();
 
                 data["Solver"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
+                data["Solver"]["allow_complete_wall_clip_threshold"] = allow_complete_wall_clip_threshold.ToString();
                 data["Solver"]["pos_reduction"] = pos_reduction.ToString();
                 data["Solver"]["bump_reduction"] = bump_reduction.ToString();
                 data["Solver"]["additional_reduction_in_wall"] = additional_reduction_in_wall.ToString();

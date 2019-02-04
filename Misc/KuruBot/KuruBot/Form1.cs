@@ -382,6 +382,29 @@ namespace KuruBot
             catch { }
         }
 
+        int cm_preview_l = Physics.full_life;
+        int cm_preview_i = Settings.nb_cost_maps_per_life;
+        private void switchCostMap_Click(object sender, EventArgs e)
+        {
+            if (b != null)
+            {
+                cm_preview_l--;
+                if (cm_preview_l < 1)
+                    cm_preview_l = Physics.full_life;
+                mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i));
+            }
+        }
+        private void switchCostMap2_Click(object sender, EventArgs e)
+        {
+            if (b != null)
+            {
+                cm_preview_i--;
+                if (cm_preview_i < 1)
+                    cm_preview_i = Settings.nb_cost_maps_per_life;
+                mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l, cm_preview_i));
+            }
+        }
+
         private void computeCM(bool no_wc)
         {
             if (b != null)
@@ -389,7 +412,7 @@ namespace KuruBot
                 thread = new Thread(delegate () {
                     TaskStarted();
                     b.ComputeNewCostMaps(no_wc);
-                    this.UIThread(() => mapc.SetCostMap(b.GetPreviewCostMap()));
+                    this.UIThread(() => mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i)));
                     TaskEnded();
                 });
                 thread.Start();
