@@ -385,7 +385,7 @@ namespace KuruBot
         }
 
         int cm_preview_l = Physics.full_life;
-        int cm_preview_i = Settings.nb_cost_maps_per_life;
+        int cm_preview_i = 1;
         private void switchCostMap_Click(object sender, EventArgs e)
         {
             if (b != null)
