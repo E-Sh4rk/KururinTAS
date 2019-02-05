@@ -70,13 +70,14 @@
             this.computeCostMapNoWC = new System.Windows.Forms.Button();
             this.switchCostMap = new System.Windows.Forms.Button();
             this.switchCostMap2 = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             this.SuspendLayout();
             // 
             // connect
             // 
             this.connect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.connect.Location = new System.Drawing.Point(12, 559);
+            this.connect.Location = new System.Drawing.Point(12, 582);
             this.connect.Name = "connect";
             this.connect.Size = new System.Drawing.Size(75, 23);
             this.connect.TabIndex = 0;
@@ -87,9 +88,9 @@
             // dlMap
             // 
             this.dlMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dlMap.Location = new System.Drawing.Point(93, 559);
+            this.dlMap.Location = new System.Drawing.Point(93, 582);
             this.dlMap.Name = "dlMap";
-            this.dlMap.Size = new System.Drawing.Size(103, 23);
+            this.dlMap.Size = new System.Drawing.Size(108, 23);
             this.dlMap.TabIndex = 1;
             this.dlMap.Text = "Download Map";
             this.dlMap.UseVisualStyleBackColor = true;
@@ -100,9 +101,9 @@
             this.main_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.main_panel.Location = new System.Drawing.Point(12, 12);
+            this.main_panel.Location = new System.Drawing.Point(12, 30);
             this.main_panel.Name = "main_panel";
-            this.main_panel.Size = new System.Drawing.Size(791, 404);
+            this.main_panel.Size = new System.Drawing.Size(838, 409);
             this.main_panel.TabIndex = 2;
             // 
             // showGMap
@@ -111,7 +112,7 @@
             this.showGMap.AutoSize = true;
             this.showGMap.Checked = true;
             this.showGMap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showGMap.Location = new System.Drawing.Point(671, 559);
+            this.showGMap.Location = new System.Drawing.Point(728, 586);
             this.showGMap.Name = "showGMap";
             this.showGMap.Size = new System.Drawing.Size(122, 17);
             this.showGMap.TabIndex = 3;
@@ -123,7 +124,7 @@
             // 
             this.showPMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showPMap.AutoSize = true;
-            this.showPMap.Location = new System.Drawing.Point(548, 559);
+            this.showPMap.Location = new System.Drawing.Point(605, 586);
             this.showPMap.Name = "showPMap";
             this.showPMap.Size = new System.Drawing.Size(117, 17);
             this.showPMap.TabIndex = 4;
@@ -139,9 +140,9 @@
             // showPosition
             // 
             this.showPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.showPosition.Location = new System.Drawing.Point(202, 559);
+            this.showPosition.Location = new System.Drawing.Point(207, 582);
             this.showPosition.Name = "showPosition";
-            this.showPosition.Size = new System.Drawing.Size(103, 23);
+            this.showPosition.Size = new System.Drawing.Size(121, 23);
             this.showPosition.TabIndex = 5;
             this.showPosition.Text = "Download Position";
             this.showPosition.UseVisualStyleBackColor = true;
@@ -151,7 +152,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 522);
+            this.label1.Location = new System.Drawing.Point(12, 553);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(232, 13);
             this.label1.TabIndex = 6;
@@ -160,7 +161,7 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(587, 517);
+            this.enterInputString.Location = new System.Drawing.Point(521, 548);
             this.enterInputString.Name = "enterInputString";
             this.enterInputString.Size = new System.Drawing.Size(29, 23);
             this.enterInputString.TabIndex = 7;
@@ -171,9 +172,9 @@
             // downloadInputs
             // 
             this.downloadInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.downloadInputs.Location = new System.Drawing.Point(311, 559);
+            this.downloadInputs.Location = new System.Drawing.Point(334, 582);
             this.downloadInputs.Name = "downloadInputs";
-            this.downloadInputs.Size = new System.Drawing.Size(123, 23);
+            this.downloadInputs.Size = new System.Drawing.Size(124, 23);
             this.downloadInputs.TabIndex = 8;
             this.downloadInputs.Text = "Download next inputs";
             this.downloadInputs.UseVisualStyleBackColor = true;
@@ -186,31 +187,31 @@
             // backupPos
             // 
             this.backupPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.backupPos.Location = new System.Drawing.Point(480, 517);
+            this.backupPos.Location = new System.Drawing.Point(392, 548);
             this.backupPos.Name = "backupPos";
             this.backupPos.Size = new System.Drawing.Size(31, 23);
             this.backupPos.TabIndex = 9;
-            this.backupPos.Text = "BP";
+            this.backupPos.Text = "BC";
             this.backupPos.UseVisualStyleBackColor = true;
             this.backupPos.Click += new System.EventHandler(this.bkpPos_Click);
             // 
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(443, 517);
+            this.restorePos.Location = new System.Drawing.Point(355, 548);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
-            this.restorePos.Text = "RP";
+            this.restorePos.Text = "RC";
             this.restorePos.UseVisualStyleBackColor = true;
             this.restorePos.Click += new System.EventHandler(this.restorePos_Click);
             // 
             // convertInputs
             // 
             this.convertInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.convertInputs.Location = new System.Drawing.Point(671, 517);
+            this.convertInputs.Location = new System.Drawing.Point(605, 548);
             this.convertInputs.Name = "convertInputs";
-            this.convertInputs.Size = new System.Drawing.Size(64, 23);
+            this.convertInputs.Size = new System.Drawing.Size(71, 23);
             this.convertInputs.TabIndex = 11;
             this.convertInputs.Text = "From bk2";
             this.convertInputs.UseVisualStyleBackColor = true;
@@ -219,9 +220,9 @@
             // sendLastInputs
             // 
             this.sendLastInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.sendLastInputs.Location = new System.Drawing.Point(440, 559);
+            this.sendLastInputs.Location = new System.Drawing.Point(464, 582);
             this.sendLastInputs.Name = "sendLastInputs";
-            this.sendLastInputs.Size = new System.Drawing.Size(99, 23);
+            this.sendLastInputs.Size = new System.Drawing.Size(123, 23);
             this.sendLastInputs.TabIndex = 12;
             this.sendLastInputs.Text = "Send last inputs";
             this.sendLastInputs.UseVisualStyleBackColor = true;
@@ -230,7 +231,7 @@
             // logLastMoves
             // 
             this.logLastMoves.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.logLastMoves.Location = new System.Drawing.Point(260, 517);
+            this.logLastMoves.Location = new System.Drawing.Point(764, 548);
             this.logLastMoves.Name = "logLastMoves";
             this.logLastMoves.Size = new System.Drawing.Size(86, 23);
             this.logLastMoves.TabIndex = 13;
@@ -245,7 +246,7 @@
             // saveInputs
             // 
             this.saveInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveInputs.Location = new System.Drawing.Point(622, 517);
+            this.saveInputs.Location = new System.Drawing.Point(556, 548);
             this.saveInputs.Name = "saveInputs";
             this.saveInputs.Size = new System.Drawing.Size(31, 23);
             this.saveInputs.TabIndex = 14;
@@ -256,29 +257,30 @@
             // loadPos
             // 
             this.loadPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadPos.Location = new System.Drawing.Point(517, 517);
+            this.loadPos.Location = new System.Drawing.Point(429, 548);
             this.loadPos.Name = "loadPos";
             this.loadPos.Size = new System.Drawing.Size(29, 23);
             this.loadPos.TabIndex = 15;
-            this.loadPos.Text = "LP";
+            this.loadPos.Text = "LC";
             this.loadPos.UseVisualStyleBackColor = true;
             this.loadPos.Click += new System.EventHandler(this.loadPos_Click);
             // 
             // savePos
             // 
             this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(552, 517);
+            this.savePos.Location = new System.Drawing.Point(464, 548);
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(29, 23);
             this.savePos.TabIndex = 16;
-            this.savePos.Text = "SP";
+            this.savePos.Text = "SC";
             this.savePos.UseVisualStyleBackColor = true;
             this.savePos.Click += new System.EventHandler(this.savePos_Click);
             // 
             // loadMap
             // 
+            this.loadMap.AccessibleName = "";
             this.loadMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadMap.Location = new System.Drawing.Point(369, 517);
+            this.loadMap.Location = new System.Drawing.Point(260, 548);
             this.loadMap.Name = "loadMap";
             this.loadMap.Size = new System.Drawing.Size(31, 23);
             this.loadMap.TabIndex = 17;
@@ -289,7 +291,7 @@
             // saveMap
             // 
             this.saveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveMap.Location = new System.Drawing.Point(406, 517);
+            this.saveMap.Location = new System.Drawing.Point(297, 548);
             this.saveMap.Name = "saveMap";
             this.saveMap.Size = new System.Drawing.Size(31, 23);
             this.saveMap.TabIndex = 18;
@@ -301,7 +303,7 @@
             // 
             this.showCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showCostMap.AutoSize = true;
-            this.showCostMap.Location = new System.Drawing.Point(671, 484);
+            this.showCostMap.Location = new System.Drawing.Point(709, 509);
             this.showCostMap.Name = "showCostMap";
             this.showCostMap.Size = new System.Drawing.Size(99, 17);
             this.showCostMap.TabIndex = 19;
@@ -312,40 +314,40 @@
             // buildSolver
             // 
             this.buildSolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolver.Location = new System.Drawing.Point(106, 480);
+            this.buildSolver.Location = new System.Drawing.Point(106, 505);
             this.buildSolver.Name = "buildSolver";
-            this.buildSolver.Size = new System.Drawing.Size(138, 23);
+            this.buildSolver.Size = new System.Drawing.Size(148, 23);
             this.buildSolver.TabIndex = 20;
-            this.buildSolver.Text = "Build solver (legal ending)";
+            this.buildSolver.Text = "1. Build solver (legal ending)";
             this.buildSolver.UseVisualStyleBackColor = true;
             this.buildSolver.Click += new System.EventHandler(this.buildSolver_Click);
             // 
             // computeCostMap
             // 
             this.computeCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMap.Location = new System.Drawing.Point(394, 480);
+            this.computeCostMap.Location = new System.Drawing.Point(413, 505);
             this.computeCostMap.Name = "computeCostMap";
             this.computeCostMap.Size = new System.Drawing.Size(80, 23);
             this.computeCostMap.TabIndex = 21;
-            this.computeCostMap.Text = "Cost map";
+            this.computeCostMap.Text = "2. Cost map";
             this.computeCostMap.UseVisualStyleBackColor = true;
             this.computeCostMap.Click += new System.EventHandler(this.computeCostMap_Click);
             // 
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(615, 480);
+            this.solve.Location = new System.Drawing.Point(644, 505);
             this.solve.Name = "solve";
-            this.solve.Size = new System.Drawing.Size(48, 23);
+            this.solve.Size = new System.Drawing.Size(59, 23);
             this.solve.TabIndex = 22;
-            this.solve.Text = "Solve";
+            this.solve.Text = "4. Solve";
             this.solve.UseVisualStyleBackColor = true;
             this.solve.Click += new System.EventHandler(this.solve_Click);
             // 
             // convertInputsToBk2
             // 
             this.convertInputsToBk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.convertInputsToBk2.Location = new System.Drawing.Point(739, 517);
+            this.convertInputsToBk2.Location = new System.Drawing.Point(682, 548);
             this.convertInputsToBk2.Name = "convertInputsToBk2";
             this.convertInputsToBk2.Size = new System.Drawing.Size(64, 23);
             this.convertInputsToBk2.TabIndex = 23;
@@ -356,11 +358,11 @@
             // buildSolverAny
             // 
             this.buildSolverAny.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buildSolverAny.Location = new System.Drawing.Point(250, 480);
+            this.buildSolverAny.Location = new System.Drawing.Point(260, 505);
             this.buildSolverAny.Name = "buildSolverAny";
-            this.buildSolverAny.Size = new System.Drawing.Size(138, 23);
+            this.buildSolverAny.Size = new System.Drawing.Size(147, 23);
             this.buildSolverAny.TabIndex = 24;
-            this.buildSolverAny.Text = "Build solver (any ending)";
+            this.buildSolverAny.Text = "1. Build solver (any ending)";
             this.buildSolverAny.UseVisualStyleBackColor = true;
             this.buildSolverAny.Click += new System.EventHandler(this.buildSolverAny_Click);
             // 
@@ -368,16 +370,16 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(187, 422);
+            this.progressBar.Location = new System.Drawing.Point(106, 445);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(616, 23);
+            this.progressBar.Size = new System.Drawing.Size(744, 23);
             this.progressBar.TabIndex = 25;
             // 
             // abort
             // 
             this.abort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.abort.Enabled = false;
-            this.abort.Location = new System.Drawing.Point(12, 451);
+            this.abort.Location = new System.Drawing.Point(12, 445);
             this.abort.Name = "abort";
             this.abort.Size = new System.Drawing.Size(88, 23);
             this.abort.TabIndex = 26;
@@ -390,40 +392,40 @@
             this.drawOnMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.drawOnMap.Appearance = System.Windows.Forms.Appearance.Button;
             this.drawOnMap.AutoSize = true;
-            this.drawOnMap.Location = new System.Drawing.Point(250, 451);
+            this.drawOnMap.Location = new System.Drawing.Point(260, 476);
             this.drawOnMap.Name = "drawOnMap";
-            this.drawOnMap.Size = new System.Drawing.Size(42, 23);
+            this.drawOnMap.Size = new System.Drawing.Size(54, 23);
             this.drawOnMap.TabIndex = 27;
-            this.drawOnMap.Text = "Draw";
+            this.drawOnMap.Text = "3. Draw";
             this.drawOnMap.UseVisualStyleBackColor = true;
             this.drawOnMap.CheckedChanged += new System.EventHandler(this.drawOnMap_CheckedChanged);
             // 
             // setConstraints
             // 
             this.setConstraints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.setConstraints.Location = new System.Drawing.Point(394, 451);
+            this.setConstraints.Location = new System.Drawing.Point(413, 476);
             this.setConstraints.Name = "setConstraints";
-            this.setConstraints.Size = new System.Drawing.Size(215, 23);
+            this.setConstraints.Size = new System.Drawing.Size(225, 23);
             this.setConstraints.TabIndex = 28;
-            this.setConstraints.Text = "Set constraints to current drawing";
+            this.setConstraints.Text = "3. Set constraints to current drawing";
             this.setConstraints.UseVisualStyleBackColor = true;
             this.setConstraints.Click += new System.EventHandler(this.setConstraints_Click);
             // 
             // setTarget
             // 
             this.setTarget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.setTarget.Location = new System.Drawing.Point(615, 451);
+            this.setTarget.Location = new System.Drawing.Point(644, 476);
             this.setTarget.Name = "setTarget";
-            this.setTarget.Size = new System.Drawing.Size(188, 23);
+            this.setTarget.Size = new System.Drawing.Size(206, 23);
             this.setTarget.TabIndex = 29;
-            this.setTarget.Text = "Set target to current drawing";
+            this.setTarget.Text = "3. Set target to current drawing";
             this.setTarget.UseVisualStyleBackColor = true;
             this.setTarget.Click += new System.EventHandler(this.setTarget_Click);
             // 
             // destroySolver
             // 
             this.destroySolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.destroySolver.Location = new System.Drawing.Point(12, 480);
+            this.destroySolver.Location = new System.Drawing.Point(12, 505);
             this.destroySolver.Name = "destroySolver";
             this.destroySolver.Size = new System.Drawing.Size(88, 23);
             this.destroySolver.TabIndex = 30;
@@ -434,14 +436,14 @@
             // brushRadius
             // 
             this.brushRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.brushRadius.Location = new System.Drawing.Point(298, 454);
+            this.brushRadius.Location = new System.Drawing.Point(330, 479);
             this.brushRadius.Maximum = new decimal(new int[] {
             50,
             0,
             0,
             0});
             this.brushRadius.Name = "brushRadius";
-            this.brushRadius.Size = new System.Drawing.Size(90, 20);
+            this.brushRadius.Size = new System.Drawing.Size(77, 20);
             this.brushRadius.TabIndex = 31;
             this.brushRadius.Value = new decimal(new int[] {
             8,
@@ -453,7 +455,7 @@
             // loadConfig
             // 
             this.loadConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.loadConfig.Location = new System.Drawing.Point(12, 422);
+            this.loadConfig.Location = new System.Drawing.Point(12, 476);
             this.loadConfig.Name = "loadConfig";
             this.loadConfig.Size = new System.Drawing.Size(88, 23);
             this.loadConfig.TabIndex = 32;
@@ -464,7 +466,7 @@
             // saveConfig
             // 
             this.saveConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.saveConfig.Location = new System.Drawing.Point(106, 422);
+            this.saveConfig.Location = new System.Drawing.Point(106, 476);
             this.saveConfig.Name = "saveConfig";
             this.saveConfig.Size = new System.Drawing.Size(75, 23);
             this.saveConfig.TabIndex = 33;
@@ -484,18 +486,18 @@
             // computeCostMapNoWC
             // 
             this.computeCostMapNoWC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMapNoWC.Location = new System.Drawing.Point(480, 480);
+            this.computeCostMapNoWC.Location = new System.Drawing.Point(499, 505);
             this.computeCostMapNoWC.Name = "computeCostMapNoWC";
-            this.computeCostMapNoWC.Size = new System.Drawing.Size(129, 23);
+            this.computeCostMapNoWC.Size = new System.Drawing.Size(139, 23);
             this.computeCostMapNoWC.TabIndex = 34;
-            this.computeCostMapNoWC.Text = "Cost map (no wall clip)";
+            this.computeCostMapNoWC.Text = "2. Cost map (no wall clip)";
             this.computeCostMapNoWC.UseVisualStyleBackColor = true;
             this.computeCostMapNoWC.Click += new System.EventHandler(this.computeCostMapNoWC_Click);
             // 
             // switchCostMap
             // 
             this.switchCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchCostMap.Location = new System.Drawing.Point(763, 480);
+            this.switchCostMap.Location = new System.Drawing.Point(805, 505);
             this.switchCostMap.Name = "switchCostMap";
             this.switchCostMap.Size = new System.Drawing.Size(20, 23);
             this.switchCostMap.TabIndex = 35;
@@ -506,7 +508,7 @@
             // switchCostMap2
             // 
             this.switchCostMap2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchCostMap2.Location = new System.Drawing.Point(783, 480);
+            this.switchCostMap2.Location = new System.Drawing.Point(830, 505);
             this.switchCostMap2.Name = "switchCostMap2";
             this.switchCostMap2.Size = new System.Drawing.Size(20, 23);
             this.switchCostMap2.TabIndex = 36;
@@ -514,11 +516,24 @@
             this.switchCostMap2.UseVisualStyleBackColor = true;
             this.switchCostMap2.Click += new System.EventHandler(this.switchCostMap2_Click);
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Location = new System.Drawing.Point(12, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(838, 18);
+            this.label2.TabIndex = 37;
+            this.label2.Text = "KuruBot - Made by E-Sh4rk - See github page for updates: https://github.com/E-Sh4" +
+    "rk/KururinTAS";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(815, 594);
+            this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.switchCostMap2);
             this.Controls.Add(this.switchCostMap);
             this.Controls.Add(this.computeCostMapNoWC);
@@ -557,7 +572,7 @@
             this.Controls.Add(this.dlMap);
             this.Controls.Add(this.connect);
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(831, 39);
+            this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
             this.Text = "KuruBot 1.4b";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -612,6 +627,7 @@
         private System.Windows.Forms.Button computeCostMapNoWC;
         private System.Windows.Forms.Button switchCostMap;
         private System.Windows.Forms.Button switchCostMap2;
+        private System.Windows.Forms.Label label2;
     }
 }
 
