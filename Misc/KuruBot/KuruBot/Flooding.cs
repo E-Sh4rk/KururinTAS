@@ -214,7 +214,7 @@ namespace KuruBot
             return res;
         }
 
-        float[,] ComputeCostMap(float gwb_multiplier, float wgm_multiplier, bool no_wall_clip)
+        float[,] ComputeCostMap(float gwb_multiplier, float allow_wall_ground_dist, bool no_wall_clip)
         {
             // Simple Dijkstra algorithm with some extra parameters.
             // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
@@ -222,7 +222,7 @@ namespace KuruBot
 
             float gwb = Settings.ground_wall_bonus * gwb_multiplier;
             float gwb_md = Settings.ground_wall_bonus_min_dist * gwb_multiplier;
-            float wgm = Settings.wall_ground_malus * wgm_multiplier;
+            float wgm_per_px = Settings.wall_ground_malus / Settings.wall_ground_malus_dist;
 
             int width = PixelEnd.x - PixelStart.x + 1;
             int height = PixelEnd.y - PixelStart.y + 1;
@@ -260,7 +260,8 @@ namespace KuruBot
                 Pixel p = q.Dequeue();
                 float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
                 bool from_wall = m.IsPixelInCollision(p.x, p.y);
-                bool from_near_wall = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x] <= Settings.wall_clip_end_dist;
+                float from_wall_dist = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x];
+                bool from_wc_allowed_zone = from_wall_dist <= allow_wall_ground_dist;
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
@@ -272,18 +273,23 @@ namespace KuruBot
                         continue;
 
                     bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
-                    bool to_near_wall = dist_to_wall[npy, npx] <= Settings.wall_clip_end_dist;
+                    float to_wall_dist = dist_to_wall[npy, npx];
+                    bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
+
+                    float wgm_coef = Math.Min(to_wall_dist, Settings.wall_ground_malus_dist) - from_wall_dist;
+                    if (wgm_coef < 0)
+                        wgm_coef = 0;
 
                     if (no_wall_clip && to_wall)
                         continue;
 
                     float nw = weight;
-                    if (from_near_wall && !to_near_wall)
-                        nw += npd.dist / Settings.ground_speed + wgm;
+                    if (from_wc_allowed_zone && !to_wc_allowed_zone)
+                        nw = float.PositiveInfinity;
                     else if (from_wall && to_wall)
                         nw += npd.dist / Settings.wall_speed;
                     else
-                        nw += npd.dist / Settings.ground_speed;
+                        nw += npd.dist / Settings.ground_speed + wgm_coef*wgm_per_px;
 
                     float ow = res[npy, npx];
                     if (nw < ow)
@@ -326,14 +332,16 @@ namespace KuruBot
             Allow
         }
 
-        public float[,] ComputeCostMap(float gwb_multiplier, WallClipSetting wcs)
+        public float[,] ComputeCostMap(int total_invul_frames, WallClipSetting wcs)
         {
             if (wcs == WallClipSetting.NoWallClip)
                 return ComputeCostMap(0, 0, true);
             else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(gwb_multiplier, 1, false);
+                return ComputeCostMap(total_invul_frames, float.PositiveInfinity, false);
             else
-                return ComputeCostMap(gwb_multiplier, float.PositiveInfinity, false);
+                return ComputeCostMap(total_invul_frames, total_invul_frames >= Settings.complete_wall_clip_duration
+                    ? Settings.complete_wall_clip_max_dist
+                    : Settings.complete_wall_clip_max_dist * total_invul_frames / Settings.complete_wall_clip_duration, false);
         }
 
         public static float GetMaxWeightExceptInfinity(float[,] map)
