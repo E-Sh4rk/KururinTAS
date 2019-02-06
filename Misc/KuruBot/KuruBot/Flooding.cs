@@ -284,10 +284,14 @@ namespace KuruBot
                     if (no_wall_clip && to_wall)
                         continue;
 
+                    if (Settings.cwc_max_dist_zero_in_legal_zone && allow_wall_ground_dist < float.PositiveInfinity && to_legal_zone)
+                    {
+                        from_wc_allowed_zone = from_wall;
+                        to_wc_allowed_zone = to_wall;
+                    }
+
                     float nw = weight;
-                    if (from_wc_allowed_zone && !to_wc_allowed_zone && !to_legal_zone)
-                        nw = float.PositiveInfinity;
-                    else if (allow_wall_ground_dist < float.PositiveInfinity && from_wall && to_legal_zone) // For legal zones, we use allow_wall_ground_dist=0
+                    if (from_wc_allowed_zone && !to_wc_allowed_zone)
                         nw = float.PositiveInfinity;
                     else if (from_wall && to_wall)
                         nw += npd.dist / Settings.wall_speed;

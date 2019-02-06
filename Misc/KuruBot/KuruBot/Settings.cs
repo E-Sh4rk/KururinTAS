@@ -20,11 +20,12 @@ namespace KuruBot
         public static float wall_ground_malus_dist = 6; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
         public static float complete_wall_clip_max_dist = 25; // Distance of a wall at which the the helirin is not considered performing a wall clip.
         public static int complete_wall_clip_duration = 10; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
+        public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
 
         // ---------- SOLVER SETTINGS ----------
 
         public static byte nb_cost_maps_per_life = 2;
-        public static bool allow_complete_wall_clip_with_one_heart = false; // If set to false, can generate some weird costs near narrow OOB places.
+        public static bool allow_complete_wall_clip_with_one_heart = false; // If set to false, can generate some infinite cost in narrow places.
 
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
@@ -77,6 +78,7 @@ namespace KuruBot
                 wall_ground_malus_dist = parseFloat(data, "Flooding", "wall_ground_malus_dist", wall_ground_malus_dist);
                 complete_wall_clip_max_dist = parseFloat(data, "Flooding", "complete_wall_clip_max_dist", complete_wall_clip_max_dist);
                 complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
+                cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
 
                 nb_cost_maps_per_life = (byte)parseInt(data, "Solver", "nb_cost_maps_per_life", nb_cost_maps_per_life);
                 allow_complete_wall_clip_with_one_heart = parseBool(data, "Solver", "allow_complete_wall_clip_with_one_heart", allow_complete_wall_clip_with_one_heart);
@@ -111,6 +113,7 @@ namespace KuruBot
                 data["Flooding"]["wall_ground_malus_dist"] = wall_ground_malus_dist.ToString();
                 data["Flooding"]["complete_wall_clip_max_dist"] = complete_wall_clip_max_dist.ToString();
                 data["Flooding"]["complete_wall_clip_duration"] = complete_wall_clip_duration.ToString();
+                data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = cwc_max_dist_zero_in_legal_zone.ToString();
 
                 data["Solver"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
                 data["Solver"]["allow_complete_wall_clip_with_one_heart"] = allow_complete_wall_clip_with_one_heart.ToString();
