@@ -127,7 +127,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, full_life, 0);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0);
         }
 
         Map map = null;
@@ -136,7 +136,7 @@ namespace KuruBot
         // Public constants
         public const short default_srate = 182;
         public const sbyte invul_frames = 20;
-        public const byte full_life = 3;
+        //public const byte full_life = 3; // Moved to Settings!
 
         // Input speed constants
         const int speed0 = (3 * 0x10000) / 2;
@@ -247,7 +247,7 @@ namespace KuruBot
             if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
             {
                 safe_zone = true;
-                st.life = full_life;
+                st.life = Settings.full_life;
             }
             if (zone == Map.Zone.Ending)
             {

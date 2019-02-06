@@ -41,15 +41,15 @@ namespace KuruBot
             }
             else
             {
-                int total_op = 1 + (Physics.full_life - 1) * Settings.nb_cost_maps_per_life;
-                cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Physics.full_life : 1][][,];
-                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Physics.full_life-1), Flooding.WallClipSetting.Allow) };
+                int total_op = 1 + (Settings.full_life - 1) * Settings.nb_cost_maps_per_life;
+                cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Settings.full_life : 1][][,];
+                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Settings.full_life-1), Flooding.WallClipSetting.Allow) };
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
 
                 if (Settings.nb_cost_maps_per_life > 0)
                 {
                     int current_op = 1;
-                    for (int i = 0; i < Physics.full_life - 1; i++)
+                    for (int i = 0; i < Settings.full_life - 1; i++)
                     {
                         float[][,] current_cm = new float[Settings.nb_cost_maps_per_life][,];
                         int min_invul = i * Physics.invul_frames;

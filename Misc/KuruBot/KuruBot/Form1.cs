@@ -384,7 +384,7 @@ namespace KuruBot
             catch { }
         }
 
-        int cm_preview_l = Physics.full_life;
+        int cm_preview_l = Settings.full_life;
         int cm_preview_i = 1;
         private void switchCostMap_Click(object sender, EventArgs e)
         {
@@ -392,7 +392,7 @@ namespace KuruBot
             {
                 cm_preview_l--;
                 if (cm_preview_l < 1)
-                    cm_preview_l = Physics.full_life;
+                    cm_preview_l = Settings.full_life;
                 mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i));
             }
         }

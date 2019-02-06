@@ -22,6 +22,10 @@ namespace KuruBot
         public static int complete_wall_clip_duration = 10; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
 
+        // ---------- GAME SETTINGS ----------
+
+        public static byte full_life = 3;
+
         // ---------- SOLVER SETTINGS ----------
 
         public static byte nb_cost_maps_per_life = 2;
@@ -70,6 +74,8 @@ namespace KuruBot
                 FileIniDataParser parser = new FileIniDataParser();
                 IniData data = parser.ReadFile(filename);
 
+                full_life = (byte)parseInt(data, "Game", "full_life", full_life);
+
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
                 ground_wall_bonus = parseFloat(data, "Flooding", "ground_wall_bonus", ground_wall_bonus);
@@ -101,9 +107,12 @@ namespace KuruBot
             try
             {
                 SectionDataCollection sections = new SectionDataCollection();
+                sections.AddSection("Game");
                 sections.AddSection("Flooding");
                 sections.AddSection("Solver");
                 IniData data = new IniData(sections);
+
+                data["Game"]["full_life"] = full_life.ToString();
 
                 data["Flooding"]["ground_speed"] = ground_speed.ToString();
                 data["Flooding"]["wall_speed"] = wall_speed.ToString();
