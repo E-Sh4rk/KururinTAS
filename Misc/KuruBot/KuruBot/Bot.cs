@@ -43,7 +43,9 @@ namespace KuruBot
             {
                 int total_op = 1 + (Settings.full_life - 1) * Settings.nb_cost_maps_per_life;
                 cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Settings.full_life : 1][][,];
-                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Settings.full_life-1), Flooding.WallClipSetting.Allow) };
+                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Settings.full_life-1),
+                    (Settings.full_life-1) > 0 || Settings.allow_complete_wall_clip_with_one_heart ?
+                    Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip) };
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
 
                 if (Settings.nb_cost_maps_per_life > 0)

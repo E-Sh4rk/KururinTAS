@@ -574,7 +574,7 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.4";
+            this.Text = "KuruBot 1.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();

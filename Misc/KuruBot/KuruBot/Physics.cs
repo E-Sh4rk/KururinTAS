@@ -247,13 +247,11 @@ namespace KuruBot
             if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
             {
                 safe_zone = true;
-                st.life = Settings.full_life;
+                if (st.life < Settings.full_life)
+                    st.life = Settings.full_life;
             }
             if (zone == Map.Zone.Ending)
-            {
                 st.gs = GameState.Win;
-                return st;
-            }
 
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
@@ -345,12 +343,6 @@ namespace KuruBot
                     {
                         new_st.invul = invul_frames;
                         new_st.life--;
-
-                        if (new_st.life == 0)
-                        {
-                            new_st.gs = GameState.Loose;
-                            return new_st;
-                        }
                     }
                 }
 
@@ -395,6 +387,10 @@ namespace KuruBot
                     new_st.ypos += new_st.yb;
                 }
             }
+
+            // Loose?
+            if (new_st.life == 0 && new_st.gs != GameState.Win)
+                new_st.gs = GameState.Loose;
 
             return new_st;
         }
