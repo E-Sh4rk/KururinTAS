@@ -17,14 +17,14 @@ namespace KuruBot
         public static float ground_wall_bonus = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
         public static float ground_wall_bonus_min_dist = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
         public static float wall_ground_malus = ground_speed * 10; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
-        public static float wall_ground_malus_dist = 8; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
-        public static float complete_wall_clip_max_dist = 20; // Distance of a wall at which the the helirin is not considered performing a wall clip.
-        public static int complete_wall_clip_duration = 10;
+        public static float wall_ground_malus_dist = 6; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
+        public static float complete_wall_clip_max_dist = 25; // Distance of a wall at which the the helirin is not considered performing a wall clip.
+        public static int complete_wall_clip_duration = 10; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
 
         // ---------- SOLVER SETTINGS ----------
 
         public static byte nb_cost_maps_per_life = 2;
-        public static bool allow_complete_wall_clip_with_one_heart = false;
+        public static bool allow_complete_wall_clip_with_one_heart = false; // If set to false, can generate some weird costs near narrow OOB places.
 
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame

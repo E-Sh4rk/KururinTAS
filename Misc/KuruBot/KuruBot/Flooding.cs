@@ -275,6 +275,7 @@ namespace KuruBot
                     bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
                     float to_wall_dist = dist_to_wall[npy, npx];
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
+                    bool to_legal_zone = legal_zones[npy, npx];
 
                     float wgm_coef = Math.Min(to_wall_dist, Settings.wall_ground_malus_dist) - from_wall_dist;
                     if (wgm_coef < 0)
@@ -284,7 +285,9 @@ namespace KuruBot
                         continue;
 
                     float nw = weight;
-                    if (from_wc_allowed_zone && !to_wc_allowed_zone)
+                    if (from_wc_allowed_zone && !to_wc_allowed_zone && !to_legal_zone)
+                        nw = float.PositiveInfinity;
+                    else if (allow_wall_ground_dist < float.PositiveInfinity && from_wall && to_legal_zone) // For legal zones, we use allow_wall_ground_dist=0
                         nw = float.PositiveInfinity;
                     else if (from_wall && to_wall)
                         nw += npd.dist / Settings.wall_speed;

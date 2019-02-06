@@ -187,7 +187,7 @@
             // backupPos
             // 
             this.backupPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.backupPos.Location = new System.Drawing.Point(392, 548);
+            this.backupPos.Location = new System.Drawing.Point(464, 548);
             this.backupPos.Name = "backupPos";
             this.backupPos.Size = new System.Drawing.Size(31, 23);
             this.backupPos.TabIndex = 9;
@@ -198,7 +198,7 @@
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(355, 548);
+            this.restorePos.Location = new System.Drawing.Point(427, 548);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
@@ -257,7 +257,7 @@
             // loadPos
             // 
             this.loadPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadPos.Location = new System.Drawing.Point(429, 548);
+            this.loadPos.Location = new System.Drawing.Point(357, 548);
             this.loadPos.Name = "loadPos";
             this.loadPos.Size = new System.Drawing.Size(29, 23);
             this.loadPos.TabIndex = 15;
@@ -268,7 +268,7 @@
             // savePos
             // 
             this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(464, 548);
+            this.savePos.Location = new System.Drawing.Point(392, 548);
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(29, 23);
             this.savePos.TabIndex = 16;
