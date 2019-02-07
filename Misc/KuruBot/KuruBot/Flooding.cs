@@ -325,6 +325,8 @@ namespace KuruBot
                     }
                     if (w <= 0 && !target[y - PixelStart.y, x - PixelStart.x])
                         w = float.Epsilon;
+                    else if (w < 0)
+                        w = 0;
                     res[y - PixelStart.y, x - PixelStart.x] = w;
                 }
             }

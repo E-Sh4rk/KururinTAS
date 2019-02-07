@@ -32,9 +32,9 @@ namespace KuruBot
             f.SetConstraints(constraints);
         }
 
-        public void ComputeNewCostMaps(bool no_wall_clip)
+        public void ComputeNewCostMaps()
         {
-            if (no_wall_clip)
+            if (!Settings.allow_wall_clip)
             {
                 cost_maps = new float[1][][,];
                 cost_maps[0] = new float[][,] { f.ComputeCostMap(0, Flooding.WallClipSetting.NoWallClip) };
@@ -44,7 +44,7 @@ namespace KuruBot
                 int total_op = 1 + (Settings.full_life - 1) * Settings.nb_cost_maps_per_life;
                 cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Settings.full_life : 1][][,];
                 cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Settings.full_life-1),
-                    (Settings.full_life-1) > 0 || Settings.allow_complete_wall_clip_with_one_heart ?
+                    (Settings.full_life-1) > 0 || !Settings.restrict_complete_wall_clip_when_one_heart ?
                     Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip) };
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
 
@@ -58,7 +58,7 @@ namespace KuruBot
                         for (int j = 0; j < current_cm.Length; j++)
                         {
                             int current_invul = min_invul + j * Physics.invul_frames / current_cm.Length;
-                            current_cm[j] = f.ComputeCostMap(current_invul, i > 0 || Settings.allow_complete_wall_clip_with_one_heart ?
+                            current_cm[j] = f.ComputeCostMap(current_invul, i > 0 || !Settings.restrict_complete_wall_clip_when_one_heart ?
                                                              Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
                             current_op++;
                             parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);

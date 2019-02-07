@@ -302,7 +302,7 @@
             // 
             this.showCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showCostMap.AutoSize = true;
-            this.showCostMap.Location = new System.Drawing.Point(605, 509);
+            this.showCostMap.Location = new System.Drawing.Point(644, 509);
             this.showCostMap.Name = "showCostMap";
             this.showCostMap.Size = new System.Drawing.Size(99, 17);
             this.showCostMap.TabIndex = 19;
@@ -500,7 +500,7 @@
             this.switchCostMap2.Name = "switchCostMap2";
             this.switchCostMap2.Size = new System.Drawing.Size(43, 23);
             this.switchCostMap2.TabIndex = 36;
-            this.switchCostMap2.Text = "N°:";
+            this.switchCostMap2.Text = "N°";
             this.switchCostMap2.UseVisualStyleBackColor = true;
             this.switchCostMap2.Click += new System.EventHandler(this.switchCostMap2_Click);
             // 
@@ -561,7 +561,7 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.5";
+            this.Text = "KuruBot 1.5.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();

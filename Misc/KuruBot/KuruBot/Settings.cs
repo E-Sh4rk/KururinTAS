@@ -16,6 +16,7 @@ namespace KuruBot
         // ---------- FLOODING SETTINGS ----------
 
         // All these values must be non-negative
+        public static byte nb_cost_maps_per_life = 2;
         public static float ground_speed = 3;
         public static bool allow_wall_clip = true;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
@@ -29,8 +30,6 @@ namespace KuruBot
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
 
         // ---------- SOLVER SETTINGS ----------
-
-        public static byte nb_cost_maps_per_life = 2;
 
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
@@ -77,6 +76,7 @@ namespace KuruBot
 
                 full_life = (byte)parseInt(data, "Game", "full_life", full_life);
 
+                nb_cost_maps_per_life = (byte)parseInt(data, "Flooding", "nb_cost_maps_per_life", nb_cost_maps_per_life);
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
                 allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
@@ -89,7 +89,6 @@ namespace KuruBot
                 complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
                 cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
 
-                nb_cost_maps_per_life = (byte)parseInt(data, "Solver", "nb_cost_maps_per_life", nb_cost_maps_per_life);
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
                 additional_reduction_in_wall = parseInt(data, "Solver", "additional_reduction_in_wall", additional_reduction_in_wall);
@@ -116,6 +115,7 @@ namespace KuruBot
 
                 data["Game"]["full_life"] = full_life.ToString();
 
+                data["Flooding"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
                 data["Flooding"]["ground_speed"] = ground_speed.ToString();
                 data["Flooding"]["allow_wall_clip"] = allow_wall_clip.ToString();
                 data["Flooding"]["wall_speed"] = wall_speed.ToString();
@@ -128,7 +128,6 @@ namespace KuruBot
                 data["Flooding"]["complete_wall_clip_duration"] = complete_wall_clip_duration.ToString();
                 data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = cwc_max_dist_zero_in_legal_zone.ToString();
 
-                data["Solver"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
                 data["Solver"]["pos_reduction"] = pos_reduction.ToString();
                 data["Solver"]["bump_reduction"] = bump_reduction.ToString();
                 data["Solver"]["additional_reduction_in_wall"] = additional_reduction_in_wall.ToString();

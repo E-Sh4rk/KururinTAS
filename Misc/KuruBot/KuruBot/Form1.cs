@@ -34,6 +34,8 @@ namespace KuruBot
             mapc = new MapControl(this, null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
+
+            updateSCMbuttons();
         }
 
         bool controls_enabled = true;
@@ -384,7 +386,12 @@ namespace KuruBot
             catch { }
         }
 
-        // TODO: text on switch buttons
+        private void updateSCMbuttons()
+        {
+            switchCostMap.Text = "H:" + cm_preview_l.ToString();
+            switchCostMap2.Text = "N° " + cm_preview_i.ToString();
+        }
+
         int cm_preview_l = Settings.full_life;
         int cm_preview_i = 1;
         private void switchCostMap_Click(object sender, EventArgs e)
@@ -395,6 +402,7 @@ namespace KuruBot
                 if (cm_preview_l < 1)
                     cm_preview_l = Settings.full_life;
                 mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i));
+                updateSCMbuttons();
             }
         }
         private void switchCostMap2_Click(object sender, EventArgs e)
@@ -405,6 +413,7 @@ namespace KuruBot
                 if (cm_preview_i < 1)
                     cm_preview_i = Settings.nb_cost_maps_per_life;
                 mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l, cm_preview_i));
+                updateSCMbuttons();
             }
         }
 
