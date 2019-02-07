@@ -384,6 +384,7 @@ namespace KuruBot
             catch { }
         }
 
+        // TODO: text on switch buttons
         int cm_preview_l = Settings.full_life;
         int cm_preview_i = 1;
         private void switchCostMap_Click(object sender, EventArgs e)
@@ -407,13 +408,13 @@ namespace KuruBot
             }
         }
 
-        private void computeCM(bool no_wc)
+        private void computeCM()
         {
             if (b != null)
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    b.ComputeNewCostMaps(no_wc);
+                    b.ComputeNewCostMaps();
                     this.UIThread(() => mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i)));
                     TaskEnded();
                 });
@@ -423,12 +424,7 @@ namespace KuruBot
 
         private void computeCostMap_Click(object sender, EventArgs e)
         {
-            computeCM(false);
-        }
-
-        private void computeCostMapNoWC_Click(object sender, EventArgs e)
-        {
-            computeCM(true);
+            computeCM();
         }
 
         private void makeSolver(Flooding.Pixel start, Flooding.Pixel end)

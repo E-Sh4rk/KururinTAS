@@ -67,7 +67,6 @@
             this.saveConfig = new System.Windows.Forms.Button();
             this.saveIniDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadIniDialog = new System.Windows.Forms.OpenFileDialog();
-            this.computeCostMapNoWC = new System.Windows.Forms.Button();
             this.switchCostMap = new System.Windows.Forms.Button();
             this.switchCostMap2 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -303,7 +302,7 @@
             // 
             this.showCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showCostMap.AutoSize = true;
-            this.showCostMap.Location = new System.Drawing.Point(709, 509);
+            this.showCostMap.Location = new System.Drawing.Point(605, 509);
             this.showCostMap.Name = "showCostMap";
             this.showCostMap.Size = new System.Drawing.Size(99, 17);
             this.showCostMap.TabIndex = 19;
@@ -327,7 +326,7 @@
             this.computeCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.computeCostMap.Location = new System.Drawing.Point(413, 505);
             this.computeCostMap.Name = "computeCostMap";
-            this.computeCostMap.Size = new System.Drawing.Size(80, 23);
+            this.computeCostMap.Size = new System.Drawing.Size(82, 23);
             this.computeCostMap.TabIndex = 21;
             this.computeCostMap.Text = "2. Cost map";
             this.computeCostMap.UseVisualStyleBackColor = true;
@@ -336,9 +335,9 @@
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(644, 505);
+            this.solve.Location = new System.Drawing.Point(521, 505);
             this.solve.Name = "solve";
-            this.solve.Size = new System.Drawing.Size(59, 23);
+            this.solve.Size = new System.Drawing.Size(66, 23);
             this.solve.TabIndex = 22;
             this.solve.Text = "4. Solve";
             this.solve.UseVisualStyleBackColor = true;
@@ -483,36 +482,25 @@
             // 
             this.loadIniDialog.Filter = "INI File|*.ini";
             // 
-            // computeCostMapNoWC
-            // 
-            this.computeCostMapNoWC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.computeCostMapNoWC.Location = new System.Drawing.Point(499, 505);
-            this.computeCostMapNoWC.Name = "computeCostMapNoWC";
-            this.computeCostMapNoWC.Size = new System.Drawing.Size(139, 23);
-            this.computeCostMapNoWC.TabIndex = 34;
-            this.computeCostMapNoWC.Text = "2. Cost map (no wall clip)";
-            this.computeCostMapNoWC.UseVisualStyleBackColor = true;
-            this.computeCostMapNoWC.Click += new System.EventHandler(this.computeCostMapNoWC_Click);
-            // 
             // switchCostMap
             // 
             this.switchCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchCostMap.Location = new System.Drawing.Point(805, 505);
+            this.switchCostMap.Location = new System.Drawing.Point(764, 505);
             this.switchCostMap.Name = "switchCostMap";
-            this.switchCostMap.Size = new System.Drawing.Size(20, 23);
+            this.switchCostMap.Size = new System.Drawing.Size(37, 23);
             this.switchCostMap.TabIndex = 35;
-            this.switchCostMap.Text = "L";
+            this.switchCostMap.Text = "H:";
             this.switchCostMap.UseVisualStyleBackColor = true;
             this.switchCostMap.Click += new System.EventHandler(this.switchCostMap_Click);
             // 
             // switchCostMap2
             // 
             this.switchCostMap2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchCostMap2.Location = new System.Drawing.Point(830, 505);
+            this.switchCostMap2.Location = new System.Drawing.Point(807, 505);
             this.switchCostMap2.Name = "switchCostMap2";
-            this.switchCostMap2.Size = new System.Drawing.Size(20, 23);
+            this.switchCostMap2.Size = new System.Drawing.Size(43, 23);
             this.switchCostMap2.TabIndex = 36;
-            this.switchCostMap2.Text = "I";
+            this.switchCostMap2.Text = "N°:";
             this.switchCostMap2.UseVisualStyleBackColor = true;
             this.switchCostMap2.Click += new System.EventHandler(this.switchCostMap2_Click);
             // 
@@ -536,7 +524,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.switchCostMap2);
             this.Controls.Add(this.switchCostMap);
-            this.Controls.Add(this.computeCostMapNoWC);
             this.Controls.Add(this.saveConfig);
             this.Controls.Add(this.loadConfig);
             this.Controls.Add(this.brushRadius);
@@ -624,7 +611,6 @@
         private System.Windows.Forms.Button saveConfig;
         private System.Windows.Forms.SaveFileDialog saveIniDialog;
         private System.Windows.Forms.OpenFileDialog loadIniDialog;
-        private System.Windows.Forms.Button computeCostMapNoWC;
         private System.Windows.Forms.Button switchCostMap;
         private System.Windows.Forms.Button switchCostMap2;
         private System.Windows.Forms.Label label2;
