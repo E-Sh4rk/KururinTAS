@@ -389,7 +389,7 @@ namespace KuruBot
         private void updateSCMbuttons()
         {
             switchCostMap.Text = "H:" + cm_preview_l.ToString();
-            switchCostMap2.Text = "N° " + cm_preview_i.ToString();
+            switchCostMap2.Text = "N°" + cm_preview_i.ToString();
         }
 
         int cm_preview_l = Settings.full_life;
