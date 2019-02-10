@@ -222,7 +222,8 @@ namespace KuruBot
 
             float gwb = Settings.ground_wall_bonus * gwb_multiplier;
             float gwb_md = Settings.ground_wall_bonus_min_dist * gwb_multiplier;
-            float wgm_per_px = Settings.wall_ground_malus / Settings.wall_ground_malus_dist;
+            float wgm_dist = Settings.wall_ground_malus_dist < 1 ? 1 : Settings.wall_ground_malus_dist;
+            float wgm_per_px = Settings.wall_ground_malus / wgm_dist;
 
             int width = PixelEnd.x - PixelStart.x + 1;
             int height = PixelEnd.y - PixelStart.y + 1;
@@ -277,7 +278,7 @@ namespace KuruBot
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
                     bool to_legal_zone = legal_zones[npy, npx];
 
-                    float wgm_coef = Math.Min(to_wall_dist, Settings.wall_ground_malus_dist) - from_wall_dist;
+                    float wgm_coef = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
                     if (wgm_coef < 0)
                         wgm_coef = 0;
 

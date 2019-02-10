@@ -238,6 +238,9 @@ namespace KuruBot
             st.ypos += ys + st.yb;
             st.rot += st.rot_rate;
 
+            if (st.life > Settings.full_life)
+                st.life = Settings.full_life;
+
             // 4. Detection of healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
             bool safe_zone = false;
