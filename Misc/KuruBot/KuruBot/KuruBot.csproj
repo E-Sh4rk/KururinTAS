@@ -53,6 +53,7 @@
     <Compile Include="Com.cs" />
     <Compile Include="ControlExtension.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="CostMap.cs" />
     <Compile Include="Flooding.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

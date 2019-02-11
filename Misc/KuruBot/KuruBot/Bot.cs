@@ -11,17 +11,17 @@ namespace KuruBot
         Flooding f = null;
         Physics p = null;
         Form1 parent = null;
-        float[][][,] cost_maps = null;
+        CostMap[][] cost_maps = null;
 
-        public Bot(Form1 parent, Map m, Physics p, Flooding.Pixel start, Flooding.Pixel end)
+        public Bot(Form1 parent, Map m, Physics p, Pixel start, Pixel end)
         {
             this.parent = parent;
             this.p = p;
             f = new Flooding(m, start, end);
         }
 
-        public Flooding.Pixel GetPixelStart() { return f.PixelStart; }
-        public Flooding.Pixel GetPixelEnd() { return f.PixelEnd; }
+        public Pixel GetPixelStart() { return f.PixelStart; }
+        public Pixel GetPixelEnd() { return f.PixelEnd; }
 
         public void SetTarget(bool[,] target)
         {
@@ -34,49 +34,48 @@ namespace KuruBot
 
         public void ComputeNewCostMaps()
         {
+            CostMap full_life_cost_map = null;
             if (!Settings.allow_wall_clip)
+                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.NoWallClip, 0);
+            else if (Settings.full_life <= 1 && Settings.restrict_complete_wall_clip_when_one_heart)
+                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, 0);
+            else
+                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.Allow, 0);
+
+            if (!Settings.allow_wall_clip || !Settings.restrict_complete_wall_clip_when_one_heart || Settings.full_life <= 1)
             {
-                cost_maps = new float[1][][,];
-                cost_maps[0] = new float[][,] { f.ComputeCostMap(0, Flooding.WallClipSetting.NoWallClip) };
+                cost_maps = new CostMap[1][];
+                cost_maps[0] = new CostMap[] { full_life_cost_map };
             }
             else
             {
-                int total_op = 1 + (Settings.full_life - 1) * Settings.nb_cost_maps_per_life;
-                cost_maps = new float[Settings.nb_cost_maps_per_life > 0 ? Settings.full_life : 1][][,];
-                cost_maps[cost_maps.Length - 1] = new float[][,] { f.ComputeCostMap(Physics.invul_frames*(Settings.full_life-1),
-                    (Settings.full_life-1) > 0 || !Settings.restrict_complete_wall_clip_when_one_heart ?
-                    Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip) };
+                int total_op = 2 + Settings.nb_additional_cost_maps;
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
 
-                if (Settings.nb_cost_maps_per_life > 0)
+                cost_maps = new CostMap[2][];
+                cost_maps[1] = new CostMap[] { full_life_cost_map };
+                
+                int current_op = 1;
+                CostMap[] cms = new CostMap[Settings.nb_additional_cost_maps + 1];
+                for (int i = 0; i < cms.Length; i++)
                 {
-                    int current_op = 1;
-                    for (int i = 0; i < Settings.full_life - 1; i++)
-                    {
-                        float[][,] current_cm = new float[Settings.nb_cost_maps_per_life][,];
-                        int min_invul = i * Physics.invul_frames;
-                        for (int j = 0; j < current_cm.Length; j++)
-                        {
-                            int current_invul = min_invul + j * Physics.invul_frames / current_cm.Length;
-                            current_cm[j] = f.ComputeCostMap(current_invul, i > 0 || !Settings.restrict_complete_wall_clip_when_one_heart ?
-                                                             Flooding.WallClipSetting.Allow : Flooding.WallClipSetting.NoCompleteWallClip);
-                            current_op++;
-                            parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
-                        }
-                        cost_maps[i] = current_cm;
-                    }
+                    int invul = i * Physics.invul_frames / cms.Length;
+                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, invul);
+                    current_op++;
+                    parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
                 }
-
+                cost_maps[0] = cms;
             }
         }
 
-        public float[,] GetPreviewCostMap(int life, int nb)
+        public CostMap GetCostMap(byte life, sbyte invul)
         {
-            if (cost_maps == null || life < 1 || nb < 1)
+            if (cost_maps == null || life < 1)
                 return null;
-            
-            float[][,] cm = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
-            return cm[Math.Min(cm.Length - 1, nb - 1)];
+
+            CostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
+            int invul_index = (invul < 0 ? Physics.invul_frames : invul) * cms.Length / Physics.invul_frames;
+            return cms[Math.Min(cms.Length - 1, invul_index)];
         }
 
         // /!\ For efficiency reason, we use a class instead of a struct.
@@ -133,14 +132,13 @@ namespace KuruBot
 
         float GetCost(int xpos, int ypos, byte life, sbyte invul)
         {
-            if (life == 0)
+            CostMap cm = GetCostMap(life, invul);
+            if (cm == null)
                 return float.PositiveInfinity;
-            float[][,] cm1 = cost_maps[Math.Min(cost_maps.Length-1,life-1)];
-            int invul_index = (invul < 0 ? Physics.invul_frames : invul) * cm1.Length / Physics.invul_frames;
-            float[,] cm2 = cm1[Math.Min(cm1.Length-1,invul_index)];
+            
             short xpix = Physics.pos_to_px(xpos);
             short ypix = Physics.pos_to_px(ypos);
-            float cost = f.Cost(cm2, xpix, ypix);
+            float cost = cm.CostAtPx(xpix, ypix, Flooding.GetTotalInvul(life, invul));
             float mult_cost = cost * Settings.cost_multiplier;
             return cost > 0 && mult_cost <= 0 ? float.Epsilon : mult_cost;
         }
@@ -173,7 +171,7 @@ namespace KuruBot
 
             // ProgressBar and preview settings
             float init_cost = cost;
-            bool[,] preview = new bool[GetPreviewCostMap(1,1).GetLength(0), GetPreviewCostMap(1,1).GetLength(1)];
+            bool[,] preview = new bool[cost_maps[0][0].Height, cost_maps[0][0].Width];
             int since_last_update = 0;
 
             // A*

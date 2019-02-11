@@ -16,15 +16,15 @@ namespace KuruBot
         // ---------- FLOODING SETTINGS ----------
 
         // All these values must be non-negative
-        public static byte nb_cost_maps_per_life = 2;
         public static float ground_speed = 3;
         public static bool allow_wall_clip = true;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
         public static float ground_wall_bonus = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
-        public static float ground_wall_bonus_min_dist = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
+        public static float ground_wall_bonus_min_cost = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
         public static float wall_ground_malus = ground_speed * 10; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
         public static float wall_ground_malus_dist = 6; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
         public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
+        public static byte nb_additional_cost_maps = 1;
         public static float complete_wall_clip_max_dist = 25; // Distance of a wall at which the the helirin is not considered performing a wall clip.
         public static int complete_wall_clip_duration = 10; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
@@ -76,15 +76,15 @@ namespace KuruBot
 
                 full_life = (byte)parseInt(data, "Game", "full_life", full_life);
 
-                nb_cost_maps_per_life = (byte)parseInt(data, "Flooding", "nb_cost_maps_per_life", nb_cost_maps_per_life);
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
                 allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
                 ground_wall_bonus = parseFloat(data, "Flooding", "ground_wall_bonus", ground_wall_bonus);
-                ground_wall_bonus_min_dist = parseFloat(data, "Flooding", "ground_wall_bonus_min_dist", ground_wall_bonus_min_dist);
+                ground_wall_bonus_min_cost = parseFloat(data, "Flooding", "ground_wall_bonus_min_cost", ground_wall_bonus_min_cost);
                 wall_ground_malus = parseFloat(data, "Flooding", "wall_ground_malus", wall_ground_malus);
                 wall_ground_malus_dist = parseFloat(data, "Flooding", "wall_ground_malus_dist", wall_ground_malus_dist);
                 restrict_complete_wall_clip_when_one_heart = parseBool(data, "Flooding", "restrict_complete_wall_clip_when_one_heart", restrict_complete_wall_clip_when_one_heart);
+                nb_additional_cost_maps = (byte)parseInt(data, "Flooding", "nb_additional_cost_maps", nb_additional_cost_maps);
                 complete_wall_clip_max_dist = parseFloat(data, "Flooding", "complete_wall_clip_max_dist", complete_wall_clip_max_dist);
                 complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
                 cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
@@ -115,15 +115,15 @@ namespace KuruBot
 
                 data["Game"]["full_life"] = full_life.ToString();
 
-                data["Flooding"]["nb_cost_maps_per_life"] = nb_cost_maps_per_life.ToString();
                 data["Flooding"]["ground_speed"] = ground_speed.ToString();
                 data["Flooding"]["allow_wall_clip"] = allow_wall_clip.ToString();
                 data["Flooding"]["wall_speed"] = wall_speed.ToString();
                 data["Flooding"]["ground_wall_bonus"] = ground_wall_bonus.ToString();
-                data["Flooding"]["ground_wall_bonus_min_dist"] = ground_wall_bonus_min_dist.ToString();
+                data["Flooding"]["ground_wall_bonus_min_cost"] = ground_wall_bonus_min_cost.ToString();
                 data["Flooding"]["wall_ground_malus"] = wall_ground_malus.ToString();
                 data["Flooding"]["wall_ground_malus_dist"] = wall_ground_malus_dist.ToString();
                 data["Flooding"]["restrict_complete_wall_clip_when_one_heart"] = restrict_complete_wall_clip_when_one_heart.ToString();
+                data["Flooding"]["nb_additional_cost_maps"] = nb_additional_cost_maps.ToString();
                 data["Flooding"]["complete_wall_clip_max_dist"] = complete_wall_clip_max_dist.ToString();
                 data["Flooding"]["complete_wall_clip_duration"] = complete_wall_clip_duration.ToString();
                 data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = cwc_max_dist_zero_in_legal_zone.ToString();

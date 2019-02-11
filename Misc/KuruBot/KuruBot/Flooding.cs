@@ -8,24 +8,6 @@ namespace KuruBot
 {
     public class Flooding
     {
-        public struct Pixel
-        {
-            public Pixel(short x, short y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-            public Pixel Add(Pixel p)
-            {
-                Pixel res = this;
-                res.x += p.x;
-                res.y += p.y;
-                return res;
-            }
-            public short x;
-            public short y;
-        }
-
         public Flooding(Map m, Pixel start, Pixel end)
         {
             this.m = m;
@@ -71,11 +53,6 @@ namespace KuruBot
         public bool IsLegalZone(short x, short y)
         {
             return legal_zones[y - PixelStart.y, x - PixelStart.x];
-        }
-
-        public float Cost(float[,] cost, short x, short y)
-        {
-            return cost[y - PixelStart.y, x - PixelStart.x];
         }
 
         Pixel[] DiagNeighbors(Pixel p)
@@ -214,14 +191,12 @@ namespace KuruBot
             return res;
         }
 
-        float[,] ComputeCostMap(float gwb_multiplier, float allow_wall_ground_dist, bool no_wall_clip)
+        CostMap ComputeCostMap(float allow_wall_ground_dist, bool no_wall_clip)
         {
             // Simple Dijkstra algorithm with some extra parameters.
             // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
-            // Instead, it will be applied after to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
+            // Instead, it will be applied after, when asking a specific cost, to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
 
-            float gwb = Settings.ground_wall_bonus * gwb_multiplier;
-            float gwb_md = Settings.ground_wall_bonus_min_dist * gwb_multiplier;
             float wgm_dist = Settings.wall_ground_malus_dist < 1 ? 1 : Settings.wall_ground_malus_dist;
             float wgm_per_px = Settings.wall_ground_malus / wgm_dist;
 
@@ -260,8 +235,8 @@ namespace KuruBot
             {
                 Pixel p = q.Dequeue();
                 float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
-                bool from_wall = m.IsPixelInCollision(p.x, p.y);
                 float from_wall_dist = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x];
+                bool from_wall = from_wall_dist <= 0;
                 bool from_wc_allowed_zone = from_wall_dist <= allow_wall_ground_dist;
 
                 PixelDist[] neighbors = Neighbors(p);
@@ -273,8 +248,8 @@ namespace KuruBot
                     if (constraints != null && constraints[npy, npx])
                         continue;
 
-                    bool to_wall = m.IsPixelInCollision(npd.px.x, npd.px.y);
                     float to_wall_dist = dist_to_wall[npy, npx];
+                    bool to_wall = to_wall_dist <= 0;
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
                     bool to_legal_zone = legal_zones[npy, npx];
 
@@ -311,28 +286,21 @@ namespace KuruBot
                 }
             }
 
-            // Post-procedure (bonus for walls + ensure that all costs are non-zero if not on an ending)
-            for (short y = PixelStart.y; y <= PixelEnd.y; y++)
+            // Post-procedure (some psot-procedure has been moved to the CostMap class)
+            for (int y = 0; y < height; y++)
             {
-                for (short x = PixelStart.x; x <= PixelEnd.x; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    float w = res[y - PixelStart.y, x - PixelStart.x];
-                    if (m.IsPixelInCollision(x, y))
-                    {
-                        if (w >= gwb_md)
-                            w -= gwb;
-                        else
-                            w -= gwb * w / gwb_md;
-                    }
-                    if (w <= 0 && !target[y - PixelStart.y, x - PixelStart.x])
+                    float w = res[y, x];
+                    if (w <= 0 && !target[y, x])
                         w = float.Epsilon;
                     else if (w < 0)
                         w = 0;
-                    res[y - PixelStart.y, x - PixelStart.x] = w;
+                    res[y, x] = w;
                 }
             }
 
-            return res;
+            return new CostMap(res, dist_to_wall, PixelStart, !no_wall_clip);
         }
 
         public enum WallClipSetting
@@ -342,27 +310,23 @@ namespace KuruBot
             Allow
         }
 
-        public float[,] ComputeCostMap(int total_invul_frames, WallClipSetting wcs)
+        public CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames)
         {
             if (wcs == WallClipSetting.NoWallClip)
-                return ComputeCostMap(0, 0, true);
+                return ComputeCostMap(0, true);
             else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(total_invul_frames, float.PositiveInfinity, false);
+                return ComputeCostMap(float.PositiveInfinity, false);
             else
-                return ComputeCostMap(total_invul_frames, total_invul_frames >= Settings.complete_wall_clip_duration
+                return ComputeCostMap(
+                    invul_frames >= Settings.complete_wall_clip_duration
                     ? Settings.complete_wall_clip_max_dist
-                    : Settings.complete_wall_clip_max_dist * total_invul_frames / Settings.complete_wall_clip_duration, false);
+                    : Settings.complete_wall_clip_max_dist * invul_frames / Settings.complete_wall_clip_duration,
+                    false);
         }
 
-        public static float GetMaxWeightExceptInfinity(float[,] map)
+        public static int GetTotalInvul(int life, int invul)
         {
-            float res = 0;
-            for (int y = 0; y < map.GetLength(0); y++)
-                for (int x = 0; x < map.GetLength(1); x++)
-                    if (map[y, x] < float.PositiveInfinity && map[y, x] > res)
-                        res = map[y, x];
-            return res;
+            return (life-1) * Physics.invul_frames + (invul < 0 ? Physics.invul_frames : invul);
         }
-
     }
 }

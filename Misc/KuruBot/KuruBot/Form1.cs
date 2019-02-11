@@ -436,7 +436,7 @@ namespace KuruBot
             computeCM();
         }
 
-        private void makeSolver(Flooding.Pixel start, Flooding.Pixel end)
+        private void makeSolver(Pixel start, Pixel end)
         {
             if (map != null && phy != null)
             {
@@ -452,15 +452,15 @@ namespace KuruBot
 
         private void buildSolver_Click(object sender, EventArgs e)
         {
-            Flooding.Pixel start = new Flooding.Pixel(0, 0);
-            Flooding.Pixel end = new Flooding.Pixel((short)(map.WidthPx - 1), (short)(map.HeightPx - 1));
+            Pixel start = new Pixel(0, 0);
+            Pixel end = new Pixel((short)(map.WidthPx - 1), (short)(map.HeightPx - 1));
             makeSolver(start, end);
         }
 
         private void buildSolverAny_Click(object sender, EventArgs e)
         {
-            Flooding.Pixel start = new Flooding.Pixel((short)(-map.WidthPx), 0);
-            Flooding.Pixel end = new Flooding.Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1));
+            Pixel start = new Pixel((short)(-map.WidthPx), 0);
+            Pixel end = new Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1));
             makeSolver(start, end);
         }
 
@@ -542,7 +542,7 @@ namespace KuruBot
             if (mapc != null)
             {
                 mapc.SetFixedWindow(null, null);
-                mapc.SetCostMap(null);
+                mapc.SetCostMap(null, 0);
             }
         }
 

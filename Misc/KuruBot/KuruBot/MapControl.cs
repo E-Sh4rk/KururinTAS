@@ -37,13 +37,14 @@ namespace KuruBot
         Bitmap bmap = null;
         GraphicalHelirin? helirin = null;
 
-        float[,] cost_map = null;
-        Flooding.Pixel? start_pixel = null;
-        Flooding.Pixel? end_pixel = null;
+        CostMap cost_map = null;
+        int cost_map_invul = 0;
+        Pixel? start_pixel = null;
+        Pixel? end_pixel = null;
         Color highlight_color = Color.Red;
         bool[,] highlight_map = null;
 
-        Flooding.Pixel computed_start_pixel;
+        Pixel computed_start_pixel;
         int computed_bmp_start_x = 0;
         int computed_bmp_start_y = 0;
         float computed_scale = 0;
@@ -63,7 +64,7 @@ namespace KuruBot
             return bmap;
         }
 
-        public void SetFixedWindow(Flooding.Pixel? start, Flooding.Pixel? end)
+        public void SetFixedWindow(Pixel? start, Pixel? end)
         {
             start_pixel = start;
             end_pixel = end;
@@ -221,9 +222,10 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetCostMap(float[,] cost_map)
+        public void SetCostMap(CostMap cost_map, int cost_map_invul)
         {
             this.cost_map = cost_map;
+            this.cost_map_invul = cost_map_invul;
             highlight_map = null;
             if (showC)
                 Redraw();
@@ -251,11 +253,11 @@ namespace KuruBot
                 }
                 if (showC && cost_map != null)
                 {
-                    width = Math.Min(width,cost_map.GetLength(1));
-                    height = Math.Min(height,cost_map.GetLength(0));
+                    width = Math.Min(width,cost_map.Width);
+                    height = Math.Min(height,cost_map.Height);
                 }
                 bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                computed_start_pixel = new Flooding.Pixel((short)start_x, (short)start_y);
+                computed_start_pixel = new Pixel((short)start_x, (short)start_y);
 
                 Graphics g = Graphics.FromImage(bitmap);
                 g.Clear(BackColor);
@@ -272,7 +274,7 @@ namespace KuruBot
 
                 if (showC && cost_map != null)
                 {
-                    float max = Flooding.GetMaxWeightExceptInfinity(cost_map);
+                    float max = cost_map.GetMaxWeightExceptInfinity(cost_map_invul);
                     if (max <= 0)
                         max = float.Epsilon;
                     for (int y = 0; y < bitmap.Height; y++)
@@ -280,7 +282,7 @@ namespace KuruBot
                         for (int x = 0; x < bitmap.Width; x++)
                         {
                             Rectangle dest = new Rectangle(x, y, 1, 1);
-                            float cost = cost_map[y, x];
+                            float cost = cost_map.CostAtIndex(x, y, cost_map_invul);
                             int color = cost < float.PositiveInfinity ? (int)((cost/max)*255) : 255;
                             color = 255 - color;
                             Brush brush = new SolidBrush(Color.FromArgb(255,color,color,color));
