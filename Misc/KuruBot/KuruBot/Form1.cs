@@ -35,7 +35,7 @@ namespace KuruBot
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
 
-            updateSCMbuttons();
+            updateSCMbutton();
         }
 
         bool controls_enabled = true;
@@ -50,7 +50,7 @@ namespace KuruBot
             showPMap.Enabled = true;
             showGMap.Enabled = true;
             switchCostMap.Enabled = true;
-            switchCostMap2.Enabled = true;
+            invulCostMap.Enabled = true;
         }
         private void EnableControls()
         {
@@ -386,14 +386,17 @@ namespace KuruBot
             catch { }
         }
 
-        private void updateSCMbuttons()
+        private void updateSCMbutton()
         {
             switchCostMap.Text = "H:" + cm_preview_l.ToString();
-            switchCostMap2.Text = "N°" + cm_preview_i.ToString();
+        }
+        private void updateCostMapDisplay()
+        {
+            mapc.SetCostMap(b.GetCostMap((byte)cm_preview_l, (sbyte)invulCostMap.Value),
+                  Flooding.GetTotalInvul((byte)cm_preview_l, (sbyte)invulCostMap.Value));
         }
 
         int cm_preview_l = Settings.full_life;
-        int cm_preview_i = 1;
         private void switchCostMap_Click(object sender, EventArgs e)
         {
             if (b != null)
@@ -401,20 +404,14 @@ namespace KuruBot
                 cm_preview_l--;
                 if (cm_preview_l < 1)
                     cm_preview_l = Settings.full_life;
-                mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i));
-                updateSCMbuttons();
+                updateCostMapDisplay();
+                updateSCMbutton();
             }
         }
-        private void switchCostMap2_Click(object sender, EventArgs e)
+        private void invulCostMap_ValueChanged(object sender, EventArgs e)
         {
             if (b != null)
-            {
-                cm_preview_i--;
-                if (cm_preview_i < 1)
-                    cm_preview_i = Settings.nb_cost_maps_per_life;
-                mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l, cm_preview_i));
-                updateSCMbuttons();
-            }
+                updateCostMapDisplay();
         }
 
         private void computeCM()
@@ -424,7 +421,7 @@ namespace KuruBot
                 thread = new Thread(delegate () {
                     TaskStarted();
                     b.ComputeNewCostMaps();
-                    this.UIThread(() => mapc.SetCostMap(b.GetPreviewCostMap(cm_preview_l,cm_preview_i)));
+                    this.UIThread(() => updateCostMapDisplay());
                     TaskEnded();
                 });
                 thread.Start();

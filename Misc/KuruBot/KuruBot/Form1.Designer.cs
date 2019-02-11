@@ -68,9 +68,10 @@
             this.saveIniDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadIniDialog = new System.Windows.Forms.OpenFileDialog();
             this.switchCostMap = new System.Windows.Forms.Button();
-            this.switchCostMap2 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.invulCostMap = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
             this.SuspendLayout();
             // 
             // connect
@@ -493,17 +494,6 @@
             this.switchCostMap.UseVisualStyleBackColor = true;
             this.switchCostMap.Click += new System.EventHandler(this.switchCostMap_Click);
             // 
-            // switchCostMap2
-            // 
-            this.switchCostMap2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchCostMap2.Location = new System.Drawing.Point(807, 505);
-            this.switchCostMap2.Name = "switchCostMap2";
-            this.switchCostMap2.Size = new System.Drawing.Size(43, 23);
-            this.switchCostMap2.TabIndex = 36;
-            this.switchCostMap2.Text = "N°";
-            this.switchCostMap2.UseVisualStyleBackColor = true;
-            this.switchCostMap2.Click += new System.EventHandler(this.switchCostMap2_Click);
-            // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -516,13 +506,27 @@
     "rk/KururinTAS";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // invulCostMap
+            // 
+            this.invulCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.invulCostMap.Location = new System.Drawing.Point(807, 506);
+            this.invulCostMap.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.invulCostMap.Name = "invulCostMap";
+            this.invulCostMap.Size = new System.Drawing.Size(43, 20);
+            this.invulCostMap.TabIndex = 38;
+            this.invulCostMap.ValueChanged += new System.EventHandler(this.invulCostMap_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.invulCostMap);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.switchCostMap2);
             this.Controls.Add(this.switchCostMap);
             this.Controls.Add(this.saveConfig);
             this.Controls.Add(this.loadConfig);
@@ -565,6 +569,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -612,8 +617,8 @@
         private System.Windows.Forms.SaveFileDialog saveIniDialog;
         private System.Windows.Forms.OpenFileDialog loadIniDialog;
         private System.Windows.Forms.Button switchCostMap;
-        private System.Windows.Forms.Button switchCostMap2;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown invulCostMap;
     }
 }
 

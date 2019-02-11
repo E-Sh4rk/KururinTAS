@@ -324,7 +324,7 @@ namespace KuruBot
                     false);
         }
 
-        public static int GetTotalInvul(int life, int invul)
+        public static int GetTotalInvul(byte life, sbyte invul)
         {
             return (life-1) * Physics.invul_frames + (invul < 0 ? Physics.invul_frames : invul);
         }
