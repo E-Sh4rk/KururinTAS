@@ -472,6 +472,7 @@ namespace KuruBot
                     TaskStarted();
                     SolverEnd(b.Solve(hs));
                     TaskEnded();
+                    GC.Collect();
                 });
                 thread.Start();
             }
@@ -485,6 +486,7 @@ namespace KuruBot
                 {
                     thread.Abort();
                     TaskEnded();
+                    GC.Collect();
                 }
                 catch { }
             }
