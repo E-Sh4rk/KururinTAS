@@ -211,7 +211,7 @@ namespace KuruBot
                         cleared_nst = ClearLifeDataOfState(norm_nst);
                         int old_life_score = -1;
                         life_data.TryGetValue(cleared_nst, out old_life_score);
-                        if (old_life_score >= life_score)
+                        if (old_life_score > life_score)
                             continue;
                     }
 
@@ -229,7 +229,7 @@ namespace KuruBot
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
                         if (life_data != null)
-                            life_data[cleared_nst] = life_score;
+                            life_data[cleared_nst] = life_score; // TODO: fix issue (see logs). Should never be overidden.
 
                         // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
                         if (cost <= 0)
