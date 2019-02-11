@@ -42,7 +42,6 @@ namespace KuruBot
         // TODO: state reduction for invulnerability?
 
         public static float cost_multiplier = 1;
-        public static bool allow_state_multiple_visits = true; // A vertex could be visited many times because the cost function is not always a lower-bound of the real distance.
         public static bool allow_state_visit_with_less_life = false;
         public static int nb_iterations_before_ui_update = 10000;
 
@@ -97,7 +96,6 @@ namespace KuruBot
                 rot_precision = (short)parseInt(data, "Solver", "rot_precision", rot_precision);
                 rot_rate_precision = (short)parseInt(data, "Solver", "rot_rate_precision", rot_rate_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
-                allow_state_multiple_visits = parseBool(data, "Solver", "allow_state_multiple_visits", allow_state_multiple_visits);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
                 nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
             }
@@ -136,7 +134,6 @@ namespace KuruBot
                 data["Solver"]["rot_precision"] = rot_precision.ToString();
                 data["Solver"]["rot_rate_precision"] = rot_rate_precision.ToString();
                 data["Solver"]["cost_multiplier"] = cost_multiplier.ToString();
-                data["Solver"]["allow_state_multiple_visits"] = allow_state_multiple_visits.ToString();
                 data["Solver"]["allow_state_visit_with_less_life"] = allow_state_visit_with_less_life.ToString();
                 data["Solver"]["nb_iterations_before_ui_update"] = nb_iterations_before_ui_update.ToString();
 

@@ -216,9 +216,10 @@ namespace KuruBot
                     }
 
                     // Already visited ?
+                    // If the state was already visited, we should not add it to the queue again! Otherwise it could overwrite the state entry and corrupt some paths.
                     StateData old = null;
                     data.TryGetValue(norm_nst, out old);
-                    if (!Settings.allow_state_multiple_visits && old != null && old.already_treated)
+                    if (old != null && old.already_treated)
                         continue;
 
                     // Better cost ?
@@ -229,7 +230,7 @@ namespace KuruBot
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
                         if (life_data != null)
-                            life_data[cleared_nst] = life_score; // TODO: fix issue (see logs). Should never be overidden.
+                            life_data[cleared_nst] = life_score;
 
                         // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
                         if (cost <= 0)
