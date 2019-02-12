@@ -43,7 +43,7 @@ namespace KuruBot
 
         public static float cost_multiplier = 1;
         public static bool allow_state_visit_with_less_life = false;
-        public static int nb_iterations_before_ui_update = 10000;
+        public static int nb_iterations_before_ui_update = 25000;
 
         // ---------- SAVE/LOAD METHODS ----------
 
