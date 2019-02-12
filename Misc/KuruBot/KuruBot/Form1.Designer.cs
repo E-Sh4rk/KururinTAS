@@ -329,7 +329,7 @@
             this.computeCostMap.Name = "computeCostMap";
             this.computeCostMap.Size = new System.Drawing.Size(82, 23);
             this.computeCostMap.TabIndex = 21;
-            this.computeCostMap.Text = "2. Cost map";
+            this.computeCostMap.Text = "3. Cost map";
             this.computeCostMap.UseVisualStyleBackColor = true;
             this.computeCostMap.Click += new System.EventHandler(this.computeCostMap_Click);
             // 
@@ -396,7 +396,7 @@
             this.drawOnMap.Name = "drawOnMap";
             this.drawOnMap.Size = new System.Drawing.Size(54, 23);
             this.drawOnMap.TabIndex = 27;
-            this.drawOnMap.Text = "3. Draw";
+            this.drawOnMap.Text = "2. Draw";
             this.drawOnMap.UseVisualStyleBackColor = true;
             this.drawOnMap.CheckedChanged += new System.EventHandler(this.drawOnMap_CheckedChanged);
             // 
@@ -407,7 +407,7 @@
             this.setConstraints.Name = "setConstraints";
             this.setConstraints.Size = new System.Drawing.Size(225, 23);
             this.setConstraints.TabIndex = 28;
-            this.setConstraints.Text = "3. Set constraints to current drawing";
+            this.setConstraints.Text = "2. Set constraints to current drawing";
             this.setConstraints.UseVisualStyleBackColor = true;
             this.setConstraints.Click += new System.EventHandler(this.setConstraints_Click);
             // 
@@ -418,7 +418,7 @@
             this.setTarget.Name = "setTarget";
             this.setTarget.Size = new System.Drawing.Size(206, 23);
             this.setTarget.TabIndex = 29;
-            this.setTarget.Text = "3. Set target to current drawing";
+            this.setTarget.Text = "2. Set target to current drawing";
             this.setTarget.UseVisualStyleBackColor = true;
             this.setTarget.Click += new System.EventHandler(this.setTarget_Click);
             // 
@@ -565,7 +565,7 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.6";
+            this.Text = "KuruBot 1.7";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();

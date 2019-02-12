@@ -152,12 +152,11 @@ namespace KuruBot
         // Various constants
         const short rotation_rate_decr = 91;
         const int bump_speed_diff_frac = 4;
-        short[] down_helirin_pixels_asc = new short[] { 4, 8, 12, 16, 20, 24, 28, 31 };
-        short[] helirin_pixels_spring = new short[] { -31, 31, -24, 24, -12, 12, 0 }; // Order is important!
+        short[] helirin_points = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 24, -24, 28, -28, 31, -31 };
+        int[] helirin_points_order_for_springs = new int[] { 16, 14, 12, 10, 8, 6, 4, 2, 15, 13, 11, 9, 7, 5, 3, 1, 0 };
+        const uint up_mask = 0x15554;
+        const uint down_mask = 0xAAAA;
         const int middle_mask = 0x7;
-        short[] helirin_points = null; // Automatically initialized
-        uint up_mask = 0; // Automatically initialized
-        uint down_mask = 0; // Automatically initialized
 
         // Bump speeds
         const short rot_bump_rate = 1024;
@@ -171,17 +170,6 @@ namespace KuruBot
         {
             this.map = map;
             math = new KuruMath();
-            // Set helirin physical points
-            up_mask = 0; down_mask = 0;
-            helirin_points = new short[1 + down_helirin_pixels_asc.Length * 2];
-            helirin_points[0] = 0;
-            for (int i = 0; i < down_helirin_pixels_asc.Length; i++)
-            {
-                down_mask += (uint)1 << (2 * i + 1);
-                helirin_points[2 * i + 1] = down_helirin_pixels_asc[i];
-                up_mask += (uint)1 << (2 * i + 2);
-                helirin_points[2 * i + 2] = (short)(-down_helirin_pixels_asc[i]);
-            }
         }
 
         static int DecreaseBumpSpeed(int bs)
@@ -259,33 +247,48 @@ namespace KuruBot
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
 
-            // 5. Action of springs
-            bool invert_rotation = false;
-            HashSet<int> already_visited = new HashSet<int>();
+            // 5/6. Collision mask & springs
+            // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
+            uint collision_mask = 0;
             //SortedSet<int> already_visited = new SortedSet<int>();
-            foreach (short radius in helirin_pixels_spring)
+            HashSet<int> spring_already_visited = new HashSet<int>();
+            bool invert_rotation = false;
+            bool update_rot_rate = false;
+            foreach (int i in helirin_points_order_for_springs) // Order is important for spring actions.
             {
+                int radius = helirin_points[i];
+
                 // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
                 short px = (short)(xpix - math.factor_by_sin(radius, st.rot));
                 short py = (short)(ypix + math.factor_by_cos(radius, st.rot));
 
+                // 5. Compute collision mask
+                if (map.IsPixelInCollision(px, py))
+                    collision_mask = collision_mask | ((uint)1 << i);
+
+                // 6. Action of springs
                 Map.Spring[] springs = map.IsPixelInSpring(px, py);
                 foreach (Map.Spring spr in springs)
                 {
-                    if (!already_visited.Contains(spr.unique_id))
+                    if (!spring_already_visited.Contains(spr.unique_id))
                     {
-                        already_visited.Add(spr.unique_id);
-                        // Invert rotation if at least one spring is in the right direction
-                        if (!invert_rotation && radius != 0)
+                        spring_already_visited.Add(spr.unique_id);
+
+                        if (radius != 0)
                         {
-                            short spring_angle = AngleOfSpring(spr.type);
-                            short helirin_angle = radius > 0 ? st.rot : (short)(st.rot + (0x10000 / 2));
-                            short helirin_normal_angle = (short)(helirin_angle + Math.Sign(st.rot_srate) * (0x10000 / 4));
-                            short diff = (short)(spring_angle - helirin_normal_angle);
-                            if (Math.Abs((int)diff) > 0x10000 / 4)
-                                invert_rotation = true;
+                            update_rot_rate = true;
+                            // Invert rotation if at least one spring is in the right direction
+                            if (!invert_rotation)
+                            {
+                                short spring_angle = AngleOfSpring(spr.type);
+                                short helirin_angle = radius > 0 ? st.rot : (short)(st.rot + (0x10000 / 2));
+                                short helirin_normal_angle = (short)(helirin_angle + Math.Sign(st.rot_srate) * (0x10000 / 4));
+                                short diff = (short)(spring_angle - helirin_normal_angle);
+                                if (Math.Abs((int)diff) > 0x10000 / 4)
+                                    invert_rotation = true;
+                            }
                         }
-                        
+
                         // Position bump
                         if (spr.type == Map.SpringType.Up)
                         {
@@ -314,27 +317,12 @@ namespace KuruBot
             }
             if (invert_rotation)
                 new_st.rot_srate = (short)(-st.rot_srate);
-            // Update rate
-            if (already_visited.Count > 0)
+            // Update rot rate
+            if (update_rot_rate)
             {
                 new_st.rot_rate = (short)(Math.Sign(new_st.rot_srate) * rot_bump_rate_spring);
                 if (new_st.rot_rate == 0)
                     new_st.rot_rate = -rot_bump_rate_spring;
-            }
-
-            // 6. Compute collision mask
-            // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
-            uint collision_mask = 0;
-            for (int i = 0; i < helirin_points.Length; i++)
-            {
-                int radius = helirin_points[i];
-
-                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
-                short px = (short)(xpix - math.factor_by_sin(radius, st.rot));
-                short py = (short)(ypix + math.factor_by_cos(radius, st.rot));
-
-                if (map.IsPixelInCollision(px, py))
-                    collision_mask = collision_mask | ((uint)1 << i);
             }
 
             if (collision_mask != 0) // If collision

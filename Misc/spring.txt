@@ -25,16 +25,21 @@ LEFT
 
 ----------
 
+Physics of helirin: similar to wall collisions.
+
 Default rate = -Default rate  if at least one spring touch the good semi-helirin (depending on current default rate and spring direction)
-If many spring touch: cumulate the effects of position bump!
+(Collisions at radius 0 (ie center) do not count)
+Each spring is counted at most 1 time.
+/!\ Depends on the order at which springs/collision_points are treated!
+Priority at negative radius, then positive radius, then 0.
+
 Bump:
 65536, direction of the bumper (applied immediatly)
+If many spring touch: cumulate the effects of position bump!
+
 Angle rate:
 768, direction of the new sleep rate (not applied this frame) (- by default)
+Only if collision at radius != 0.
 
 It seems to takes place BEFORE the effects of wall physics
 BUT modification of rotation rate direction and position does not influence wall physics.
-
-Physics of helirin: seems quite similar to that for walls collisions, but less points:
-0---X---X---X---X---X---X---X--X
-S|          S|          S|     S|
