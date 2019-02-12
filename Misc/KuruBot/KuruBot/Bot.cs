@@ -239,7 +239,7 @@ namespace KuruBot
                             break;
                         }
                         
-                        if (old == null || old.already_treated)
+                        if (old == null)
                             q.Enqueue(norm_nst, total_cost);
                         else
                             q.UpdatePriority(norm_nst, total_cost);
