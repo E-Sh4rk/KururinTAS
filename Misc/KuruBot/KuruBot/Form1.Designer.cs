@@ -92,7 +92,7 @@
             this.dlMap.Name = "dlMap";
             this.dlMap.Size = new System.Drawing.Size(108, 23);
             this.dlMap.TabIndex = 1;
-            this.dlMap.Text = "Download Map";
+            this.dlMap.Text = "Download map";
             this.dlMap.UseVisualStyleBackColor = true;
             this.dlMap.Click += new System.EventHandler(this.dlMap_Click);
             // 
@@ -144,7 +144,7 @@
             this.showPosition.Name = "showPosition";
             this.showPosition.Size = new System.Drawing.Size(121, 23);
             this.showPosition.TabIndex = 5;
-            this.showPosition.Text = "Download Position";
+            this.showPosition.Text = "Download config";
             this.showPosition.UseVisualStyleBackColor = true;
             this.showPosition.Click += new System.EventHandler(this.showPosition_Click);
             // 
