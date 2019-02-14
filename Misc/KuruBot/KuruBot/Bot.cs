@@ -59,8 +59,8 @@ namespace KuruBot
                 CostMap[] cms = new CostMap[Settings.nb_additional_cost_maps + 1];
                 for (int i = 0; i < cms.Length; i++)
                 {
-                    int invul = i * Physics.invul_frames / cms.Length;
-                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, invul);
+                    int invul = i * (Physics.invul_frames+1) / cms.Length;
+                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(0,(sbyte)invul));
                     current_op++;
                     parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
                 }
@@ -74,7 +74,7 @@ namespace KuruBot
                 return null;
 
             CostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
-            int invul_index = (invul < 0 ? Physics.invul_frames : invul) * cms.Length / Physics.invul_frames;
+            int invul_index = Math.Max(0, (int)invul) * cms.Length / (Physics.invul_frames+1);
             return cms[Math.Min(cms.Length - 1, invul_index)];
         }
 
@@ -125,10 +125,6 @@ namespace KuruBot
             st.invul = 0;
             return st;
         }
-        int GetLifeScore(HelirinState st)
-        {
-            return (st.life-1) * (Physics.invul_frames + 1) + st.invul;
-        }
 
         float GetCost(int xpos, int ypos, byte life, sbyte invul)
         {
@@ -138,7 +134,7 @@ namespace KuruBot
             
             short xpix = Physics.pos_to_px(xpos);
             short ypix = Physics.pos_to_px(ypos);
-            float cost = cm.CostAtPx(xpix, ypix, Flooding.GetTotalInvul(life, invul));
+            float cost = cm.CostAtPx(xpix, ypix, Flooding.GetRealInvul(life, invul));
             float mult_cost = cost * Settings.cost_multiplier;
             return cost > 0 && mult_cost <= 0 ? float.Epsilon : mult_cost;
         }
@@ -168,7 +164,7 @@ namespace KuruBot
             q.Enqueue(norm_init, total_cost);
             data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
             if (life_data != null)
-                life_data.Add(ClearLifeDataOfState(norm_init), GetLifeScore(init));
+                life_data.Add(ClearLifeDataOfState(norm_init), Flooding.GetRealInvul(init.life, init.invul));
 
             // ProgressBar and preview settings
             float init_cost = cost;
@@ -208,7 +204,7 @@ namespace KuruBot
                     HelirinState cleared_nst = null;
                     if (life_data!= null)
                     {
-                        life_score = GetLifeScore(nst);
+                        life_score = Flooding.GetRealInvul(nst.life, nst.invul);
                         cleared_nst = ClearLifeDataOfState(norm_nst);
                         int old_life_score = -1;
                         life_data.TryGetValue(cleared_nst, out old_life_score);

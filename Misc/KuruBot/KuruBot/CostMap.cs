@@ -56,13 +56,13 @@ namespace KuruBot
             get { return cmap.GetLength(1); }
         }
 
-        public float CostAtIndex(int x, int y, int total_invul)
+        public float CostAtIndex(int x, int y, int invul_frames)
         {
             float cost = cmap[y, x];
             if (add_bonus_to_walls && cost > 0)
             {
-                float gwb = this.gwb * total_invul;
-                float gwb_mc = this.gwb_mc * total_invul;
+                float gwb = this.gwb * invul_frames;
+                float gwb_mc = this.gwb_mc * invul_frames;
                 if (wall_dist[y, x] <= 0)
                 {
                     if (cost >= gwb_mc)
@@ -75,18 +75,18 @@ namespace KuruBot
             }
             return cost;
         }
-        public float CostAtPx(short x, short y, int total_invul)
+        public float CostAtPx(short x, short y, int invul_frames)
         {
-            return CostAtIndex(x - pixel_start.x, y - pixel_start.y, total_invul);
+            return CostAtIndex(x - pixel_start.x, y - pixel_start.y, invul_frames);
         }
-        public float GetMaxWeightExceptInfinity(int total_invul)
+        public float GetMaxWeightExceptInfinity(int invul_frames)
         {
             float res = 0;
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    float cost = CostAtIndex(x, y, total_invul);
+                    float cost = CostAtIndex(x, y, invul_frames);
                     if (cost < float.PositiveInfinity && cost > res)
                         res = cost;
                 }

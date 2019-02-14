@@ -38,7 +38,7 @@ namespace KuruBot
         GraphicalHelirin? helirin = null;
 
         CostMap cost_map = null;
-        int cost_map_invul = 0;
+        int cost_map_real_invul = 0;
         Pixel? start_pixel = null;
         Pixel? end_pixel = null;
         Color highlight_color = Color.Red;
@@ -222,10 +222,10 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetCostMap(CostMap cost_map, int cost_map_invul)
+        public void SetCostMap(CostMap cost_map, int cost_map_real_invul)
         {
             this.cost_map = cost_map;
-            this.cost_map_invul = cost_map_invul;
+            this.cost_map_real_invul = cost_map_real_invul;
             highlight_map = null;
             if (showC)
                 Redraw();
@@ -274,7 +274,7 @@ namespace KuruBot
 
                 if (showC && cost_map != null)
                 {
-                    float max = cost_map.GetMaxWeightExceptInfinity(cost_map_invul);
+                    float max = cost_map.GetMaxWeightExceptInfinity(cost_map_real_invul);
                     if (max <= 0)
                         max = float.Epsilon;
                     for (int y = 0; y < bitmap.Height; y++)
@@ -282,7 +282,7 @@ namespace KuruBot
                         for (int x = 0; x < bitmap.Width; x++)
                         {
                             Rectangle dest = new Rectangle(x, y, 1, 1);
-                            float cost = cost_map.CostAtIndex(x, y, cost_map_invul);
+                            float cost = cost_map.CostAtIndex(x, y, cost_map_real_invul);
                             int color = cost < float.PositiveInfinity ? (int)((cost/max)*255) : 255;
                             color = 255 - color;
                             Brush brush = new SolidBrush(Color.FromArgb(255,color,color,color));

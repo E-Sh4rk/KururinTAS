@@ -324,9 +324,9 @@ namespace KuruBot
                     false);
         }
 
-        public static int GetTotalInvul(byte life, sbyte invul)
+        public static int GetRealInvul(byte life, sbyte invul)
         {
-            return (life-1) * Physics.invul_frames + (invul < 0 ? Physics.invul_frames : invul);
+            return (life-1) * Physics.invul_frames + Math.Max(0, invul-1);
         }
     }
 }
