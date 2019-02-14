@@ -242,7 +242,10 @@ namespace KuruBot
                     st.life = Settings.full_life;
             }
             if (zone == Map.Zone.Ending)
+            {
                 st.gs = GameState.Win;
+                return st;
+            }
 
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
@@ -380,7 +383,7 @@ namespace KuruBot
             }
 
             // Loose?
-            if (new_st.life == 0 && new_st.gs != GameState.Win)
+            if (new_st.life == 0)
                 new_st.gs = GameState.Loose;
 
             return new_st;

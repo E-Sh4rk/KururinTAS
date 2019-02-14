@@ -225,26 +225,30 @@ namespace KuruBot
 
                     // Non-infinite better cost ?
                     cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul);
+                    if (cost >= float.PositiveInfinity)
+                        continue;
                     total_cost = cost + weight;
-                    if (cost < float.PositiveInfinity && (old == null || total_cost < old.cost + old.weight))
-                    {
-                        StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
-                        data[norm_nst] = nst_data;
-                        if (life_data != null)
-                            life_data[cleared_nst] = life_score;
+                    if (old != null && total_cost >= old.cost + old.weight)
+                        continue;
 
-                        // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
-                        if (cost <= 0)
-                        {
-                            result = norm_nst;
-                            break;
-                        }
-                        
-                        if (old == null)
-                            q.Enqueue(norm_nst, total_cost);
-                        else
-                            q.UpdatePriority(norm_nst, total_cost);
+                    // Everything's okay, we add the config to the data and queue
+
+                    StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
+                    data[norm_nst] = nst_data;
+                    if (life_data != null)
+                        life_data[cleared_nst] = life_score;
+
+                    // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
+                    if (cost <= 0)
+                    {
+                        result = norm_nst;
+                        break;
                     }
+                        
+                    if (old == null)
+                        q.Enqueue(norm_nst, total_cost);
+                    else
+                        q.UpdatePriority(norm_nst, total_cost);
                 }
             }
 
