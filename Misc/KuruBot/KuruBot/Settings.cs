@@ -26,7 +26,7 @@ namespace KuruBot
         public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
         public static byte nb_additional_cost_maps = 1;
         public static float complete_wall_clip_max_dist = 25; // Distance of a wall at which the the helirin is not considered performing a wall clip.
-        public static int complete_wall_clip_duration = 10; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
+        public static int complete_wall_clip_duration = 9; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
 
         // ---------- SOLVER SETTINGS ----------
