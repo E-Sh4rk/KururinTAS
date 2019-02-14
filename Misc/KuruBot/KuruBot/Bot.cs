@@ -164,7 +164,8 @@ namespace KuruBot
             HelirinState norm_init = NormaliseState(init);
             float cost = GetCost(init.xpos, init.ypos, init.life, init.invul);
             float weight = 0;
-            q.Enqueue(norm_init, cost);
+            float total_cost = cost + weight;
+            q.Enqueue(norm_init, total_cost);
             data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
             if (life_data != null)
                 life_data.Add(ClearLifeDataOfState(norm_init), GetLifeScore(init));
@@ -222,10 +223,10 @@ namespace KuruBot
                     if (old != null && old.already_treated)
                         continue;
 
-                    // Better cost ?
+                    // Non-infinite better cost ?
                     cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul);
-                    float total_cost = cost + weight;
-                    if (old == null || total_cost < old.cost + old.weight)
+                    total_cost = cost + weight;
+                    if (cost < float.PositiveInfinity && (old == null || total_cost < old.cost + old.weight))
                     {
                         StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
                         data[norm_nst] = nst_data;
