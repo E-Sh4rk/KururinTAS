@@ -144,7 +144,7 @@
             this.showPosition.Name = "showPosition";
             this.showPosition.Size = new System.Drawing.Size(121, 23);
             this.showPosition.TabIndex = 5;
-            this.showPosition.Text = "Download config";
+            this.showPosition.Text = "Download state";
             this.showPosition.UseVisualStyleBackColor = true;
             this.showPosition.Click += new System.EventHandler(this.showPosition_Click);
             // 
@@ -191,7 +191,7 @@
             this.backupPos.Name = "backupPos";
             this.backupPos.Size = new System.Drawing.Size(31, 23);
             this.backupPos.TabIndex = 9;
-            this.backupPos.Text = "BC";
+            this.backupPos.Text = "BS";
             this.backupPos.UseVisualStyleBackColor = true;
             this.backupPos.Click += new System.EventHandler(this.bkpPos_Click);
             // 
@@ -202,7 +202,7 @@
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
-            this.restorePos.Text = "RC";
+            this.restorePos.Text = "RS";
             this.restorePos.UseVisualStyleBackColor = true;
             this.restorePos.Click += new System.EventHandler(this.restorePos_Click);
             // 
@@ -261,7 +261,7 @@
             this.loadPos.Name = "loadPos";
             this.loadPos.Size = new System.Drawing.Size(29, 23);
             this.loadPos.TabIndex = 15;
-            this.loadPos.Text = "LC";
+            this.loadPos.Text = "LS";
             this.loadPos.UseVisualStyleBackColor = true;
             this.loadPos.Click += new System.EventHandler(this.loadPos_Click);
             // 
@@ -272,7 +272,7 @@
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(29, 23);
             this.savePos.TabIndex = 16;
-            this.savePos.Text = "SC";
+            this.savePos.Text = "SS";
             this.savePos.UseVisualStyleBackColor = true;
             this.savePos.Click += new System.EventHandler(this.savePos_Click);
             // 
@@ -565,7 +565,7 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.0";
+            this.Text = "KuruBot 1.0.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
