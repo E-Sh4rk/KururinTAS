@@ -6,14 +6,14 @@
 
 - This bot has been designed for Windows, but it might also work on Linux or Mac.
 - For Windows systems, .NET Framework 4 (or more) need to be installed. For Linux or Mac, Mono can be used as an alternative.
-- This bot does not need to communicate with the game in order to work. However, we recommend to connect it to Bizhawks in order to easily transfer states and visualize solutions.
+- This bot does not need to communicate with the game in order to work. However, we recommend to connect it to Bizhawk in order to easily transfer states and visualize solutions.
 
 ### Connecting the bot to Bizhawk
 
 1. Place the script `kuruCOM.lua` in a folder with r/w permissions.
-2. Start Kuru Kuru Kururin in Bizhawks and load this LUA script.
-3. Connect the bot by clicking on the `Connect` button and selecting the LUA script (the same file that was loaded by Bizhawks, not a copy).
-4. If the game is paused in Bizhawks, the communication will also be paused. In this case, you can advance a frame if you want to complete a pending transfer.
+2. Start Kuru Kuru Kururin in Bizhawk and load this LUA script.
+3. Connect the bot by clicking on the `Connect` button and selecting the LUA script (the same file that was loaded by Bizhawk, not a copy).
+4. If the game is paused in Bizhawk, the communication will also be paused. In this case, you can advance a frame if you want to complete a pending transfer.
 
 ### Configuring the bot
 
@@ -22,13 +22,13 @@
 
 ### Loading a map
 
-- If the bot is connected to Bizhawks, you can load the current ingame map by clicking on the button `Download map`
+- If the bot is connected to Bizhawk, you can load the current ingame map by clicking on the button `Download map`
 - Alternatively, you can load a previously saved map by clicking on the button `LM` (Load Map)
 - You can save a map by clicking on the button `SM` (Save Map)
 
 ### Loading the state of the helirin
 
-- If the bot is connected to Bizhawks, you can load the current ingame state by clicking on the button `Download state`
+- If the bot is connected to Bizhawk, you can load the current ingame state by clicking on the button `Download state`
 - Alternatively, you can load a previously saved state by clicking on the button `LS` (Load State)
 - You can save a state by clicking on the button `SS` (Save State)
 - If you want to manually edit a state file, here is the list of values that it contains:  
