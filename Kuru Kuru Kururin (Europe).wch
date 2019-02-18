@@ -1,0 +1,25 @@
+SystemID GBA
+4544	d	s	0	IWRAM	X
+4545	b	u	0	IWRAM	X Subpixel
+4546	w	u	0	IWRAM	X Pixel
+4548	d	s	0	IWRAM	Y
+4549	b	u	0	IWRAM	Y Subpixel
+454A	w	u	0	IWRAM	Y Pixel
+454C	d	s	0	IWRAM	XB
+4550	d	s	0	IWRAM	YB
+4554	d	s	0	IWRAM	XS
+4558	d	s	0	IWRAM	YS
+4570	w	u	0	IWRAM	Speed norm
+4572	w	s	0	IWRAM	Angle
+4574	w	s	0	IWRAM	Angle Rate
+4576	w	s	0	IWRAM	Angle Default Rate
+457E	w	u	0	IWRAM	Bump count
+4582	b	u	0	IWRAM	Lives
+4584	b	u	0	IWRAM	Frame
+4585	b	u	0	IWRAM	Invulnerability
+313C	w	u	0	IWRAM	MapW IW
+313E	w	u	0	IWRAM	MapH IW
+4420	b	u	0	IWRAM	World
+4421	b	u	0	IWRAM	Level
+45D4	d	u	0	IWRAM	Collision Mask
+
