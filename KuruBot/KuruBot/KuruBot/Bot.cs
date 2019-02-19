@@ -60,7 +60,7 @@ namespace KuruBot
                 for (int i = 0; i < cms.Length; i++)
                 {
                     int invul = i * (Physics.invul_frames+1) / cms.Length;
-                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(0,(sbyte)invul));
+                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(1,(sbyte)invul));
                     current_op++;
                     parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
                 }

@@ -253,9 +253,11 @@ namespace KuruBot
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
                     bool to_legal_zone = legal_zones[npy, npx];
 
-                    float wgm_coef = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
-                    if (wgm_coef < 0)
-                        wgm_coef = 0;
+                    float wgm = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
+                    if (wgm <= 0)
+                        wgm = 0;
+                    else
+                        wgm *= wgm_per_px;
 
                     if (no_wall_clip && to_wall)
                         continue;
@@ -272,7 +274,7 @@ namespace KuruBot
                     else if (from_wall && to_wall)
                         nw += npd.dist / Settings.wall_speed;
                     else
-                        nw += npd.dist / Settings.ground_speed + wgm_coef*wgm_per_px;
+                        nw += npd.dist / Settings.ground_speed + wgm;
 
                     float ow = res[npy, npx];
                     if (nw < ow)
@@ -326,6 +328,8 @@ namespace KuruBot
 
         public static int GetRealInvul(byte life, sbyte invul)
         {
+            if (life <= 0)
+                return -1;
             return (life-1) * Physics.invul_frames + Math.Max(0, invul-1);
         }
     }
