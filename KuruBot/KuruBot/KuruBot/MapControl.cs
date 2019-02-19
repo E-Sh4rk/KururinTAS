@@ -134,11 +134,11 @@ namespace KuruBot
         public int brush_radius_squared = 64;
         private void Control1_MouseMove(Object sender, MouseEventArgs e)
         {
-            if (highlight_map == null)
-                highlight_map = new bool[bmap.Height,bmap.Width];
-
             if (e.Button == MouseButtons.Left)
             {
+                if (highlight_map == null)
+                    highlight_map = new bool[bmap.Height, bmap.Width];
+
                 int x = (int)((e.X - computed_bmp_start_x) / computed_scale);
                 int y = (int)((e.Y - computed_bmp_start_y) / computed_scale);
                 bool[,] new_map = new bool[highlight_map.GetLength(0), highlight_map.GetLength(1)];
