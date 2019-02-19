@@ -25,7 +25,15 @@
 ### Configuring the bot
 
 - Depending on what kind of problem you want to solve, you can configure the bot by clicking on `Load config` and choosing the right configuration file
-- These configuration files have the extension `.ini`. They contain some parameters for the bot
+- These configuration files have the extension `.ini`. They contain some parameters for the bot.
+- In term of complexity, damageless < noWC < WC. Here is a quick description of the predefined configruations:
+  - `config_wc_precise_default.ini`: The default configuration. Adapted to wall clips that need precision but do not need exploration.
+  - `config_wc_less_precise_default.ini`: Adapted to wall clips that need less precision but a little more exploration.
+  - `*_no_life_prediction.ini`: Disable the life prediction optimisation. Can be useful when the bot refuse to perform/continue a wall clip because the helirin has too few life/invulnerability left.
+  - `config_no_wc_strict.ini`: Disable wall clips by forbidding to be in a wall.
+  - `config_no_wc_relaxed.ini`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
+  - `config_damageless.ini`: For damageless (of course, no wall clip possible).
+  - `config_damageless_greedier.ini`: For damageless, with a greedier search. A solution may be found faster, but it may be less optimal.
 
 ### Loading a map
 
@@ -36,7 +44,7 @@
 
 ### Loading the state of the helirin
 
-- If the bot is connected to Bizhawk, you can load the current ingame state by clicking on the button `Download state`
+- If the bot is connected to Bizhawk, you can load the current ingame state by clicking on the button `Download state`. If the game is paused and you want to capture the current frame (not the next one), you can click on `Download state`, then save the current state into a dummy slot in Bizhawk, and reload this dummy slot (it will perform the transfer without having to frame advance).
 - Alternatively, you can load a previously saved state by clicking on the button `LS` (Load State)
 - You can save a state by clicking on the button `SS` (Save State)
 - If you want to manually edit a state file, here is the list of values that it contains:  
@@ -46,10 +54,10 @@
 
 ### Solving!
 
-The following steps must be done again if you change the map or the configuration of the bot. You do not need to do it again if you just change the state of the helirin.
+The three first steps must be done again if you change the map or the configuration of the bot. You do not need to do it again if you just change the state of the helirin.
 
 1. The first step is to build the solver. If you want to focus the search on the inbound ending, click on `1. Build solver (legal ending)`. Otherwise, click on `1. Build solver (any ending)`.
-2. The second step is optionnal. If you want to set a custom target (different than the regular ending zone), you can do it by clicking on `2. Draw`, drawing your custom ending zone on the map (right click to clear) and clicking on `2. Set target to current drawing`. You can also add custom bounds (in order to restrict the search space) by drawing some additional walls around the area to explore, and clicking on `2. Set constraints to current drawing`.
+2. The second step is optionnal. If you want to set a custom target (different than the regular ending zone), you can do it by clicking on `2. Draw`, drawing your custom ending zone on the map (right click to clear) and clicking on `2. Set target to current drawing`. You can also add custom bounds (in order to restrict the search space) by drawing some additional walls around the area to explore, and clicking on `2. Set constraints to current drawing`. The radius of the brush can be changed in the spinbox at the right of the button `2. Draw`.
 3. The third step is to build the cost map. Just click on the button `3. Cost map` (it can take some times depending on the size of the map and the configuration of the bot). You can then visualize the cost map by checking `Show cost map` (if you have set custom bounds and/or target in the step 2, you can check that it has been taken into account).
 4. Last step: click on `4. Solve` and wait! A message box will appear if a solution is found. You can abort the search at anytime by clicking on the `Abort` button.
 
@@ -57,6 +65,11 @@ The following steps must be done again if you change the map or the configuratio
 
 - If a solution has been found, you can save it by clicking on `SI` (Save Input). You will be able to load it later by clicking on `LI` (Load Input).
 - If you want to play the solution in the game, just click on `Send last inputs` (the bot must be connected to Bizhawk).
+
+### Exporting the solution in bk2
+
+- The simplest way to export the solution to a `.bk2` file is to play it in Bizhawk while recording (menu `File -> Movie` of Bizhawk).
+- If you are an expert of the bk2 format, you also convert an input file of the bot (saved with `SI`) into an input file for the bk2 format (usually called `Input Log.txt`) by clicking on the `To bk2` button. The reverse conversion can be achieved with the `From bk2` button.
 
 ## Credits
 

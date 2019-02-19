@@ -49,13 +49,13 @@ namespace KuruBot
 
         static float parseFloat(IniData data, string cat, string name, float def)
         {
-            try { return float.Parse(data[cat][name]); }
+            try { return float.Parse(data[cat][name], System.Globalization.CultureInfo.InvariantCulture); }
             catch { }
             return def;
         }
         static int parseInt(IniData data, string cat, string name, int def)
         {
-            try { return int.Parse(data[cat][name]); }
+            try { return int.Parse(data[cat][name], System.Globalization.CultureInfo.InvariantCulture); }
             catch { }
             return def;
         }
@@ -101,6 +101,18 @@ namespace KuruBot
             }
             catch { }
         }
+        static string ToString(float o)
+        {
+            return o.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+        static string ToString(int o)
+        {
+            return o.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+        static string ToString(object o)
+        {
+            return o.ToString();
+        }
         public static void SaveConfig(string filename)
         {
             try
@@ -111,31 +123,31 @@ namespace KuruBot
                 sections.AddSection("Solver");
                 IniData data = new IniData(sections);
 
-                data["Game"]["full_life"] = full_life.ToString();
+                data["Game"]["full_life"] = ToString(full_life);
 
-                data["Flooding"]["ground_speed"] = ground_speed.ToString();
-                data["Flooding"]["allow_wall_clip"] = allow_wall_clip.ToString();
-                data["Flooding"]["wall_speed"] = wall_speed.ToString();
-                data["Flooding"]["ground_wall_bonus"] = ground_wall_bonus.ToString();
-                data["Flooding"]["ground_wall_bonus_min_cost"] = ground_wall_bonus_min_cost.ToString();
-                data["Flooding"]["wall_ground_malus"] = wall_ground_malus.ToString();
-                data["Flooding"]["wall_ground_malus_dist"] = wall_ground_malus_dist.ToString();
-                data["Flooding"]["restrict_complete_wall_clip_when_one_heart"] = restrict_complete_wall_clip_when_one_heart.ToString();
-                data["Flooding"]["nb_additional_cost_maps"] = nb_additional_cost_maps.ToString();
-                data["Flooding"]["complete_wall_clip_max_dist"] = complete_wall_clip_max_dist.ToString();
-                data["Flooding"]["complete_wall_clip_duration"] = complete_wall_clip_duration.ToString();
-                data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = cwc_max_dist_zero_in_legal_zone.ToString();
+                data["Flooding"]["ground_speed"] = ToString(ground_speed);
+                data["Flooding"]["allow_wall_clip"] = ToString(allow_wall_clip);
+                data["Flooding"]["wall_speed"] = ToString(wall_speed);
+                data["Flooding"]["ground_wall_bonus"] = ToString(ground_wall_bonus);
+                data["Flooding"]["ground_wall_bonus_min_cost"] = ToString(ground_wall_bonus_min_cost);
+                data["Flooding"]["wall_ground_malus"] = ToString(wall_ground_malus);
+                data["Flooding"]["wall_ground_malus_dist"] = ToString(wall_ground_malus_dist);
+                data["Flooding"]["restrict_complete_wall_clip_when_one_heart"] = ToString(restrict_complete_wall_clip_when_one_heart);
+                data["Flooding"]["nb_additional_cost_maps"] = ToString(nb_additional_cost_maps);
+                data["Flooding"]["complete_wall_clip_max_dist"] = ToString(complete_wall_clip_max_dist);
+                data["Flooding"]["complete_wall_clip_duration"] = ToString(complete_wall_clip_duration);
+                data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = ToString(cwc_max_dist_zero_in_legal_zone);
 
-                data["Solver"]["pos_reduction"] = pos_reduction.ToString();
-                data["Solver"]["bump_reduction"] = bump_reduction.ToString();
-                data["Solver"]["additional_reduction_in_wall"] = additional_reduction_in_wall.ToString();
-                data["Solver"]["additional_reduction_dist_multiplier"] = additional_reduction_dist_multiplier.ToString();
-                data["Solver"]["max_additional_reduction"] = max_additional_reduction.ToString();
-                data["Solver"]["rot_precision"] = rot_precision.ToString();
-                data["Solver"]["rot_rate_precision"] = rot_rate_precision.ToString();
-                data["Solver"]["cost_multiplier"] = cost_multiplier.ToString();
-                data["Solver"]["allow_state_visit_with_less_life"] = allow_state_visit_with_less_life.ToString();
-                data["Solver"]["nb_iterations_before_ui_update"] = nb_iterations_before_ui_update.ToString();
+                data["Solver"]["pos_reduction"] = ToString(pos_reduction);
+                data["Solver"]["bump_reduction"] = ToString(bump_reduction);
+                data["Solver"]["additional_reduction_in_wall"] = ToString(additional_reduction_in_wall);
+                data["Solver"]["additional_reduction_dist_multiplier"] = ToString(additional_reduction_dist_multiplier);
+                data["Solver"]["max_additional_reduction"] = ToString(max_additional_reduction);
+                data["Solver"]["rot_precision"] = ToString(rot_precision);
+                data["Solver"]["rot_rate_precision"] = ToString(rot_rate_precision);
+                data["Solver"]["cost_multiplier"] = ToString(cost_multiplier);
+                data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
+                data["Solver"]["nb_iterations_before_ui_update"] = ToString(nb_iterations_before_ui_update);
 
                 FileIniDataParser parser = new FileIniDataParser();
                 parser.WriteFile(filename, data);
