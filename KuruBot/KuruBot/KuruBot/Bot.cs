@@ -206,16 +206,16 @@ namespace KuruBot
                     {
                         life_score = Flooding.GetRealInvul(nst.life, nst.invul);
                         cleared_nst = ClearLifeDataOfState(norm_nst);
-                        int old_life_score = -1;
-                        life_data.TryGetValue(cleared_nst, out old_life_score);
+                        int old_life_score;
+                        life_data.TryGetValue(cleared_nst, out old_life_score); // Default value for 'old_life_score' (type int) is 0.
                         if (old_life_score > life_score)
                             continue;
                     }
 
                     // Already visited ?
                     // If the state was already visited, we should not add it to the queue again! Otherwise it could overwrite the state entry and corrupt some paths.
-                    StateData old = null;
-                    data.TryGetValue(norm_nst, out old);
+                    StateData old;
+                    data.TryGetValue(norm_nst, out old); // Default value for 'old' (type StateData) is null.
                     if (old != null && old.already_treated)
                         continue;
 
