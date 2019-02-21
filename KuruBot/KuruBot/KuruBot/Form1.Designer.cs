@@ -70,8 +70,10 @@
             this.switchCostMap = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.invulCostMap = new System.Windows.Forms.NumericUpDown();
+            this.minInvulScore = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).BeginInit();
             this.SuspendLayout();
             // 
             // connect
@@ -303,7 +305,7 @@
             // 
             this.showCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showCostMap.AutoSize = true;
-            this.showCostMap.Location = new System.Drawing.Point(644, 509);
+            this.showCostMap.Location = new System.Drawing.Point(659, 509);
             this.showCostMap.Name = "showCostMap";
             this.showCostMap.Size = new System.Drawing.Size(99, 17);
             this.showCostMap.TabIndex = 19;
@@ -336,9 +338,9 @@
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(521, 505);
+            this.solve.Location = new System.Drawing.Point(570, 505);
             this.solve.Name = "solve";
-            this.solve.Size = new System.Drawing.Size(66, 23);
+            this.solve.Size = new System.Drawing.Size(55, 23);
             this.solve.TabIndex = 22;
             this.solve.Text = "4. Solve";
             this.solve.UseVisualStyleBackColor = true;
@@ -405,7 +407,7 @@
             this.setConstraints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.setConstraints.Location = new System.Drawing.Point(413, 476);
             this.setConstraints.Name = "setConstraints";
-            this.setConstraints.Size = new System.Drawing.Size(225, 23);
+            this.setConstraints.Size = new System.Drawing.Size(212, 23);
             this.setConstraints.TabIndex = 28;
             this.setConstraints.Text = "2. Set constraints to current drawing";
             this.setConstraints.UseVisualStyleBackColor = true;
@@ -414,9 +416,9 @@
             // setTarget
             // 
             this.setTarget.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.setTarget.Location = new System.Drawing.Point(644, 476);
+            this.setTarget.Location = new System.Drawing.Point(631, 476);
             this.setTarget.Name = "setTarget";
-            this.setTarget.Size = new System.Drawing.Size(206, 23);
+            this.setTarget.Size = new System.Drawing.Size(219, 23);
             this.setTarget.TabIndex = 29;
             this.setTarget.Text = "2. Set target to current drawing";
             this.setTarget.UseVisualStyleBackColor = true;
@@ -520,11 +522,20 @@
             this.invulCostMap.TabIndex = 38;
             this.invulCostMap.ValueChanged += new System.EventHandler(this.invulCostMap_ValueChanged);
             // 
+            // minInvulScore
+            // 
+            this.minInvulScore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.minInvulScore.Location = new System.Drawing.Point(521, 506);
+            this.minInvulScore.Name = "minInvulScore";
+            this.minInvulScore.Size = new System.Drawing.Size(43, 20);
+            this.minInvulScore.TabIndex = 39;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.minInvulScore);
             this.Controls.Add(this.invulCostMap);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.switchCostMap);
@@ -565,11 +576,12 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.0.3";
+            this.Text = "KuruBot 1.1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -619,6 +631,7 @@
         private System.Windows.Forms.Button switchCostMap;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown invulCostMap;
+        private System.Windows.Forms.NumericUpDown minInvulScore;
     }
 }
 

@@ -467,7 +467,7 @@ namespace KuruBot
             {
                 thread = new Thread(delegate () {
                     TaskStarted();
-                    SolverEnd(b.Solve(hs));
+                    SolverEnd(b.Solve(hs, (int)minInvulScore.Value));
                     TaskEnded();
                     GC.Collect();
                 });

@@ -60,7 +60,7 @@ The three first steps must be done again if you change the map or the configurat
 1. The first step is to build the solver. If you want to focus the search on the inbound ending, click on `1. Build solver (legal ending)`. Otherwise, click on `1. Build solver (any ending)`.
 2. The second step is optionnal. If you want to set a custom target (different than the regular ending zone), you can do it by clicking on `2. Draw`, drawing your custom ending zone on the map (right click to clear) and clicking on `2. Set target to current drawing`. You can also add custom bounds (in order to restrict the search space) by drawing some additional walls around the area to explore, and clicking on `2. Set constraints to current drawing`. The radius of the brush can be changed in the spinbox at the right of the button `2. Draw`.
 3. The third step is to build the cost map. Just click on the button `3. Cost map` (it can take some times depending on the size of the map and the configuration of the bot). You can then visualize the cost map by checking `Show cost map` (if you have set custom bounds and/or target in the step 2, you can check that it has been taken into account).
-4. Last step: click on `4. Solve` and wait! A message box will appear if a solution is found. You can abort the search at anytime by clicking on the `Abort` button.
+4. Last step: click on `4. Solve` and wait! A message box will appear if a solution is found. The spin box at the left correspond to a minimal "life score" (going below is treated as a death). For instance, setting it to 20 prevents the helirin from having less than 2 hearts. You can abort the search at anytime by clicking on the `Abort` button.
 
 ### Visualizing the solution and saving it
 

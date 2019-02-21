@@ -146,7 +146,7 @@ namespace KuruBot
             return xpix < f.PixelStart.x || xpix > f.PixelEnd.x || ypix < f.PixelStart.y || ypix > f.PixelEnd.y;
         }
 
-        public Action[] Solve (HelirinState init)
+        public Action[] Solve (HelirinState init, int min_life_score)
         {
             if (cost_maps == null || init == null)
                 return null;
@@ -195,16 +195,15 @@ namespace KuruBot
                     HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 
-                    // Out of search space / Loose ?
-                    if (nst.gs == GameState.Loose || IsOutOfSearchSpace(nst.xpos, nst.ypos))
+                    // Loose / Not enough life / Out of search space ?
+                    int life_score = Flooding.GetRealInvul(nst.life, nst.invul);
+                    if (nst.gs == GameState.Loose || life_score < min_life_score || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
                     // Already enqueued with more life ?
-                    int life_score = -1;
                     HelirinState cleared_nst = null;
                     if (life_data!= null)
                     {
-                        life_score = Flooding.GetRealInvul(nst.life, nst.invul);
                         cleared_nst = ClearLifeDataOfState(norm_nst);
                         int old_life_score;
                         life_data.TryGetValue(cleared_nst, out old_life_score); // Default value for 'old_life_score' (type int) is 0.
