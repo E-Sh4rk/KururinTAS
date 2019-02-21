@@ -27,14 +27,14 @@
 - Depending on what kind of problem you want to solve, you can configure the bot by clicking on `Load config` and choosing the right configuration file
 - These configuration files have the extension `.ini`. They contain some parameters for the bot.
 - In term of complexity, damageless < noWC < WC. Here is a quick description of the predefined configruations:
-  - `config_wc_precise_default.ini`: The default configuration. Adapted to wall clips that need precision but do not need exploration.
-  - `config_wc_less_precise_default.ini`: Adapted to wall clips that need less precision but a little more exploration.
-  - `config_wc_exploration.ini`: Adapted to exploration with some easy wall clips.
-  - `*_no_life_prediction.ini`: Disable the life prediction optimisation. Can be useful when the bot refuse to perform/continue a wall clip because the helirin has too few life/invulnerability left.
-  - `config_no_wc_strict.ini`: Disable wall clips by forbidding to be in a wall.
-  - `config_no_wc_relaxed.ini`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
-  - `config_damageless.ini`: For damageless (of course, no wall clip possible).
-  - `config_damageless_greedier.ini`: For damageless, with a greedier search. A solution may be found faster, but it may be less optimal.
+  - `config_wc_default`: The default configuration. Adapted to wall clips that need precision but do not need exploration.
+  - `*_less_precise`: Less precise configuration: the bot will be able to explore more, but might miss some tricky wall clips.
+  - `*_no_life_prediction`: Disable the life prediction optimisation. Can be relevant when the bot must briefly quit the legal zone with very low life and invulnerability.
+  - `config_wc_exploration`: Adapted to exploration, but less efficient for wall clips.
+  - `config_no_wc_strict`: Disable wall clips by forbidding to be in a wall.
+  - `config_no_wc_relaxed`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
+  - `config_damageless`: For damageless (of course, no wall clip possible).
+  - `config_damageless_greedier`: For damageless, with a greedier search. A solution may be found faster, but it may be less optimal.
 
 ### Loading a map
 
