@@ -135,7 +135,7 @@ namespace KuruBot
 
         // Public constants
         public const short default_srate = 182;
-        public const sbyte invul_frames = 20;
+        //public const sbyte invul_frames = 20; // Moved to Settings!
         //public const byte full_life = 3; // Moved to Settings!
 
         // Input speed constants
@@ -201,6 +201,11 @@ namespace KuruBot
             ActionEffect e = Controller.action_to_effect(a);
             st = st.ShallowCopy();
 
+            if (st.life > Settings.full_life)
+                st.life = Settings.full_life;
+            if (st.invul > Settings.invul_frames)
+                st.invul = Settings.invul_frames;
+
             // 1. Set input speed (XS and YS) depending on inputs
             int[] speeds = input_speeds;
             if (e.x != Direction1.None && e.y != Direction1.None)
@@ -225,9 +230,6 @@ namespace KuruBot
             st.xpos += xs + st.xb;
             st.ypos += ys + st.yb;
             st.rot += st.rot_rate;
-
-            if (st.life > Settings.full_life)
-                st.life = Settings.full_life;
 
             // 4. Detection of healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
@@ -335,7 +337,7 @@ namespace KuruBot
                 {
                     if (new_st.invul == 0)
                     {
-                        new_st.invul = invul_frames;
+                        new_st.invul = Settings.invul_frames;
                         new_st.life--;
                     }
                 }

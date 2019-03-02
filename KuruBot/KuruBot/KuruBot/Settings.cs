@@ -12,6 +12,7 @@ namespace KuruBot
         // ---------- GAME SETTINGS ----------
 
         public static byte full_life = 3;
+        public static sbyte invul_frames = 20;
 
         // ---------- FLOODING SETTINGS ----------
 
@@ -74,6 +75,7 @@ namespace KuruBot
                 IniData data = parser.ReadFile(filename);
 
                 full_life = (byte)parseInt(data, "Game", "full_life", full_life);
+                invul_frames = (sbyte)parseInt(data, "Game", "invul_frames", invul_frames);
 
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
                 allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
@@ -124,6 +126,7 @@ namespace KuruBot
                 IniData data = new IniData(sections);
 
                 data["Game"]["full_life"] = ToString(full_life);
+                data["Game"]["invul_frames"] = ToString(invul_frames);
 
                 data["Flooding"]["ground_speed"] = ToString(ground_speed);
                 data["Flooding"]["allow_wall_clip"] = ToString(allow_wall_clip);

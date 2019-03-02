@@ -11,7 +11,7 @@ RotSleepRate
 
 State (ingame/win/loose)
 Lives
-Invicibility
+Invulnerability
 
 ----- STATE REDUCTION -----
 
@@ -25,9 +25,9 @@ For position, precision could be proportionnal to the "distance to a wall".
 
 ----- STATE REDUCTION (FOR LIFE SYSTEM) -----
 
-Invicibility time could be rounded to 5 frames.
+Invulnerability time could be rounded to 5 frames.
 
-An optional optimisation could remember the max lives/invicibility reached for each [state - lives/invicibility], and reject a state if it is smaller
+An optional optimisation could remember the max lives/invulnerability reached for each [state - lives/invulnerability], and reject a state if it is smaller
 (prevent some go and back that are only decreasing the lives).
 
 ----- COST FUNCTION (for A*) -----
@@ -37,5 +37,5 @@ Flooding could get a little constant bonus when infiltrating into walls, and a l
 It could propagate inside walls (maybe at the same speed than on ground, because it can't stay into wall forever due to lives).
 (/!\ result will not be optimal)
 
-Bonus for infiltrating walls decrease when the player loose a life (or more precisely, when the player spend invicibility time):
+Bonus for infiltrating walls decrease when the player loose a life (or more precisely, when the player spend invulnerability time):
 at least one cost map per heart should be generated, the last one (1 heart) disallowing to start a new complete wall clip.

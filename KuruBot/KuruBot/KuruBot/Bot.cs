@@ -59,7 +59,7 @@ namespace KuruBot
                 CostMap[] cms = new CostMap[Settings.nb_additional_cost_maps + 1];
                 for (int i = 0; i < cms.Length; i++)
                 {
-                    int invul = i * (Physics.invul_frames+1) / cms.Length;
+                    int invul = i * (Settings.invul_frames+1) / cms.Length;
                     cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(1,(sbyte)invul));
                     current_op++;
                     parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
@@ -74,7 +74,7 @@ namespace KuruBot
                 return null;
 
             CostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
-            int invul_index = Math.Max(0, (int)invul) * cms.Length / (Physics.invul_frames+1);
+            int invul_index = Math.Max(0, (int)invul) * cms.Length / (Settings.invul_frames+1);
             return cms[Math.Min(cms.Length - 1, invul_index)];
         }
 
@@ -153,7 +153,7 @@ namespace KuruBot
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
             Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
             Dictionary<HelirinState, int> life_data = null;
-            if (!Settings.allow_state_visit_with_less_life && init.invul >= 0)
+            if (!Settings.allow_state_visit_with_less_life && Settings.invul_frames >= 0)
                 life_data = new Dictionary<HelirinState, int>();
 
             // Init

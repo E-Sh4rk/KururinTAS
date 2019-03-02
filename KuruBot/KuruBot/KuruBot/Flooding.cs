@@ -330,7 +330,7 @@ namespace KuruBot
         {
             if (life <= 0)
                 return -1;
-            return (life-1) * Physics.invul_frames + Math.Max(0, invul-1);
+            return (life-1) * Settings.invul_frames + Math.Max(0, invul-1);
         }
     }
 }
