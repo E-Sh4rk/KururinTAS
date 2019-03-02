@@ -28,11 +28,12 @@
 - These configuration files have the extension `.ini`. They contain some parameters for the bot.
 - In term of complexity, damageless < noWC < WC. Here is a quick description of the predefined configruations:
   - `config_wc_k`: Full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (it could perform very tricky wall clips) but will explore less the map.
-  - `*_no_life_prediction`: Disable the life prediction optimisation. Can be relevant when the bot must briefly quit the legal zone with very low life and invulnerability.
   - `config_no_wc_strict`: Disable wall clips by forbidding to be in a wall.
   - `config_no_wc_relaxed`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
   - `config_damageless`: For damageless (of course, no wall clip possible).
   - `config_damageless_greedier`: For damageless, with a greedier search. A solution may be found faster, but it may be less optimal.
+  - `disable_life_prediction`: Load it after another config in order to disable the life prediction optimisation. Can be relevant when the bot must briefly quit the legal zone with very low life and invulnerability.
+  - `disable_life`: Load it after another config in order to disable the life constraints. The helirin will be considered as invincible.
 
 ### Loading a map
 
