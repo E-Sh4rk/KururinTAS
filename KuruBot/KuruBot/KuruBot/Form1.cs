@@ -165,7 +165,7 @@ namespace KuruBot
             ExecuteInputs(a_inputs.ToArray());
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private void playMove_KeyDown(object sender, KeyEventArgs e)
         {
             if (!controls_enabled)
                 return;

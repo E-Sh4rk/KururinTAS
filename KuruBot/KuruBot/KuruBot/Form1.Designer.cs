@@ -35,7 +35,6 @@
             this.showPMap = new System.Windows.Forms.CheckBox();
             this.kuruComFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.showPosition = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.enterInputString = new System.Windows.Forms.Button();
             this.downloadInputs = new System.Windows.Forms.Button();
             this.loadFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -71,6 +70,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.invulCostMap = new System.Windows.Forms.NumericUpDown();
             this.minInvulScore = new System.Windows.Forms.NumericUpDown();
+            this.playMove = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).BeginInit();
@@ -149,16 +149,6 @@
             this.showPosition.Text = "Download state";
             this.showPosition.UseVisualStyleBackColor = true;
             this.showPosition.Click += new System.EventHandler(this.showPosition_Click);
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 553);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(232, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Use Ø/CTRL/ALT+Numpad to perform a move.";
             // 
             // enterInputString
             // 
@@ -530,11 +520,23 @@
             this.minInvulScore.Size = new System.Drawing.Size(43, 20);
             this.minInvulScore.TabIndex = 39;
             // 
+            // playMove
+            // 
+            this.playMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.playMove.Location = new System.Drawing.Point(12, 548);
+            this.playMove.Name = "playMove";
+            this.playMove.Size = new System.Drawing.Size(242, 23);
+            this.playMove.TabIndex = 40;
+            this.playMove.Text = "Play move (then use Ø/CTRL/ALT+Numpad)";
+            this.playMove.UseVisualStyleBackColor = true;
+            this.playMove.KeyDown += new System.Windows.Forms.KeyEventHandler(this.playMove_KeyDown);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.playMove);
             this.Controls.Add(this.minInvulScore);
             this.Controls.Add(this.invulCostMap);
             this.Controls.Add(this.label2);
@@ -566,19 +568,16 @@
             this.Controls.Add(this.backupPos);
             this.Controls.Add(this.downloadInputs);
             this.Controls.Add(this.enterInputString);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.showPosition);
             this.Controls.Add(this.showPMap);
             this.Controls.Add(this.showGMap);
             this.Controls.Add(this.main_panel);
             this.Controls.Add(this.dlMap);
             this.Controls.Add(this.connect);
-            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.2.0";
+            this.Text = "KuruBot 1.2.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).EndInit();
@@ -596,7 +595,6 @@
         private System.Windows.Forms.CheckBox showPMap;
         private System.Windows.Forms.OpenFileDialog kuruComFileDialog;
         private System.Windows.Forms.Button showPosition;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button enterInputString;
         private System.Windows.Forms.Button downloadInputs;
         private System.Windows.Forms.OpenFileDialog loadFileDialog;
@@ -632,6 +630,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown invulCostMap;
         private System.Windows.Forms.NumericUpDown minInvulScore;
+        private System.Windows.Forms.Button playMove;
     }
 }
 
