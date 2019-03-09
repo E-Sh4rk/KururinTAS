@@ -22,7 +22,7 @@ namespace KuruBot
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
         public static float ground_wall_bonus = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
         public static float ground_wall_bonus_min_cost = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than ground_wall_bonus. Unit: dist/frame.
-        public static float wall_ground_malus = ground_speed * 10; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
+        public static float wall_ground_malus = ground_speed * 8; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
         public static float wall_ground_malus_dist = 6; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
         public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
         public static byte nb_additional_cost_maps = 1;
