@@ -42,7 +42,7 @@ namespace KuruBot
             else
                 full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.Allow, 0);
 
-            if (!Settings.allow_wall_clip || !Settings.restrict_complete_wall_clip_when_one_heart || Settings.full_life <= 1)
+            if (!Settings.allow_wall_clip || !Settings.restrict_complete_wall_clip_when_one_heart || Settings.full_life <= 1 || Settings.invul_frames < 0)
             {
                 cost_maps = new CostMap[1][];
                 cost_maps[0] = new CostMap[] { full_life_cost_map };
@@ -74,6 +74,8 @@ namespace KuruBot
                 return null;
 
             CostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
+            if (Settings.invul_frames < 0)
+                return cms[cms.Length - 1];
             int invul_index = Math.Max(0, (int)invul) * cms.Length / (Settings.invul_frames+1);
             return cms[Math.Min(cms.Length - 1, invul_index)];
         }
