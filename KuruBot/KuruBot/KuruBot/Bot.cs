@@ -153,7 +153,7 @@ namespace KuruBot
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
             Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
             Dictionary<HelirinState, int> life_data = null;
-            if (!Settings.allow_state_visit_with_less_life && Settings.invul_frames >= 0)
+            if (!Settings.allow_state_visit_with_less_life && Settings.invul_frames >= 0 && Settings.full_life >= 2)
                 life_data = new Dictionary<HelirinState, int>();
 
             // Init

@@ -31,7 +31,8 @@
   - `config_no_wc_strict`: Disable wall clips by forbidding to be in a wall.
   - `config_no_wc_relaxed`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
   - `config_damageless`: For damageless (of course, no wall clip possible).
-  - `config_damageless_greedier`: For damageless, with a greedier search. A solution may be found faster, but it may be less optimal.
+  - `decrease_cost_map`: Decrease the importance given to the cost map so that the bot will be less greedy.
+  - `increase_cost_map`: Increase the importance given to the cost map so that the bot will be greedier.
   - `disable_waiting`: Decrease rotation precision. Reduce the search space but make the bot unable to deliberately wait (for changing its rotation).
   - `disable_life_prediction`: Load it after another config in order to disable the life prediction optimisation. Can be relevant when the bot must briefly quit the legal zone with very low life and invulnerability.
   - `disable_life`: Load it after another config in order to disable the life constraints. The helirin will be considered as invincible.
