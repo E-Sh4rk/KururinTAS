@@ -199,7 +199,7 @@ namespace KuruBot
 
                     // Loose / Not enough life / Out of search space ?
                     int life_score = Flooding.GetRealInvul(nst.life, nst.invul);
-                    if (nst.gs == GameState.Loose || life_score < min_life_score || IsOutOfSearchSpace(nst.xpos, nst.ypos))
+                    if (nst.gs == GameState.Loose || (life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
                     // Already enqueued with more life ?
