@@ -197,8 +197,8 @@ namespace KuruBot
             // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
             // Instead, it will be applied after, when asking a specific cost, to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
 
-            float wgm_dist = Settings.wall_ground_malus_dist < 1 ? 1 : Settings.wall_ground_malus_dist;
-            float wgm_per_px = Settings.wall_ground_malus / wgm_dist;
+            float wgm_dist = Settings.wall_clip_malus_dist < 1 ? 1 : Settings.wall_clip_malus_dist;
+            float wgm_per_px = Settings.wall_clip_malus / wgm_dist;
 
             int width = PixelEnd.x - PixelStart.x + 1;
             int height = PixelEnd.y - PixelStart.y + 1;

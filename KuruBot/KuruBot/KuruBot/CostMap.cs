@@ -30,8 +30,8 @@ namespace KuruBot
         protected bool add_bonus_to_walls = false;
         protected Pixel pixel_start;
 
-        protected float gwb = 0;
-        protected float gwb_mc = 0;
+        protected float wb = 0;
+        protected float wb_rc = 0;
 
         public CostMap(float[,] cmap, float[,] wall_dist, Pixel pixel_start, bool add_bonus_to_walls)
         {
@@ -39,8 +39,8 @@ namespace KuruBot
             this.wall_dist = wall_dist;
             this.pixel_start = pixel_start;
             this.add_bonus_to_walls = add_bonus_to_walls;
-            gwb = Settings.ground_wall_bonus;
-            gwb_mc = Settings.ground_wall_bonus_min_cost;
+            wb = Settings.wall_bonus_per_invul;
+            wb_rc = Settings.wall_bonus_required_cost;
         }
 
         public Pixel PixelStart
@@ -61,14 +61,14 @@ namespace KuruBot
             float cost = cmap[y, x];
             if (add_bonus_to_walls && cost > 0)
             {
-                float gwb = this.gwb * invul_frames;
-                float gwb_mc = this.gwb_mc * invul_frames;
+                float wb = this.wb * invul_frames;
+                float wb_rc = this.wb_rc * invul_frames;
                 if (wall_dist[y, x] <= 0)
                 {
-                    if (cost >= gwb_mc)
-                        cost -= gwb;
+                    if (cost >= wb_rc)
+                        cost -= wb;
                     else
-                        cost -= gwb * cost / gwb_mc;
+                        cost -= wb * cost / wb_rc;
                 }
                 if (cost <= 0)
                     cost = float.Epsilon;
