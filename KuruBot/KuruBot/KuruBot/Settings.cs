@@ -20,13 +20,13 @@ namespace KuruBot
         public static float ground_speed = 3;
         public static bool allow_wall_clip = true;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
-        public static float wall_bonus_per_invul = 7 - 2 - ground_speed; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
-        public static float wall_bonus_required_cost = 7 - 2; // Min weight required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
-        public static float wall_clip_malus = ground_speed * 7; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
-        public static float wall_clip_malus_dist = 14; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
+        public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
+        public static float wall_bonus_required_cost = 2.5f /*7 / ground_speed*/; // Min weight required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
+        public static float wall_clip_malus = 16; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
+        public static float wall_clip_malus_dist = 16; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
         public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
         public static byte nb_additional_cost_maps = 1;
-        public static float complete_wall_clip_max_dist = 25; // Distance of a wall at which the the helirin is not considered performing a wall clip.
+        public static float complete_wall_clip_max_dist = 24; // Distance of a wall at which the the helirin is not considered performing a wall clip.
         public static int complete_wall_clip_duration = 9; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
 

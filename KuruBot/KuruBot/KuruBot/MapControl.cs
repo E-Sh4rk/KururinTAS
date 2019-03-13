@@ -266,7 +266,7 @@ namespace KuruBot
                 Brush healingBrush = new SolidBrush(Color.FromArgb(0x77, 0x40, 0x40, 0xFF));
                 Brush endingBrush = new SolidBrush(Color.FromArgb(0x77, 0xD0, 0xD0, 0x00));
                 Brush springBrush = new SolidBrush(Color.FromArgb(0x77, 0x80, 0x80, 0x80));
-                Brush collisionBrush = Brushes.Red;
+                Brush collisionBrush = Brushes.SlateGray;
                 Brush phyStartingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0x00, 0x00));
                 Brush phyHealingBrush = new SolidBrush(Color.FromArgb(0x55, 0x40, 0x40, 0xFF));
                 Brush phyEndingBrush = new SolidBrush(Color.FromArgb(0x55, 0xD0, 0xD0, 0x00));

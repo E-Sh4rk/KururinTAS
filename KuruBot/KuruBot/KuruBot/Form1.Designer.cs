@@ -576,7 +576,7 @@
             this.Controls.Add(this.connect);
             this.MinimumSize = new System.Drawing.Size(878, 656);
             this.Name = "Form1";
-            this.Text = "KuruBot 1.3.2";
+            this.Text = "KuruBot 1.4.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).EndInit();
