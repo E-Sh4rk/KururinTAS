@@ -30,5 +30,6 @@ Installation note:
 
 Changelog:
  - Ingame rendering has been improved. In particular, it now implements a 2-frame delay and a 'CamHack' in order to perfectly intergate walls.
+ - Wait for the level to finish loading before drawing walls.
 
 Credits to ThunderAxe31 and E-Sh4rk.
