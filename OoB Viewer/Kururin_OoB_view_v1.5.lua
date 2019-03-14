@@ -37,7 +37,7 @@ then
 		view.drawLine = view.DrawLine
 		view.drawAxis = view.DrawAxis
 		view.drawEllipse = view.DrawEllipse
-		view.drawRectangle = view.DrawRectangle
+		view.drawRectFix = view.DrawRectangle
 	else
 		view = gui.createcanvas(x_nb_tiles*tile_size*window_zoom, y_nb_tiles*tile_size*window_zoom)
 		view.drawText = function (a,b,c,d,e,f,g,h,i,j) view.DrawText(a*window_zoom,b*window_zoom,c,d,e,f*window_zoom,g,h,i,j) end
@@ -45,7 +45,7 @@ then
 		view.drawLine = function (a,b,c,d) view.DrawLine(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom) end
 		view.drawAxis = function (a,b,c) view.DrawAxis(a*window_zoom,b*window_zoom,c*window_zoom) end
 		view.drawEllipse = function (a,b,c,d) view.DrawEllipse(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom) end
-		view.drawRectangle = function (a,b,c,d,e,f) view.DrawRectangle(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom,e,f) end
+		view.drawRectFix = function (a,b,c,d,e,f) view.DrawRectangle(a*window_zoom,b*window_zoom,c*window_zoom,d*window_zoom,e,f) end
 	end
 	view.clearImageCache = view.ClearImageCache
 	view.clear = view.Clear
@@ -58,10 +58,15 @@ else
 	view = gui
 	view.clear = function (x) end --function (x) view.drawRectangle(0, 0, 239, 159, x, x) end
 	view.refresh = function () end
+	view.drawRectFix = function (x,y,w,h,c1,c2) view.drawRectangle(x-1,y-1,w+1,h+1,c1,c2) end
 	view.defaultForeground(0xFF000000)
 	--client.SetGameExtraPadding(0, 168, 0, 0)
 end
 
+local x_pos_old = 0
+local y_pos_old = 0
+local x_pos_older = 0
+local y_pos_older = 0
 while true do
 	-- Activation?
 	local ok = true
@@ -105,6 +110,7 @@ while true do
 		else
 			if not draw_in_separate_window
 			then
+				-- Cam Hack
 				memory.write_u16_le(addr_cam_left, 0x8000, "IWRAM")
 				memory.write_u16_le(addr_cam_right, 0x7FFF, "IWRAM")
 				memory.write_u16_le(addr_cam_top, 0x8000, "IWRAM")
@@ -114,6 +120,18 @@ while true do
 			-- We consider position as an unsigned variable (see below).
 			local x_pos = memory.read_u16_le(addr_x_pos, "IWRAM")
 			local y_pos = memory.read_u16_le(addr_y_pos, "IWRAM")
+			if not draw_in_separate_window
+			then
+				local x_tmp = x_pos
+				local y_tmp = y_pos
+				x_pos = x_pos_older
+				y_pos = y_pos_older
+				x_pos_older = x_pos_old
+				y_pos_older = y_pos_old
+				x_pos_old = x_tmp
+				y_pos_old = y_tmp
+			end
+			
 			-- Position for the top left corner of the screen
 			x_pos = x_pos - (x_nb_tiles*tile_size/2)
 			y_pos = y_pos - (y_nb_tiles*tile_size/2)
@@ -190,9 +208,9 @@ while true do
 							
 							-- We draw the healing/ending zone if there is any
 							if tile_id == 0xFE or tile_id == 0xFF then
-								view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x77D0D000)
+								view.drawRectFix(x_tile, y_tile, tile_size, tile_size, 0, 0x77D0D000)
 							elseif tile_id == 0xFB or tile_id == 0xFC or tile_id == 0xFD or tile_id == 0xEA or tile_id == 0xEB or tile_id == 0xEC or tile_id == 0xED or tile_id == 0xEE or tile_id == 0xEF then
-								view.drawRectangle(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
+								view.drawRectFix(x_tile, y_tile, tile_size, tile_size, 0, 0x774040FF)
 							end
 						end
 					end

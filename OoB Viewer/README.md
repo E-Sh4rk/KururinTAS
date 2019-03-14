@@ -23,3 +23,12 @@ Changelog:
  - Use real game tiles for walls rendering
  - Add a window zoom parameter
  
+## v1.5 (smarter)
+
+Installation note:
+ - The directory `sprites` is required. It must be placed in the same folder as the script.
+
+Changelog:
+ - Ingame rendering has been improved. In particular, it now implements a 2-frame delay and a 'CamHack' in order to perfectly intergate walls.
+
+Credits to ThunderAxe31 and E-Sh4rk.
