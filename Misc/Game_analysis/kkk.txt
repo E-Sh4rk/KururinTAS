@@ -109,6 +109,11 @@ Level number			3004421
 Collision mask 1		30045D4
 Collision mask 2?		30045D8
 
+Camera Left Bound		30043CC
+Camera Right Bound		30043CE
+Camera Top Bound		30043D0
+Camera Bottom Bound		30043D2
+
 Flags...			30046B8
 ---- ---- ---- ---- ---- D--- ---- ----
 D:Damaging (set the sprite of the face)

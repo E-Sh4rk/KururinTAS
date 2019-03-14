@@ -22,4 +22,8 @@ SystemID GBA
 4420	b	u	0	IWRAM	World
 4421	b	u	0	IWRAM	Level
 45D4	d	u	0	IWRAM	Collision Mask
+43CC	w	s	0	IWRAM	Cam Bound L
+43CE	w	s	0	IWRAM	Cam Bound R
+43D0	w	s	0	IWRAM	Cam Bound T
+43D2	w	s	0	IWRAM	Cam Bound B
 
