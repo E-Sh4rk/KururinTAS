@@ -49,4 +49,15 @@ img.save("sprites/preview.png", "PNG")
 max_id = 130
 for tile in range(0x1000):
     if blocks[tile] != None and (tile % 0x400) <= max_id:
-        blocks[tile].save("sprites/"+str(tile)+".bmp", "BMP")
+        #img = blocks[tile].convert("RGBA")
+        original_pixdata = blocks[tile].load()
+        img = Image.new('RGBA', (8, 8))
+        pixdata = img.load()
+        for y in range(8):
+            for x in range(8):
+                v = original_pixdata[x,y]
+                if v == 255:
+                    pixdata[x, y] = (255, 255, 255, 0)
+                else:
+                    pixdata[x, y] = (v, v, v, 255)
+        img.save("sprites/"+str(tile)+".png", "PNG")

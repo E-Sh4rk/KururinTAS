@@ -51,10 +51,10 @@ then
 	
 else
 	view = gui
-	view.clear = function (x) view.drawRectangle(0, 0, 239, 159, x, x) end
+	view.clear = function (x) end --function (x) view.drawRectangle(0, 0, 239, 159, x, x) end
 	view.refresh = function () end
 	view.defaultForeground(0xFF000000)
-	client.SetGameExtraPadding(0, 168, 0, 0)
+	--client.SetGameExtraPadding(0, 168, 0, 0)
 end
 
 while true do
@@ -135,7 +135,7 @@ while true do
 					local tile_index = tile_type % 0x1000 -- Seems faster than bit.band(tile_type, 0xFFF)
 					local tile_id = tile_index % 0x400 -- Seems fatser than bit.band(tile_index, 0x3FF)
 					if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
-						view.drawImage("sprites/" .. tostring(tile_index) .. ".bmp", x_tile, y_tile)
+						view.drawImage("sprites/" .. tostring(tile_index) .. ".png", x_tile, y_tile)
 					end
 					
 					-- Now we check collision with healing/ending zones. For that, the same calculus is performed except that position is considered signed and:
