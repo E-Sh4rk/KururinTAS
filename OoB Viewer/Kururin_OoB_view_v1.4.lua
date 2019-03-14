@@ -51,9 +51,10 @@ then
 	
 else
 	view = gui
-	view.clear = function (x) end
+	view.clear = function (x) view.drawRectangle(0, 0, 239, 159, x, x) end
 	view.refresh = function () end
 	view.defaultForeground(0xFF000000)
+	client.SetGameExtraPadding(0, 168, 0, 0)
 end
 
 while true do
