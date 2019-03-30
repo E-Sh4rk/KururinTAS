@@ -1,4 +1,5 @@
 SystemID GBA
+0DC0	d	u	0	IWRAM	Global Frame Counter
 4544	d	s	0	IWRAM	X
 4545	b	u	0	IWRAM	X Subpixel
 4546	w	u	0	IWRAM	X Pixel
@@ -26,4 +27,7 @@ SystemID GBA
 43CE	w	s	0	IWRAM	Cam Bound R
 43D0	w	s	0	IWRAM	Cam Bound T
 43D2	w	s	0	IWRAM	Cam Bound B
+45E8	w	u	0	IWRAM	Timer (frame)
+4564	w	u	0	IWRAM	Helirin Color Timer
+59CC	d	u	0	IWRAM	Laggy Level Frame Counter
 
