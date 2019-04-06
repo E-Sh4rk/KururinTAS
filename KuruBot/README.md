@@ -32,6 +32,7 @@
   - `config_no_wc_relaxed`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
   - `config_damageless`: For damageless (of course, no wall clip possible).
 - The configuration files below must be loaded after another config:
+  - `damageless_checkpoint_at_healzones`: For damageless configurations, once an healing zone is reached, stop optimizing what has already been done before.
   - `decrease_cost_map`: Decrease the importance given to the cost map so that the bot will be less greedy.
   - `increase_cost_map`: Increase the importance given to the cost map so that the bot will be greedier.
   - `disable_waiting`: Decrease rotation precision. Reduce the search space but make the bot unable to deliberately wait (for changing its rotation).

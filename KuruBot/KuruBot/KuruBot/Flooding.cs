@@ -238,6 +238,8 @@ namespace KuruBot
                 float from_wall_dist = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x];
                 bool from_wall = from_wall_dist <= 0;
                 bool from_wc_allowed_zone = from_wall_dist <= allow_wall_ground_dist;
+                Map.Zone from_zone = m.IsPixelInZone(p.x, p.y);
+                bool from_healzone = from_zone == Map.Zone.Starting || from_zone == Map.Zone.Healing;
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
@@ -252,6 +254,8 @@ namespace KuruBot
                     bool to_wall = to_wall_dist <= 0;
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
                     bool to_legal_zone = legal_zones[npy, npx];
+                    Map.Zone to_zone = m.IsPixelInZone(npd.px.x, npd.px.y);
+                    bool to_healzone = to_zone == Map.Zone.Starting || to_zone == Map.Zone.Healing;
 
                     float wgm = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
                     if (wgm <= 0)
@@ -276,6 +280,9 @@ namespace KuruBot
                     else
                         nw += npd.dist / Settings.ground_speed + wgm;
 
+                    if (from_healzone && !to_healzone)
+                        nw += Settings.damageless_back_before_healzone_malus;
+
                     float ow = res[npy, npx];
                     if (nw < ow)
                     {
@@ -294,6 +301,11 @@ namespace KuruBot
                 for (int x = 0; x < width; x++)
                 {
                     float w = res[y, x];
+                    // Healzone bonus
+                    Map.Zone zone = m.IsPixelInZone((short)(x+PixelStart.x), (short)(y+PixelStart.y));
+                    if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
+                        w -= Settings.damageless_healzone_bonus;
+
                     if (w <= 0 && !target[y, x])
                         w = float.Epsilon;
                     else if (w < 0)

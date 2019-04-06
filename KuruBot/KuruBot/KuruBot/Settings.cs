@@ -18,6 +18,8 @@ namespace KuruBot
 
         // All these values must be non-negative
         public static float ground_speed = 3;
+        public static float damageless_healzone_bonus = 0;
+        public static float damageless_back_before_healzone_malus = 0;
         public static bool allow_wall_clip = true;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
         public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
@@ -78,6 +80,8 @@ namespace KuruBot
                 invul_frames = (sbyte)parseInt(data, "Game", "invul_frames", invul_frames);
 
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
+                damageless_healzone_bonus = parseFloat(data, "Flooding", "damageless_healzone_bonus", damageless_healzone_bonus);
+                damageless_back_before_healzone_malus = parseFloat(data, "Flooding", "damageless_back_before_healzone_malus", damageless_back_before_healzone_malus);
                 allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
                 wall_bonus_per_invul = parseFloat(data, "Flooding", "wall_bonus_per_invul", wall_bonus_per_invul);
@@ -129,6 +133,8 @@ namespace KuruBot
                 data["Game"]["invul_frames"] = ToString(invul_frames);
 
                 data["Flooding"]["ground_speed"] = ToString(ground_speed);
+                data["Flooding"]["damageless_healzone_bonus"] = ToString(damageless_healzone_bonus);
+                data["Flooding"]["damageless_back_before_healzone_malus"] = ToString(damageless_back_before_healzone_malus);
                 data["Flooding"]["allow_wall_clip"] = ToString(allow_wall_clip);
                 data["Flooding"]["wall_speed"] = ToString(wall_speed);
                 data["Flooding"]["wall_bonus_per_invul"] = ToString(wall_bonus_per_invul);
