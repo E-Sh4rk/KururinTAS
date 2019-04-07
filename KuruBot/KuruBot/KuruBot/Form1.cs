@@ -75,7 +75,7 @@ namespace KuruBot
                     MessageBox.Show(this, "No solution found!", "No solution");
                 else
                 {
-                    MessageBox.Show(this, "Solution found!", "Solution");
+                    MessageBox.Show(this, "Solution found : " + res.Length + " frames.", "Solution");
                     ExecuteInputs(res);
                 }
             });

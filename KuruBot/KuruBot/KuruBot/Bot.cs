@@ -104,18 +104,36 @@ namespace KuruBot
         HelirinState NormaliseState (HelirinState st)
         {
             st = st.ShallowCopy();
+            short px = Physics.pos_to_px(st.xpos);
+            short py = Physics.pos_to_px(st.ypos);
 
-            float wall_dist = f.DistToWall(Physics.pos_to_px(st.xpos), Physics.pos_to_px(st.ypos)) * Settings.additional_reduction_dist_multiplier;
-            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, Settings.max_additional_reduction);
-            int pos_reduction = Settings.pos_reduction + add_red;
-            int bump_reduction = Settings.bump_reduction + add_red;
+            int pos_reduction = Settings.pos_reduction;
+            int bump_reduction = Settings.bump_reduction;
+            short rot_precision = Settings.rot_precision;
+            short rot_rate_precision = Settings.rot_rate_precision;
+            float additional_reduction_dist_multiplier = Settings.additional_reduction_dist_multiplier;
+            int max_additional_reduction = Settings.max_additional_reduction;
+            if (f.IsHealZone(px, py))
+            {
+                pos_reduction = Settings.healzone_pos_reduction;
+                bump_reduction = Settings.healzone_bump_reduction;
+                rot_precision = Settings.healzone_rot_precision;
+                rot_rate_precision = Settings.healzone_rot_rate_precision;
+                additional_reduction_dist_multiplier = Settings.healzone_additional_reduction_dist_multiplier;
+                max_additional_reduction = Settings.healzone_max_additional_reduction;
+            }
+
+            float wall_dist = f.DistToWall(px, py) * additional_reduction_dist_multiplier;
+            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, max_additional_reduction);
+            pos_reduction += add_red;
+            bump_reduction += add_red;
 
             st.xpos = (st.xpos >> pos_reduction) << pos_reduction;
             st.ypos = (st.ypos >> pos_reduction) << pos_reduction;
             st.xb   = (st.xb >> bump_reduction) << bump_reduction;
             st.yb   = (st.yb >> bump_reduction) << bump_reduction;
-            st.rot  = (short)((int)Math.Round((float)st.rot / Settings.rot_precision) * Settings.rot_precision);
-            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / Settings.rot_rate_precision) * Settings.rot_rate_precision);
+            st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
+            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
 
             return st;
         }
@@ -158,6 +176,17 @@ namespace KuruBot
             if (!Settings.allow_state_visit_with_less_life && Settings.invul_frames >= 0 && Settings.full_life >= 2)
                 life_data = new Dictionary<HelirinState, int>();
 
+            // Set range of possible inputs
+            int min_input = 0;
+            if (Settings.min_ab_speed == 1)
+                min_input = 1;
+            else if (Settings.min_ab_speed == 2)
+                min_input = 9;
+            else if (Settings.min_ab_speed == 3)
+                min_input = 17;
+            else if (Settings.min_ab_speed > 3)
+                min_input = 25;
+
             // Init
             HelirinState norm_init = NormaliseState(init);
             float cost = GetCost(init.xpos, init.ypos, init.life, init.invul);
@@ -191,7 +220,7 @@ namespace KuruBot
                     parent.UpdateProgressBarAndHighlight(100 - st_data.cost * 100 / init_cost, preview);
                 }
 
-                for (int i = 0; i < 25; i++)
+                for (int i = 24; i >= min_input; i--)
                 {
                     Action a = (Action)i;
                     HelirinState nst = p.Next(st_data.exact_state, a);
@@ -241,11 +270,17 @@ namespace KuruBot
                         result = norm_nst;
                         break;
                     }
-                        
+
+                    // We don't use UpdatePriority because it does not change the InsertionIndex (first-in, first-out)
+                    if (old != null)
+                        q.Remove(norm_nst);
+                    q.Enqueue(norm_nst, total_cost);
+                    /*
                     if (old == null)
                         q.Enqueue(norm_nst, total_cost);
                     else
                         q.UpdatePriority(norm_nst, total_cost);
+                    */
                 }
             }
 

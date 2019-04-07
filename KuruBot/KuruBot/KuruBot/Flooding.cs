@@ -55,6 +55,12 @@ namespace KuruBot
             return legal_zones[y - PixelStart.y, x - PixelStart.x];
         }
 
+        public bool IsHealZone(short x, short y)
+        {
+            Map.Zone zone = m.IsPixelInZone(x, y);
+            return zone == Map.Zone.Healing || zone == Map.Zone.Starting;
+        }
+
         Pixel[] DiagNeighbors(Pixel p)
         {
             List<Pixel> res = new List<Pixel>();
@@ -238,8 +244,7 @@ namespace KuruBot
                 float from_wall_dist = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x];
                 bool from_wall = from_wall_dist <= 0;
                 bool from_wc_allowed_zone = from_wall_dist <= allow_wall_ground_dist;
-                Map.Zone from_zone = m.IsPixelInZone(p.x, p.y);
-                bool from_healzone = from_zone == Map.Zone.Starting || from_zone == Map.Zone.Healing;
+                bool from_healzone = IsHealZone(p.x,p.y);
 
                 PixelDist[] neighbors = Neighbors(p);
                 foreach (PixelDist npd in neighbors)
@@ -254,8 +259,7 @@ namespace KuruBot
                     bool to_wall = to_wall_dist <= 0;
                     bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
                     bool to_legal_zone = legal_zones[npy, npx];
-                    Map.Zone to_zone = m.IsPixelInZone(npd.px.x, npd.px.y);
-                    bool to_healzone = to_zone == Map.Zone.Starting || to_zone == Map.Zone.Healing;
+                    bool to_healzone = IsHealZone(npd.px.x, npd.px.y);
 
                     float wgm = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
                     if (wgm <= 0)
@@ -302,8 +306,7 @@ namespace KuruBot
                 {
                     float w = res[y, x];
                     // Healzone bonus
-                    Map.Zone zone = m.IsPixelInZone((short)(x+PixelStart.x), (short)(y+PixelStart.y));
-                    if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
+                    if (IsHealZone((short)(x + PixelStart.x), (short)(y + PixelStart.y)))
                         w -= Settings.damageless_healzone_bonus;
 
                     if (w <= 0 && !target[y, x])
