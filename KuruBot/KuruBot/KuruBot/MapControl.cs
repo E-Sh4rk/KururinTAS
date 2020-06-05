@@ -15,16 +15,18 @@ namespace KuruBot
 
         public struct GraphicalHelirin
         {
-            public GraphicalHelirin(int px, int py, float a)
+            public GraphicalHelirin(int px, int py, float a, bool hasBon)
             {
                 pixelX = px;
                 pixelY = py;
                 angle = a;
+                hasBonus = hasBon;
             }
 
             public int pixelX;
             public int pixelY;
             public float angle;
+            public bool hasBonus;
         }
 
         Form1 p;
@@ -115,13 +117,13 @@ namespace KuruBot
             if (e.Button == MouseButtons.Left)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, true));
             }
             if (e.Button == MouseButtons.Right)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
             }
         }
@@ -411,8 +413,7 @@ namespace KuruBot
 
             int real_start_x = start_x - (int)(computed_start_pixel.x * scale);
             int real_start_y = start_y - (int)(computed_start_pixel.y * scale);
-            // TODO: only if bonus not already owned
-            if (m != null) {
+            if (m != null && (helirin == null || !helirin.Value.hasBonus)) {
                 Rectangle? bonus = m.GetBonusPxRect();
                 if (bonus.HasValue)
                 {

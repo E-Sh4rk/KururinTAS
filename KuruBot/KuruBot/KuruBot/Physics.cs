@@ -8,13 +8,15 @@ namespace KuruBot
     public enum GameState
     {
         InGame = 0,
+        InGameWithBonus,
         Win,
+        WinWithBonus,
         Loose
     }
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
     {
-        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul)
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul, bool hasBonus)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -25,7 +27,16 @@ namespace KuruBot
             this.rot_srate = rot_srate;
             this.life = life;
             this.invul = invul;
-            gs = GameState.InGame;
+            gs = hasBonus ? GameState.InGameWithBonus : GameState.InGame;
+        }
+
+        public bool IsTerminal()
+        {
+            return gs != GameState.InGameWithBonus && gs != GameState.InGame;
+        }
+        public bool HasBonus()
+        {
+            return gs == GameState.InGameWithBonus || gs == GameState.WinWithBonus;
         }
 
         public HelirinState ShallowCopy()
@@ -118,7 +129,7 @@ namespace KuruBot
             float angle = rot_to_angle_approx(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
-            return new MapControl.GraphicalHelirin(xpix, ypix, angle);
+            return new MapControl.GraphicalHelirin(xpix, ypix, angle, h.HasBonus());
         }
 
         public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
@@ -127,7 +138,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus);
         }
 
         Map map = null;
@@ -195,7 +206,7 @@ namespace KuruBot
         {
             if (st == null)
                 return null;
-            if (st.gs != GameState.InGame)
+            if (st.IsTerminal())
                 return st;
 
             ActionEffect e = Controller.action_to_effect(a);
@@ -245,7 +256,7 @@ namespace KuruBot
             }
             if (zone == Map.Zone.Ending)
             {
-                st.gs = GameState.Win;
+                st.gs = st.gs == GameState.InGameWithBonus ? GameState.WinWithBonus : GameState.Win;
                 return st;
             }
 

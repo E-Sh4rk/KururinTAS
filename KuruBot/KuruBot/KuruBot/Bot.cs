@@ -249,12 +249,16 @@ namespace KuruBot
                     if (old != null && old.already_treated)
                         continue;
 
-                    // Non-infinite better cost ?
+                    // Keep only if it is a non-infinite better cost
                     cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul);
                     if (cost >= float.PositiveInfinity)
                         continue;
                     total_cost = cost + weight;
                     if (old != null && total_cost >= old.cost + old.weight)
+                        continue;
+
+                    // Is the state terminal without having completed the objective?
+                    if (cost > 0 && nst.IsTerminal())
                         continue;
 
                     // Everything's okay, we add the config to the data and queue
