@@ -22,6 +22,7 @@ SystemID GBA
 313E	w	u	0	IWRAM	MapH IW
 4420	b	u	0	IWRAM	World
 4421	b	u	0	IWRAM	Level
+4440	b	u	0	IWRAM	Has bonus (0b00010000)
 45D4	d	u	0	IWRAM	Collision Mask
 43CC	w	s	0	IWRAM	Cam Bound L
 43CE	w	s	0	IWRAM	Cam Bound R

@@ -177,12 +177,10 @@ while true do
 							local x_pos_tile_mod = x_pos_tile % map_x_size
 							local y_pos_tile_mod = y_pos_tile % map_y_size
 							
-							-- Map is stored at the very beggining of EWRAM. The 2 first dwords contain the size of the map.
+							-- Map is stored at the very beginning of EWRAM. The 2 first dwords contain the size of the map.
 							-- For more details, see https://medium.com/message/building-a-cheat-bot-f848f199e76b
 							local tile_addr = x_pos_tile_mod*2 + y_pos_tile_mod*map_x_size*2 + 4
 							local tile_type = memory.read_u16_le(tile_addr, "EWRAM") -- EWRAM = 0x02000000
-							--if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
-							--view.drawText(x_tile+tile_size/2, y_tile+tile_size/2, tostring(tile_type), nil, nil, 4, nil, nil, "center", "middle") -- Uncomment to print the tile type on each sprite.
 							
 							-- We draw the wall tile depending on its type
 							-- It follows this format: http://problemkaputt.de/gbatek.htm#lcdvrambgscreendataformatbgmap
@@ -195,6 +193,9 @@ while true do
 							if tile_id ~= 0 and tile_id <= 130 and tile_id ~= 23 and tile_id ~= 26 and tile_id ~= 56 and tile_id ~= 125 then
 								view.drawImage("sprites/" .. tostring(tile_index) .. ".png", x_tile, y_tile)
 							end
+							--if x == x_nb_tiles/2 and y == y_nb_tiles/2 then console.log(tile_type) end -- Uncomment to print the tile type under the helirin.
+							--view.drawText(x_tile+tile_size/2, y_tile+tile_size/2, tostring(tile_id), nil, nil, 4, nil, nil, "center", "middle") -- Uncomment to print the tile id on each sprite.
+
 							
 							-- Now we check collision with healing/ending zones. For that, the same calculus is performed except that position is considered signed and:
 							-- Modulo of signed integers act like the C one
