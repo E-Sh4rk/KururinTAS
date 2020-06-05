@@ -235,7 +235,7 @@ namespace KuruBot
         {
             if (m != null)
             {
-                Bitmap bitmap = null;
+                Bitmap bitmap;
                 int width = showP ? 3* m.WidthPx : m.WidthPx;
                 int height = showP ? 3 * m.HeightPx : m.HeightPx;
                 int start_x = showP ? -m.WidthPx : 0;
@@ -408,6 +408,22 @@ namespace KuruBot
                     }
                 }
             }
+
+            int real_start_x = start_x - (int)(computed_start_pixel.x * scale);
+            int real_start_y = start_y - (int)(computed_start_pixel.y * scale);
+            // TODO: only if bonus not already owned
+            if (m != null) {
+                Rectangle? bonus = m.GetBonusPxRect();
+                if (bonus.HasValue)
+                {
+                    float x = bonus.Value.X;
+                    float y = bonus.Value.Y;
+                    float w = bonus.Value.Width;
+                    float h = bonus.Value.Height;
+                    Brush b = new SolidBrush(Color.MediumPurple);
+                    g.FillRectangle(b, real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+                }
+            }
                 
             if (helirin != null)
             {
@@ -417,8 +433,6 @@ namespace KuruBot
                 int offset_x = h.pixelX - Map.helirin_radius;
                 int offset_y = h.pixelY - Map.helirin_radius;
                 int size = Map.helirin_radius * 2;
-                int real_start_x = start_x - (int)(computed_start_pixel.x*scale);
-                int real_start_y = start_y - (int)(computed_start_pixel.y*scale);
                 g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
 
                 offset_x = h.pixelX - 2;

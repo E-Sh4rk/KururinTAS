@@ -24,6 +24,10 @@ namespace KuruBot
         Zone[] physical_zone_map = null;
         Spring[,][] physical_spring_map = null;
 
+        // Bonus attributes
+        BonusType bonus_type = BonusType.None;
+        Rectangle? bonus_px_rect = null;
+
         public Map(ushort[,] map)
         {
             // Initialize graphical map
@@ -40,7 +44,7 @@ namespace KuruBot
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    Rectangle? sprite = GetTileSprite(TileAt(x,y));
+                    Rectangle? sprite = GetTileSprite(TileAt(x, y));
                     if (sprite.HasValue)
                     {
                         Rectangle s = sprite.Value;
@@ -48,11 +52,11 @@ namespace KuruBot
                         {
                             for (int x2 = 0; x2 < tile_size; x2++)
                             {
-                                Color c = bmp.GetPixel(s.X+x2, s.Y+y2);
+                                Color c = bmp.GetPixel(s.X + x2, s.Y + y2);
                                 int x_phy = x * tile_size + x2;
                                 int y_phy = y * tile_size + y2;
                                 if (c.A != 255 || c.B != 255 || c.G != 255 || c.R != 255)
-                                    physical_map[x_phy+y_phy * WidthPx] = true;
+                                    physical_map[x_phy + y_phy * WidthPx] = true;
                             }
                         }
                     }
@@ -60,12 +64,12 @@ namespace KuruBot
             }
 
             // Build physical zone map
-            physical_zone_map = new Zone[Height*Width];
+            physical_zone_map = new Zone[Height * Width];
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    Zone z = IsTileAZone(TileAt(x,y));
+                    Zone z = IsTileAZone(TileAt(x, y));
                     physical_zone_map[x + y * Width] = z;
                 }
             }
@@ -81,7 +85,7 @@ namespace KuruBot
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    SpringType? t = IsTileASpring(TileAt(x,y));
+                    SpringType? t = IsTileASpring(TileAt(x, y));
                     if (t.HasValue)
                     {
                         int id = x + y * Width;
@@ -89,10 +93,10 @@ namespace KuruBot
                         {
                             for (int x2 = 0; x2 < spring_size; x2++)
                             {
-                                int py = y*tile_size + y2;
-                                int px = x*tile_size + x2;
+                                int py = y * tile_size + y2;
+                                int px = x * tile_size + x2;
                                 Spring[] cur = physical_spring_map[py, px];
-                                Spring[] res = new Spring[cur.Length+1];
+                                Spring[] res = new Spring[cur.Length + 1];
                                 Array.Copy(cur, res, cur.Length);
                                 res[cur.Length] = new Spring(t.Value, id);
                                 physical_spring_map[py, px] = res;
@@ -100,6 +104,16 @@ namespace KuruBot
                         }
                     }
                 }
+            }
+
+            // Bonus Info
+            int offset = 0;
+            int typ = GetMapInfoData(map, ref offset);
+            if (typ != 0) {
+                bonus_type = typ <= 10 ? BonusType.Bird : BonusType.Esthetic;
+                int bonus_x = GetMapInfoData(map, ref offset) * 8 - 4;
+                int bonus_y = GetMapInfoData(map, ref offset) * 8 - 4;
+                bonus_px_rect = new Rectangle(bonus_x, bonus_y, 17, 17);
             }
         }
 
@@ -231,6 +245,38 @@ namespace KuruBot
             if (x < 0 || x >= WidthPx || y < 0 || y >= HeightPx)
                 return new Spring[0];
             return physical_spring_map[y, x];
+        }
+
+        public enum BonusType
+        {
+            None = 0,
+            Esthetic,
+            Bird
+        }
+
+        int GetMapInfoData(ushort[,] map, ref int offset)
+        {
+            int res = 0;
+            ushort tile = map[offset / Width, offset % Width];
+            while (tile >= 0xE0 && tile <= 0xE9)
+            {
+                res = res * 10 + tile - 0xE0;
+                offset++;
+                tile = map[offset / Width, offset % Width];
+            }
+            offset++;
+            return res;
+        }
+
+        public BonusType IsPixelInBonus(short x, short y)
+        {
+            if (!bonus_px_rect.HasValue || !bonus_px_rect.Value.Contains(x,y))
+                return BonusType.None;
+            return bonus_type;
+        }
+        public Rectangle? GetBonusPxRect()
+        {
+            return bonus_px_rect;
         }
     }
 }
