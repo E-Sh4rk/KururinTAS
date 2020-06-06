@@ -365,12 +365,12 @@ namespace KuruBot
             if (m.HasBonus != Map.BonusType.None && Settings.bonus_required)
             {
                 bonusCM = ComputeCostMap(wcs, invul_frames, true);
-                float min = float.PositiveInfinity;
+                float max = 0;
                 Rectangle r = m.GetBonusPxRect().Value;
                 for (int y = r.Top; y < r.Bottom; y++)
                     for (int x = r.Left; x < r.Right; x++)
-                        min = Math.Min(min, targetCM.CostAtPx((short)x, (short)y, 0));
-                bonusCM.GlobalMalus += min;
+                        max = Math.Max(max, targetCM.CostAtPx((short)x, (short)y, 0));
+                bonusCM.GlobalMalus += max;
             }
             return new ExtendedCostMap(targetCM, bonusCM);
         }
