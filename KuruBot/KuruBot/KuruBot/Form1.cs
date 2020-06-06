@@ -49,6 +49,7 @@ namespace KuruBot
             showCostMap.Enabled = true;
             showPMap.Enabled = true;
             showGMap.Enabled = true;
+            bonusCostMap.Enabled = true;
             switchCostMap.Enabled = true;
             invulCostMap.Enabled = true;
         }
