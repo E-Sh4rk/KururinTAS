@@ -135,6 +135,9 @@ namespace KuruBot
             st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
             st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
 
+            if (!Settings.bonus_required && !st.IsTerminal())
+                st.gs = GameState.InGame;
+
             return st;
         }
 
