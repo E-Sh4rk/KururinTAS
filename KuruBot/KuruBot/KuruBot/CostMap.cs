@@ -32,6 +32,7 @@ namespace KuruBot
 
         protected float wb = 0;
         protected float wb_rc = 0;
+        protected float global_malus = 0;
 
         public CostMap(float[,] cmap, float[,] wall_dist, Pixel pixel_start, bool add_bonus_to_walls)
         {
@@ -41,6 +42,12 @@ namespace KuruBot
             this.add_bonus_to_walls = add_bonus_to_walls;
             wb = Settings.wall_bonus_per_invul;
             wb_rc = Settings.wall_bonus_required_cost;
+        }
+
+        public float GlobalMalus
+        {
+            get { return global_malus; }
+            set { global_malus = value; }
         }
 
         public Pixel PixelStart
@@ -73,7 +80,7 @@ namespace KuruBot
                 if (cost <= 0)
                     cost = float.Epsilon;
             }
-            return cost;
+            return cost + global_malus;
         }
         public float CostAtPx(short x, short y, int invul_frames)
         {
@@ -92,6 +99,24 @@ namespace KuruBot
                 }
             }
             return res;
+        }
+    }
+
+    public class ExtendedCostMap
+    {
+        CostMap targetCM = null;
+        CostMap bonusCM = null;
+        public ExtendedCostMap(CostMap targetCM, CostMap bonusCM)
+        {
+            this.targetCM = targetCM;
+            this.bonusCM = bonusCM;
+        }
+
+        public CostMap Get(bool hasBonus)
+        {
+            if (!hasBonus && bonusCM != null)
+                return bonusCM;
+            return targetCM;
         }
     }
 }

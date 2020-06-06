@@ -278,5 +278,9 @@ namespace KuruBot
         {
             return bonus_px_rect;
         }
+        public BonusType HasBonus
+        {
+            get { return bonus_type; }
+        }
     }
 }

@@ -389,10 +389,11 @@ namespace KuruBot
         private void updateSCMbutton()
         {
             switchCostMap.Text = "H:" + cm_preview_l.ToString();
+            bonusCostMap.Text = cm_preview_bonus ? "B" : "T";
         }
         private void updateCostMapDisplay()
         {
-            mapc.SetCostMap(b.GetCostMap((byte)cm_preview_l, (sbyte)invulCostMap.Value),
+            mapc.SetCostMap(b.GetCostMap((byte)cm_preview_l, (sbyte)invulCostMap.Value, !cm_preview_bonus),
                   Flooding.GetRealInvul((byte)cm_preview_l, (sbyte)invulCostMap.Value));
         }
 
@@ -412,6 +413,16 @@ namespace KuruBot
         {
             if (b != null)
                 updateCostMapDisplay();
+        }
+        bool cm_preview_bonus = false;
+        private void bonusCostMap_Click(object sender, EventArgs e)
+        {
+            if (b != null)
+            {
+                cm_preview_bonus = !cm_preview_bonus;
+                updateCostMapDisplay();
+                updateSCMbutton();
+            }
         }
 
         private void computeCM()

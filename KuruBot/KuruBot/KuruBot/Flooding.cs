@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Priority_Queue;
@@ -197,7 +198,7 @@ namespace KuruBot
             return res;
         }
 
-        CostMap ComputeCostMap(float allow_wall_ground_dist, bool no_wall_clip)
+        CostMap ComputeCostMap(float allow_wall_ground_dist, bool no_wall_clip, bool targetBonus)
         {
             // Simple Dijkstra algorithm with some extra parameters.
             // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
@@ -212,13 +213,24 @@ namespace KuruBot
             SimplePriorityQueue<Pixel> q = new SimplePriorityQueue<Pixel>();
 
             // Init target
-            bool[,] target = this.target;
-            if (target == null)
+            bool[,] target;
+            if (targetBonus)
             {
-                target = new bool[height,width];
+                target = new bool[height, width];
                 for (short y = PixelStart.y; y <= PixelEnd.y; y++)
                     for (short x = PixelStart.x; x <= PixelEnd.x; x++)
-                        target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                        target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInBonus(x, y) != Map.BonusType.None;
+            }
+            else
+            {
+                target = this.target;
+                if (target == null)
+                {
+                    target = new bool[height, width];
+                    for (short y = PixelStart.y; y <= PixelEnd.y; y++)
+                        for (short x = PixelStart.x; x <= PixelEnd.x; x++)
+                            target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                }
             }
 
             // Init
@@ -299,7 +311,7 @@ namespace KuruBot
                 }
             }
 
-            // Post-procedure (some psot-procedure has been moved to the CostMap class)
+            // Post-procedure (some post-procedure has been moved to the CostMap class)
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -327,18 +339,40 @@ namespace KuruBot
             Allow
         }
 
-        public CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames)
+        CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames, bool targetBonus)
         {
             if (wcs == WallClipSetting.NoWallClip)
-                return ComputeCostMap(0, true);
+                return ComputeCostMap(0, true, targetBonus);
             else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(float.PositiveInfinity, false);
+                return ComputeCostMap(float.PositiveInfinity, false, targetBonus);
             else
                 return ComputeCostMap(
                     invul_frames >= Settings.complete_wall_clip_duration
                     ? Settings.complete_wall_clip_max_dist
                     : Settings.complete_wall_clip_max_dist * invul_frames / Settings.complete_wall_clip_duration,
-                    false);
+                    false, targetBonus);
+        }
+
+        public CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames)
+        {
+            return ComputeCostMap(wcs, invul_frames, false);
+        }
+
+        public ExtendedCostMap ComputeExtendedCostMap(WallClipSetting wcs, int invul_frames)
+        {
+            CostMap targetCM = ComputeCostMap(wcs, invul_frames);
+            CostMap bonusCM = null;
+            if (m.HasBonus != Map.BonusType.None && Settings.bonus_required)
+            {
+                bonusCM = ComputeCostMap(wcs, invul_frames, true);
+                float min = float.PositiveInfinity;
+                Rectangle r = m.GetBonusPxRect().Value;
+                for (int y = r.Top; y < r.Bottom; y++)
+                    for (int x = r.Left; x < r.Right; x++)
+                        min = Math.Min(min, targetCM.CostAtPx((short)x, (short)y, 0));
+                bonusCM.GlobalMalus += min;
+            }
+            return new ExtendedCostMap(targetCM, bonusCM);
         }
 
         public static int GetRealInvul(byte life, sbyte invul)

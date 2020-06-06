@@ -71,6 +71,7 @@
             this.invulCostMap = new System.Windows.Forms.NumericUpDown();
             this.minInvulScore = new System.Windows.Forms.NumericUpDown();
             this.playMove = new System.Windows.Forms.Button();
+            this.bonusCostMap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).BeginInit();
@@ -295,7 +296,7 @@
             // 
             this.showCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.showCostMap.AutoSize = true;
-            this.showCostMap.Location = new System.Drawing.Point(659, 509);
+            this.showCostMap.Location = new System.Drawing.Point(631, 509);
             this.showCostMap.Name = "showCostMap";
             this.showCostMap.Size = new System.Drawing.Size(99, 17);
             this.showCostMap.TabIndex = 19;
@@ -328,7 +329,7 @@
             // solve
             // 
             this.solve.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.solve.Location = new System.Drawing.Point(570, 505);
+            this.solve.Location = new System.Drawing.Point(561, 505);
             this.solve.Name = "solve";
             this.solve.Size = new System.Drawing.Size(55, 23);
             this.solve.TabIndex = 22;
@@ -515,7 +516,7 @@
             // minInvulScore
             // 
             this.minInvulScore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.minInvulScore.Location = new System.Drawing.Point(521, 506);
+            this.minInvulScore.Location = new System.Drawing.Point(512, 506);
             this.minInvulScore.Name = "minInvulScore";
             this.minInvulScore.Size = new System.Drawing.Size(43, 20);
             this.minInvulScore.TabIndex = 39;
@@ -531,11 +532,23 @@
             this.playMove.UseVisualStyleBackColor = true;
             this.playMove.KeyDown += new System.Windows.Forms.KeyEventHandler(this.playMove_KeyDown);
             // 
+            // bonusCostMap
+            // 
+            this.bonusCostMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bonusCostMap.Location = new System.Drawing.Point(728, 505);
+            this.bonusCostMap.Name = "bonusCostMap";
+            this.bonusCostMap.Size = new System.Drawing.Size(30, 23);
+            this.bonusCostMap.TabIndex = 41;
+            this.bonusCostMap.Text = "T";
+            this.bonusCostMap.UseVisualStyleBackColor = true;
+            this.bonusCostMap.Click += new System.EventHandler(this.bonusCostMap_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.bonusCostMap);
             this.Controls.Add(this.playMove);
             this.Controls.Add(this.minInvulScore);
             this.Controls.Add(this.invulCostMap);
@@ -631,6 +644,7 @@
         private System.Windows.Forms.NumericUpDown invulCostMap;
         private System.Windows.Forms.NumericUpDown minInvulScore;
         private System.Windows.Forms.Button playMove;
+        private System.Windows.Forms.Button bonusCostMap;
     }
 }
 

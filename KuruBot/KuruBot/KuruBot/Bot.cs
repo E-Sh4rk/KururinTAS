@@ -11,7 +11,7 @@ namespace KuruBot
         Flooding f = null;
         Physics p = null;
         Form1 parent = null;
-        CostMap[][] cost_maps = null;
+        ExtendedCostMap[][] cost_maps = null;
 
         public Bot(Form1 parent, Map m, Physics p, Pixel start, Pixel end)
         {
@@ -34,33 +34,33 @@ namespace KuruBot
 
         public void ComputeNewCostMaps()
         {
-            CostMap full_life_cost_map = null;
+            ExtendedCostMap full_life_cost_map;
             if (!Settings.allow_wall_clip)
-                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.NoWallClip, 0);
+                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoWallClip, 0);
             else if (Settings.full_life <= 1 && Settings.restrict_complete_wall_clip_when_one_heart)
-                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, 0);
+                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoCompleteWallClip, 0);
             else
-                full_life_cost_map = f.ComputeCostMap(Flooding.WallClipSetting.Allow, 0);
+                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.Allow, 0);
 
             if (!Settings.allow_wall_clip || !Settings.restrict_complete_wall_clip_when_one_heart || Settings.full_life <= 1 || Settings.invul_frames < 0)
             {
-                cost_maps = new CostMap[1][];
-                cost_maps[0] = new CostMap[] { full_life_cost_map };
+                cost_maps = new ExtendedCostMap[1][];
+                cost_maps[0] = new ExtendedCostMap[] { full_life_cost_map };
             }
             else
             {
                 int total_op = 2 + Settings.nb_additional_cost_maps;
                 parent.UpdateProgressBarAndHighlight(100 / total_op, null);
 
-                cost_maps = new CostMap[2][];
-                cost_maps[1] = new CostMap[] { full_life_cost_map };
+                cost_maps = new ExtendedCostMap[2][];
+                cost_maps[1] = new ExtendedCostMap[] { full_life_cost_map };
                 
                 int current_op = 1;
-                CostMap[] cms = new CostMap[Settings.nb_additional_cost_maps + 1];
+                ExtendedCostMap[] cms = new ExtendedCostMap[Settings.nb_additional_cost_maps + 1];
                 for (int i = 0; i < cms.Length; i++)
                 {
                     int invul = i * (Settings.invul_frames+1) / cms.Length;
-                    cms[i] = f.ComputeCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(1,(sbyte)invul));
+                    cms[i] = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(1,(sbyte)invul));
                     current_op++;
                     parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
                 }
@@ -68,16 +68,16 @@ namespace KuruBot
             }
         }
 
-        public CostMap GetCostMap(byte life, sbyte invul)
+        public CostMap GetCostMap(byte life, sbyte invul, bool hasBonus)
         {
             if (cost_maps == null || life < 1)
                 return null;
 
-            CostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
+            ExtendedCostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
             if (Settings.invul_frames < 0)
-                return cms[cms.Length - 1];
+                return cms[cms.Length - 1].Get(hasBonus);
             int invul_index = Math.Max(0, (int)invul) * cms.Length / (Settings.invul_frames+1);
-            return cms[Math.Min(cms.Length - 1, invul_index)];
+            return cms[Math.Min(cms.Length - 1, invul_index)].Get(hasBonus);
         }
 
         // /!\ For efficiency reason, we use a class instead of a struct.
@@ -146,9 +146,9 @@ namespace KuruBot
             return st;
         }
 
-        float GetCost(int xpos, int ypos, byte life, sbyte invul)
+        float GetCost(int xpos, int ypos, byte life, sbyte invul, bool hasBonus)
         {
-            CostMap cm = GetCostMap(life, invul);
+            CostMap cm = GetCostMap(life, invul, hasBonus);
             if (cm == null)
                 return float.PositiveInfinity;
             
@@ -189,7 +189,7 @@ namespace KuruBot
 
             // Init
             HelirinState norm_init = NormaliseState(init);
-            float cost = GetCost(init.xpos, init.ypos, init.life, init.invul);
+            float cost = GetCost(init.xpos, init.ypos, init.life, init.invul, init.HasBonus());
             float weight = 0;
             float total_cost = cost + weight;
             q.Enqueue(norm_init, total_cost);
@@ -199,7 +199,7 @@ namespace KuruBot
 
             // ProgressBar and preview settings
             float init_cost = cost;
-            bool[,] preview = new bool[cost_maps[0][0].Height, cost_maps[0][0].Width];
+            bool[,] preview = new bool[cost_maps[0][0].Get(true).Height, cost_maps[0][0].Get(true).Width];
             int since_last_update = 0;
 
             // A*
@@ -250,7 +250,7 @@ namespace KuruBot
                         continue;
 
                     // Keep only if it is a non-infinite better cost
-                    cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul);
+                    cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul, nst.HasBonus());
                     if (cost >= float.PositiveInfinity)
                         continue;
                     total_cost = cost + weight;
