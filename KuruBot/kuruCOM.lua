@@ -17,6 +17,8 @@ local addr_rotation_rate   = 0x4574
 local addr_rotation_srate   = 0x4576
 local addr_lives   = 0x4582
 local addr_invul   = 0x4585
+local addr_bonus   = 0x4440
+local bonus_mask   = 0x10
 
 local in_file = working_dir .. "/" .. in_filename
 local out_file = working_dir .. "/" .. out_filename
@@ -82,7 +84,9 @@ function get_pos()
 	local rot_srate = tostring(memory.read_s16_le(addr_rotation_srate, "IWRAM"))
 	local lives = tostring(memory.read_u8(addr_lives, "IWRAM"))
 	local invul = tostring(memory.read_s8(addr_invul, "IWRAM"))
-	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. "\n"
+	local bonus = memory.read_u8(addr_bonus, "IWRAM")
+	local bonus_bit = tostring(bit.band(bonus, bonus_mask))
+	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. " " .. bonus_bit .. "\n"
 end
 
 while true
@@ -128,6 +132,7 @@ do
 						local rot_srate = tonumber(init[7])
 						local lives = tonumber(init[8])
 						local invul = tonumber(init[9])
+						local bonus = tonumber(init[10])
 						
 						memory.write_s32_le(addr_x_pos, xpos, "IWRAM")
 						memory.write_s32_le(addr_y_pos, ypos, "IWRAM")
@@ -140,6 +145,13 @@ do
 						memory.write_s16_le(addr_rotation_srate, rot_srate, "IWRAM")
 						memory.write_u8(addr_lives, lives, "IWRAM")
 						memory.write_s8(addr_invul, invul, "IWRAM")
+						local tmp_bonus = memory.read_u8(addr_bonus, "IWRAM")
+						if bonus == 0 then
+							tmp_bonus = bit.band(tmp_bonus, bit.bnot(bonus_mask))
+						else
+							tmp_bonus = bit.bor(tmp_bonus, bonus_mask)
+						end
+						memory.write_u8(addr_bonus, tmp_bonus, "IWRAM")
 						-- Play inputs
 						current_play = content
 						current_play_index = 3
