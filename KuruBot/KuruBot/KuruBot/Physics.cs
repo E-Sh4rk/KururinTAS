@@ -263,7 +263,7 @@ namespace KuruBot
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
 
-            // 5/6. Collision mask & springs
+            // 5/6. Collision mask & springs & bonuses
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             uint collision_mask = 0;
             //SortedSet<int> already_visited = new SortedSet<int>();
@@ -282,7 +282,7 @@ namespace KuruBot
                 if (map.IsPixelInCollision(px, py))
                     collision_mask = collision_mask | ((uint)1 << i);
 
-                // 6. Action of springs
+                // 6. Action of springs & bonuses
                 Map.Spring[] springs = map.IsPixelInSpring(px, py);
                 foreach (Map.Spring spr in springs)
                 {
@@ -330,6 +330,8 @@ namespace KuruBot
                         new_st.ypos += new_st.yb;
                     }
                 }
+                if (map.IsPixelInBonus(px, py) != Map.BonusType.None)
+                    new_st.gs = GameState.InGameWithBonus;
             }
             if (invert_rotation)
                 new_st.rot_srate = (short)(-st.rot_srate);
