@@ -19,6 +19,8 @@ local addr_lives   = 0x4582
 local addr_invul   = 0x4585
 local addr_bonus   = 0x4440
 local bonus_mask   = 0x10
+local addr_global_frame_counter = 0x0DC0
+local addr_local_frame_counter = 0x4584
 
 local in_file = working_dir .. "/" .. in_filename
 local out_file = working_dir .. "/" .. out_filename
@@ -64,6 +66,9 @@ function normalize_str(str)
 end
 -----------------------------
 
+local last_local_frame_nb = -1
+local level_start_frame_nb = -1
+
 local current_play_index = 0
 local current_play = {}
 local current_play_ans = ""
@@ -86,11 +91,23 @@ function get_pos()
 	local invul = tostring(memory.read_s8(addr_invul, "IWRAM"))
 	local bonus = memory.read_u8(addr_bonus, "IWRAM")
 	local bonus_bit = tostring(bit.band(bonus, bonus_mask))
-	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. " " .. bonus_bit .. "\n"
+	local frame_number = 0
+	if level_start_frame_nb >= 0 then
+		frame_number = tostring(memory.read_u32_le(addr_global_frame_counter, "IWRAM") - level_start_frame_nb)
+	end
+	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. " " .. bonus_bit .. " " .. frame_number .. "\n"
 end
 
 while true
 do
+	-- Detection of level start
+	local lfn = memory.read_u8(addr_local_frame_counter, "IWRAM")
+	if lfn == 0 and last_local_frame_nb == 0 then
+		level_start_frame_nb = memory.read_u32_le(addr_global_frame_counter, "IWRAM")
+	else
+		last_local_frame_nb = lfn
+	end
+	
 	for file_i=0, 2 do
 		local in_file_i = bizstring.replace(in_file, "@", tostring(file_i))
 		local out_file_i = bizstring.replace(out_file, "@", tostring(file_i))
@@ -133,6 +150,7 @@ do
 						local lives = tonumber(init[8])
 						local invul = tonumber(init[9])
 						local bonus = tonumber(init[10])
+						-- Note: frame number is ignored (modifying it would not change the moving objects positions...)
 						
 						memory.write_s32_le(addr_x_pos, xpos, "IWRAM")
 						memory.write_s32_le(addr_y_pos, ypos, "IWRAM")
