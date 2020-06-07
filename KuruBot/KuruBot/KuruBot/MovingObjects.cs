@@ -24,7 +24,6 @@ namespace KuruBot
         ushort period;
         const ushort midwaitStart = 0x7FFF, midwait = 0;
         short speed;
-        const short strokeLength = 0;
 
         public Rectangle dangerArea;
 
@@ -105,6 +104,33 @@ namespace KuruBot
 
     public class Roller
     {
+        public class Ball // No need for copies, so we use a class instead of a struct.
+        {
+            public Ball() { }
+            public Ball(int cx, int cy, int r, int t)
+            {
+                this.cx = cx; this.cy = cy; this.r = r; this.t = t;
+            }
+            public int cx = 0;
+            public int cy = 0;
+            public int r = 0;
+            public int t = 0;
+            public static bool operator <(Ball l, Ball f)
+            {
+                return l.t < f.t;
+            }
+            public static bool operator >(Ball l, Ball f)
+            {
+                return l.t > f.t;
+            }
+            public bool InCollisionWith(int px, int py)
+            {
+                int sx = px - cx;
+                int sy = py - cy;
+                return sx * sx + sy * sy <= r * r;
+            }
+        }
+
         short x, y;
         int vx, vy;
         short period;
@@ -112,6 +138,23 @@ namespace KuruBot
         short endTime;
 
         public Rectangle dangerArea;
+
+        public Ball PreciseBoxAtTime(int gameFrames)
+        {
+            // TODO: Add memoisation?
+            int t = gameFrames - startTime;
+            if (t >= 0)
+            {
+                t %= period;
+                if (t < endTime)
+                {
+                    int ballx = x + ((t * vx) >> 16);
+                    int bally = y + ((t * vy) >> 16);
+                    return new Ball(ballx, bally, 14, t);
+                }
+            }
+            return null;
+        }
 
         private Roller() { }
 
