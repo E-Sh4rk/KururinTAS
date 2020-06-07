@@ -373,7 +373,7 @@ namespace KuruBot
                     Brush b = new SolidBrush(Color.FromArgb(0x44, 0xAA, 0x22, 0x77));
                     foreach (Piston p in m.Pistons)
                         drawRectangle(p.dangerArea, b);
-                    b = new SolidBrush(Color.FromArgb(0x22, 0xAA, 0x77, 0x22));
+                    b = new SolidBrush(Color.FromArgb(0x44, 0xAA, 0x77, 0x22));
                     foreach (Roller r in m.Rollers)
                         drawRectangle(r.dangerArea, b);
                 }

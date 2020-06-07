@@ -158,12 +158,12 @@ namespace KuruBot
 
         private Roller() { }
 
-        public static List<Roller> Create(BitArray walls, int mapWidth, int x, int y, int dir, int startTime, int period, int speed = 0xC000)
+        public static List<Roller> Create(BitArray walls, int mapWidth, int x, int y, int dir, int startTime, int period, int speed = 0xC0)
         {
             Roller roller = new Roller();
             dir *= 0x2000;
-            roller.vx = KuruMath.instance.sin(speed, (short)dir);
-            roller.vy = -KuruMath.instance.cos(speed, (short)dir);
+            roller.vx = KuruMath.instance.sin(speed * 0x100, (short)dir);
+            roller.vy = -KuruMath.instance.cos(speed * 0x100, (short)dir);
 
             roller.x = (short)(x * 8 + 16);
             if ((dir & 0x2000) != 0)
@@ -210,7 +210,7 @@ namespace KuruBot
                 res.Add(roller);
                 roller = (Roller)roller.MemberwiseClone();
                 roller.startTime += (short)period;
-                roller.endTime += (short)period;
+                //roller.endTime += (short)period;
             }
             return res;
         }
