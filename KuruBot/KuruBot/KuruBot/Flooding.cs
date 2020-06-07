@@ -370,7 +370,7 @@ namespace KuruBot
                 for (int y = r.Top; y < r.Bottom; y++)
                     for (int x = r.Left; x < r.Right; x++)
                         max = Math.Max(max, targetCM.CostAtPx((short)x, (short)y, 0));
-                bonusCM.GlobalMalus += max;
+                bonusCM.GlobalMalus += max + Settings.back_before_bonus_malus;
             }
             return new ExtendedCostMap(targetCM, bonusCM);
         }
