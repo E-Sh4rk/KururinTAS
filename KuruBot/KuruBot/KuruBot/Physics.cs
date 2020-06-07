@@ -16,7 +16,7 @@ namespace KuruBot
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
     {
-        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul, bool hasBonus)
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul, bool hasBonus, ushort frameNumber)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -27,6 +27,7 @@ namespace KuruBot
             this.rot_srate = rot_srate;
             this.life = life;
             this.invul = invul;
+            this.frameNumber = frameNumber;
             gs = hasBonus ? GameState.InGameWithBonus : GameState.InGame;
         }
 
@@ -52,6 +53,7 @@ namespace KuruBot
         public bool Equals(HelirinState other)
         {
             return other != null &&
+                   frameNumber == other.frameNumber &&
                    xpos == other.xpos &&
                    ypos == other.ypos &&
                    rot == other.rot &&
@@ -67,6 +69,7 @@ namespace KuruBot
         public override int GetHashCode()
         {
             var hashCode = 2000477822;
+            hashCode = hashCode * -1521134295 + frameNumber.GetHashCode();
             hashCode = hashCode * -1521134295 + xpos.GetHashCode();
             hashCode = hashCode * -1521134295 + ypos.GetHashCode();
             hashCode = hashCode * -1521134295 + rot.GetHashCode();
@@ -91,6 +94,7 @@ namespace KuruBot
         public byte life;
         public sbyte invul;
         public GameState gs;
+        public ushort frameNumber; // 2 bytes is enough for more than 10 minutes
 
         public static bool operator ==(HelirinState state1, HelirinState state2)
         {
@@ -129,7 +133,7 @@ namespace KuruBot
             float angle = rot_to_angle_approx(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
-            return new MapControl.GraphicalHelirin(xpix, ypix, angle, h.HasBonus());
+            return new MapControl.GraphicalHelirin(xpix, ypix, angle, h.HasBonus(), h.frameNumber);
         }
 
         public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
@@ -138,7 +142,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus, (ushort)h.frameNumber);
         }
 
         Map map = null;
@@ -212,6 +216,8 @@ namespace KuruBot
             ActionEffect e = Controller.action_to_effect(a);
             st = st.ShallowCopy();
 
+            st.frameNumber += 1;
+
             if (st.life > Settings.full_life)
                 st.life = Settings.full_life;
             if (st.invul > Settings.invul_frames)
@@ -263,6 +269,7 @@ namespace KuruBot
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
 
+            // TODO: Handle moving objects
             // 5/6. Collision mask & springs & bonuses
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             uint collision_mask = 0;

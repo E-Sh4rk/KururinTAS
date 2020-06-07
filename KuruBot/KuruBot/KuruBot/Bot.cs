@@ -138,6 +138,8 @@ namespace KuruBot
             if (!Settings.bonus_required && !st.IsTerminal())
                 st.gs = GameState.InGame;
 
+            st.frameNumber = 0; // TODO: Add a setting to keep frameNumber
+
             return st;
         }
 

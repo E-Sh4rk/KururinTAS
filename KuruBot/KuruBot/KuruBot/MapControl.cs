@@ -15,18 +15,20 @@ namespace KuruBot
 
         public struct GraphicalHelirin
         {
-            public GraphicalHelirin(int px, int py, float a, bool hasBon)
+            public GraphicalHelirin(int px, int py, float a, bool bonus, int fn)
             {
                 pixelX = px;
                 pixelY = py;
                 angle = a;
-                hasBonus = hasBon;
+                hasBonus = bonus;
+                frameNumber = fn;
             }
 
             public int pixelX;
             public int pixelY;
             public float angle;
             public bool hasBonus;
+            public int frameNumber;
         }
 
         Form1 p;
@@ -118,13 +120,13 @@ namespace KuruBot
             if (e.Button == MouseButtons.Left)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, true));
             }
             if (e.Button == MouseButtons.Right)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
             }
         }
@@ -442,6 +444,7 @@ namespace KuruBot
                 Rectangle? bonus = m.GetBonusPxRect();
                 if (bonus.HasValue)
                     drawRectangle(bonus.Value, new SolidBrush(Color.MediumPurple));
+                // TODO: Show moving objects precise boxes
             }
                 
             if (helirin != null)

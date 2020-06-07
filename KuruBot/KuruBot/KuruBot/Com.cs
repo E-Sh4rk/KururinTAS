@@ -89,8 +89,9 @@ namespace KuruBot
             short rot_srate = Convert.ToInt16(headers[6]);
             byte life = Convert.ToByte(headers[7]);
             sbyte invul = Convert.ToSByte(headers[8]);
-            bool hasBonus = headers.Length > 9 ? (Convert.ToInt32(headers[9]) != 0) : false;
-            return new HelirinState(xpos, ypos, xb, yb, rot, rot_rate, rot_srate, life, invul, hasBonus);
+            bool has_bonus = headers.Length > 9 ? (Convert.ToInt32(headers[9]) != 0) : false;
+            ushort frame_number = headers.Length > 10 ? Convert.ToUInt16(headers[10]) : (ushort)0;
+            return new HelirinState(xpos, ypos, xb, yb, rot, rot_rate, rot_srate, life, invul, has_bonus, frame_number);
         }
 
         public static string hs_to_string(HelirinState hs)
@@ -104,8 +105,9 @@ namespace KuruBot
             string rot_srate_str = hs.rot_srate.ToString();
             string life_str = hs.life.ToString();
             string invul_str = hs.invul.ToString();
+            string frame_number_str = hs.frameNumber.ToString();
             return xpos_str + " " + ypos_str + " " + xb_str + " " + yb_str + " " + rot_str + " " + rot_rate_str + " " + rot_srate_str
-                    + " " + life_str + " " + invul_str + " " + (hs.HasBonus() ? "1" : "0") + "\n";
+                    + " " + life_str + " " + invul_str + " " + (hs.HasBonus() ? "1" : "0") + " " + frame_number_str + "\n";
         }
 
         public HelirinState GetHelirin()
