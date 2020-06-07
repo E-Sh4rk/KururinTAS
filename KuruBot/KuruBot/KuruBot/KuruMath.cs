@@ -7,6 +7,8 @@ namespace KuruBot
 {
     class KuruMath
     {
+        public static KuruMath instance = new KuruMath();
+
         int shift_angle;
         int factor;
         int[] cos_table = null;
@@ -28,13 +30,13 @@ namespace KuruBot
         }
 
         // /!\ Overflow: radius * factor should be smaller than 2^31
-        public int factor_by_cos(int radius, short rot)
+        public int cos(int radius, short rot)
         {
             int angle = (ushort)rot >> shift_angle;
             return (radius * cos_table[angle]) / factor;
         }
         // /!\ Overflow: radius * factor should be smaller than 2^31
-        public int factor_by_sin(int radius, short rot)
+        public int sin(int radius, short rot)
         {
             int angle = (ushort)rot >> shift_angle;
             return (radius * sin_table[angle]) / factor;

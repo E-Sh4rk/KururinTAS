@@ -361,7 +361,21 @@ namespace KuruBot
                         }
                     }
                 }
-                
+
+                if (showO)
+                {
+                    void drawRectangle(Rectangle r, Brush brush)
+                    {
+                        g.FillRectangle(brush, r.X - start_x, r.Y - start_y, r.Width, r.Height);
+                    }
+                    Brush b = new SolidBrush(Color.FromArgb(0x44, 0xAA, 0x22, 0x77));
+                    foreach (Piston p in m.Pistons)
+                        drawRectangle(p.dangerArea, b);
+                    b = new SolidBrush(Color.FromArgb(0x22, 0xAA, 0x77, 0x22));
+                    foreach (Roller r in m.Rollers)
+                        drawRectangle(r.dangerArea, b);
+                }
+
                 bmap = bitmap;
             }
             else
@@ -423,20 +437,11 @@ namespace KuruBot
                 float h = r.Height;
                 g.FillRectangle(b, real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
             }
-            if (showO)
+            if (showO && m != null && (helirin == null || !helirin.Value.hasBonus))
             {
-                if (m != null && (helirin == null || !helirin.Value.hasBonus))
-                {
-                    Rectangle? bonus = m.GetBonusPxRect();
-                    if (bonus.HasValue)
-                        drawRectangle(bonus.Value, new SolidBrush(Color.MediumPurple));
-                }
-                if (m != null)
-                {
-                    Brush b = new SolidBrush(Color.FromArgb(0x55, 0xAA, 0x22, 0x77));
-                    foreach (Piston p in m.Pistons)
-                        drawRectangle(p.dangerArea, b);
-                }
+                Rectangle? bonus = m.GetBonusPxRect();
+                if (bonus.HasValue)
+                    drawRectangle(bonus.Value, new SolidBrush(Color.MediumPurple));
             }
                 
             if (helirin != null)

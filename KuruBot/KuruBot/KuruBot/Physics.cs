@@ -180,7 +180,7 @@ namespace KuruBot
         public Physics(Map map)
         {
             this.map = map;
-            math = new KuruMath();
+            math = KuruMath.instance;//new KuruMath();
         }
 
         static int DecreaseBumpSpeed(int bs)
@@ -275,8 +275,8 @@ namespace KuruBot
                 int radius = helirin_points[i];
 
                 // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
-                short px = (short)(xpix - math.factor_by_sin(radius, st.rot));
-                short py = (short)(ypix + math.factor_by_cos(radius, st.rot));
+                short px = (short)(xpix - math.sin(radius, st.rot));
+                short py = (short)(ypix + math.cos(radius, st.rot));
 
                 // 5. Compute collision mask
                 if (map.IsPixelInCollision(px, py))
@@ -365,13 +365,13 @@ namespace KuruBot
                 bool down_side = (collision_mask & down_mask) != 0;
                 if (up_side && !down_side)
                 {
-                    new_st.xb = - math.factor_by_sin(auto_bump_speed, st.rot);
-                    new_st.yb =   math.factor_by_cos(auto_bump_speed, st.rot);
+                    new_st.xb = - math.sin(auto_bump_speed, st.rot);
+                    new_st.yb =   math.cos(auto_bump_speed, st.rot);
                 }
                 if (!up_side && down_side)
                 {
-                    new_st.xb =   math.factor_by_sin(auto_bump_speed, st.rot);
-                    new_st.yb = - math.factor_by_cos(auto_bump_speed, st.rot);
+                    new_st.xb =   math.sin(auto_bump_speed, st.rot);
+                    new_st.yb = - math.cos(auto_bump_speed, st.rot);
                 }
                 new_st.rot_rate = (short)(-Math.Sign(st.rot_rate) * rot_bump_rate);
                 if (new_st.rot_rate == 0)

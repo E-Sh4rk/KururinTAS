@@ -36,6 +36,7 @@ namespace KuruBot
 
         // Moving objects
         Piston[] pistons = null;
+        Roller[] rollers = null;
 
         public Map(ushort[,] map)
         {
@@ -85,6 +86,7 @@ namespace KuruBot
 
             // Build physical spring map & moving objects
             List<Piston> pistons = new List<Piston>();
+            List<Roller> rollers = new List<Roller>();
             physical_spring_map = new Spring[HeightPx, WidthPx][];
             for (int y = 0; y < HeightPx; y++)
             {
@@ -117,17 +119,20 @@ namespace KuruBot
                     else
                     {
                         // Moving Object ?
-                        object obj = MovingObjectAt(map, x, y);
+                        object obj = MovingObjectAt(map, physical_map, x, y);
                         if (obj != null)
                         {
                             if (obj is Piston)
                                 pistons.Add((Piston)obj);
+                            if (obj is List<Roller>)
+                                rollers.AddRange((List<Roller>)obj);
                             // TODO: physical map for moving objects?
                         }
                     }
                 }
             }
             this.pistons = pistons.ToArray();
+            this.rollers = rollers.ToArray();
 
             // Bonus Info
             int offset = 0;
@@ -326,7 +331,13 @@ namespace KuruBot
                                     120, // period 2 seconds
                                     273); // speed (0x10000/273 = 240 = 3 seconds)
         }
-        object RetrieveObjectDataExt(ushort[,] map, int x, int y)
+        List<Roller> RetrieveRollerData(ushort[,] map, BitArray walls, int x, int y)
+        {
+            return Roller.Create(walls, WidthPx, x, y, GetMapInfoData(map, x + 1, y), // direction
+                                       GetMapInfoData(map, x, y + 1), // start time
+                                       GetMapInfoData(map, x, y + 2)); // period
+        }
+        object RetrieveObjectDataExt(ushort[,] map, BitArray walls, int x, int y)
         {
             int id = GetMapInfoData(map, x + 1, y);
             int offset = 0;
@@ -346,20 +357,21 @@ namespace KuruBot
                     tile = TileAtOffset(map, offset);
                     offset++;
                     int type = tile & 0x3FF;
+                    int direction, startTime, period, speed;
                     switch (type)
                     {
                         case OBJ_PISTON:
-                            int direction = GetMapInfoData(map, ref offset);
-                            int startTime = GetMapInfoData(map, ref offset);
-                            int period = GetMapInfoData(map, ref offset);
-                            int speed = 0x10000 / GetMapInfoData(map, ref offset);
+                            direction = GetMapInfoData(map, ref offset);
+                            startTime = GetMapInfoData(map, ref offset);
+                            period = GetMapInfoData(map, ref offset);
+                            speed = 0x10000 / GetMapInfoData(map, ref offset);
                             return new Piston(x, y, direction, startTime, period, speed);
                         case OBJ_ROLLER:
-                            /*int direction = GetMapValue(tile);
-                            int startTime = GetMapValue(tile);
-                            int period = GetMapValue(tile);
-                            int speed = GetMapValue(tile);
-                            CreateRoller(x, y, direction, startTime, period, speed);*/
+                            direction = GetMapInfoData(map, ref offset);
+                            startTime = GetMapInfoData(map, ref offset);
+                            period = GetMapInfoData(map, ref offset);
+                            speed = GetMapInfoData(map, ref offset);
+                            return Roller.Create(walls, WidthPx, x, y, direction, startTime, period, speed);
                         default:
                             // Unsupported object (shooter?)
                             break;
@@ -368,19 +380,22 @@ namespace KuruBot
                 }
             }
         }
-        object MovingObjectAt(ushort[,] map, int x, int y)
+        object MovingObjectAt(ushort[,] map, BitArray walls, int x, int y)
         {
             int tile = TileAt(x, y);
             int type = tile & 0x3FF;
             switch (type)
             {
                 case OBJ_LOOKUP_OBJECT_INFO:
-                    return RetrieveObjectDataExt(map, x, y);
+                    return RetrieveObjectDataExt(map, walls, x, y);
                 case OBJ_PISTON:
                     if (y >= 4)
                         return RetrievePistonData(map, x, y);
                     break;
                 case OBJ_ROLLER:
+                    if (y >= 4)
+                        return RetrieveRollerData(map, walls, x, y);
+                    break;
                 default:
                     break;
             }
@@ -390,6 +405,10 @@ namespace KuruBot
         public Piston[] Pistons
         {
             get { return pistons; }
+        }
+        public Roller[] Rollers
+        {
+            get { return rollers; }
         }
 
     }
