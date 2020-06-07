@@ -3,6 +3,7 @@
 local working_dir = "tasks"
 local in_filename = "in@.txt"
 local out_filename = "out@.txt"
+local gfc_filename = "gfc.txt"
 
 -----------------------------
 
@@ -24,6 +25,7 @@ local addr_local_frame_counter = 0x4584
 
 local in_file = working_dir .. "/" .. in_filename
 local out_file = working_dir .. "/" .. out_filename
+local gfc_file = working_dir .. "/" .. gfc_filename
 
 -- Return true if file exists and is readable.
 function file_exists(path)
@@ -68,6 +70,9 @@ end
 
 local last_local_frame_nb = -1
 local level_start_frame_nb = -1
+if file_exists(gfc_file) then
+	level_start_frame_nb = tonumber(read_file(gfc_file))
+end
 
 local current_play_index = 0
 local current_play = {}
@@ -93,9 +98,13 @@ function get_pos()
 	local bonus_bit = tostring(bit.band(bonus, bonus_mask))
 	local frame_number = 0
 	if level_start_frame_nb >= 0 then
-		frame_number = tostring(memory.read_u32_le(addr_global_frame_counter, "IWRAM") - level_start_frame_nb)
+		frame_number = memory.read_u32_le(addr_global_frame_counter, "IWRAM") - level_start_frame_nb
+		if frame_number < 0 or frame_number > 0xFFFF then
+			frame_number = 0
+		end
 	end
-	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. " " .. bonus_bit .. " " .. frame_number .. "\n"
+	local frame_number_str = tostring(frame_number)
+	return xpos .. " " .. ypos .. " " .. xb .. " " .. yb .. " " .. rot .. " " .. rot_rate .. " " .. rot_srate .. " " .. lives .. " " .. invul .. " " .. bonus_bit .. " " .. frame_number_str .. "\n"
 end
 
 while true
@@ -104,6 +113,7 @@ do
 	local lfn = memory.read_u8(addr_local_frame_counter, "IWRAM")
 	if lfn == 0 and last_local_frame_nb == 0 then
 		level_start_frame_nb = memory.read_u32_le(addr_global_frame_counter, "IWRAM")
+		write_file(gfc_file, tostring(level_start_frame_nb))
 	else
 		last_local_frame_nb = lfn
 	end
