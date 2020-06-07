@@ -28,6 +28,38 @@ namespace KuruBot
 
         public Rectangle dangerArea;
 
+        public Rectangle PreciseBoxAtTime(int gameFrames)
+        {
+            // TODO: Add memoisation?
+            int t = gameFrames - 1 - startTime;
+            int angle = 0;
+            if (t >= 0)
+            {
+                t %= period;
+                if (t >= midwaitStart)
+                {
+                    angle = 0x8000;
+                    t = Math.Max(0, t - midwaitStart - midwait);
+                }
+                angle += t * speed;
+                if (angle >= 0x10000)
+                    angle = 0;
+            }
+            int offset = KuruMath.instance.cos(0x100, (short)angle) << 13;
+
+            int x = this.x << 16;
+            int y = this.y << 16;
+            switch (dir)
+            {
+                case Direction.Down: y += offset; break;
+                case Direction.Left: x -= offset; break;
+                case Direction.Up: y -= offset; break;
+                case Direction.Right: x += offset; break;
+            }
+            x >>= 16; y >>= 16;
+            return new Rectangle(x, y, w+1, h+1);
+        }
+
         public Piston(int x, int y, int dir, int startTime, int waitTime, int speed)
         {
             this.x = (ushort)(x * 8);
