@@ -31,7 +31,7 @@ namespace KuruBot
             else
                 Settings.SaveConfig(config_default_file);
 
-            mapc = new MapControl(this, null, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
+            mapc = new MapControl(this, null, showGMap.Checked, showPMap.Checked, showObjects.Checked, showCostMap.Checked);
             mapc.Dock = DockStyle.Fill;
             main_panel.Controls.Add(mapc);
 
@@ -49,6 +49,7 @@ namespace KuruBot
             showCostMap.Enabled = true;
             showPMap.Enabled = true;
             showGMap.Enabled = true;
+            showObjects.Enabled = true;
             bonusCostMap.Enabled = true;
             switchCostMap.Enabled = true;
             invulCostMap.Enabled = true;
@@ -113,7 +114,7 @@ namespace KuruBot
                 map = com.DownloadMap();
                 if (map != null)
                     phy = new Physics(map);
-                mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
+                mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showObjects.Checked, showCostMap.Checked);
             }
         }
 
@@ -128,7 +129,7 @@ namespace KuruBot
 
         private void showGPMap_CheckedChanged(object sender, EventArgs e)
         {
-            mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
+            mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showObjects.Checked, showCostMap.Checked);
         }
 
         Action[] last_inputs = null;
@@ -380,7 +381,7 @@ namespace KuruBot
                     map = Com.parse_map(File.ReadAllLines(loadFileDialog.FileName));
                     if (map != null)
                         phy = new Physics(map);
-                    mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showCostMap.Checked);
+                    mapc.SetSettings(map, showGMap.Checked, showPMap.Checked, showObjects.Checked, showCostMap.Checked);
                 }
 
             }

@@ -14,6 +14,12 @@ namespace KuruBot
         public const int spring_size = 2*8 + 1;
         public const int helirin_radius = 32; // Not really... This value is only used for rendering.
 
+        const int OBJ_LOOKUP_OBJECT_INFO = 240;
+        const int OBJ_OBJECT_INFO = 241;
+        const int OBJ_PISTON = 245;
+        const int OBJ_ROLLER_CATCHER = 246;
+        const int OBJ_ROLLER = 247;
+
         // Graphical atrributes
         ushort[,] map = null;
         SortedSet<ushort> void_sprites = null;
@@ -27,6 +33,9 @@ namespace KuruBot
         // Bonus attributes
         BonusType bonus_type = BonusType.None;
         Rectangle? bonus_px_rect = null;
+
+        // Moving objects
+        Piston[] pistons = null;
 
         public Map(ushort[,] map)
         {
@@ -74,7 +83,8 @@ namespace KuruBot
                 }
             }
 
-            // Build physical spring map
+            // Build physical spring map & moving objects
+            List<Piston> pistons = new List<Piston>();
             physical_spring_map = new Spring[HeightPx, WidthPx][];
             for (int y = 0; y < HeightPx; y++)
             {
@@ -85,6 +95,7 @@ namespace KuruBot
             {
                 for (int x = 0; x < Width; x++)
                 {
+                    // Spring ?
                     SpringType? t = IsTileASpring(TileAt(x, y));
                     if (t.HasValue)
                     {
@@ -103,8 +114,20 @@ namespace KuruBot
                             }
                         }
                     }
+                    else
+                    {
+                        // Moving Object ?
+                        object obj = MovingObjectAt(map, x, y);
+                        if (obj != null)
+                        {
+                            if (obj is Piston)
+                                pistons.Add((Piston)obj);
+                            // TODO: physical map for moving objects?
+                        }
+                    }
                 }
             }
+            this.pistons = pistons.ToArray();
 
             // Bonus Info
             int offset = 0;
@@ -247,6 +270,8 @@ namespace KuruBot
             return physical_spring_map[y, x];
         }
 
+        // ----- Bonuses -----
+
         public enum BonusType
         {
             None = 0,
@@ -254,18 +279,27 @@ namespace KuruBot
             Bird
         }
 
+        ushort TileAtOffset(ushort[,] map, int offset)
+        {
+            return map[offset / Width, offset % Width];
+        }
         int GetMapInfoData(ushort[,] map, ref int offset)
         {
             int res = 0;
-            ushort tile = map[offset / Width, offset % Width];
+            ushort tile = TileAtOffset(map, offset);
             while (tile >= 0xE0 && tile <= 0xE9)
             {
                 res = res * 10 + tile - 0xE0;
                 offset++;
-                tile = map[offset / Width, offset % Width];
+                tile = TileAtOffset(map, offset);
             }
             offset++;
             return res;
+        }
+        int GetMapInfoData(ushort[,] map, int x, int y)
+        {
+            int offset = y * Width + x;
+            return GetMapInfoData(map, ref offset);
         }
 
         public BonusType IsPixelInBonus(short x, short y)
@@ -282,5 +316,81 @@ namespace KuruBot
         {
             get { return bonus_type; }
         }
+
+        // ----- Moving Objects -----
+
+        Piston RetrievePistonData(ushort[,] map, int x, int y)
+        {
+            return new Piston(x, y, GetMapInfoData(map, x + 1, y), // direction
+                                    GetMapInfoData(map, x, y + 1), // start time
+                                    120, // period 2 seconds
+                                    273); // speed (0x10000/273 = 240 = 3 seconds)
+        }
+        object RetrieveObjectDataExt(ushort[,] map, int x, int y)
+        {
+            int id = GetMapInfoData(map, x + 1, y);
+            int offset = 0;
+
+            while (true)
+            {
+                ushort tile = TileAtOffset(map, offset);
+                while ((tile & 0x3FF) != OBJ_OBJECT_INFO)
+                {
+                    offset++;
+                    tile = TileAtOffset(map, offset);
+                }
+                offset++;
+
+                if (id == GetMapInfoData(map, ref offset))
+                {
+                    tile = TileAtOffset(map, offset);
+                    offset++;
+                    int type = tile & 0x3FF;
+                    switch (type)
+                    {
+                        case OBJ_PISTON:
+                            int direction = GetMapInfoData(map, ref offset);
+                            int startTime = GetMapInfoData(map, ref offset);
+                            int period = GetMapInfoData(map, ref offset);
+                            int speed = 0x10000 / GetMapInfoData(map, ref offset);
+                            return new Piston(x, y, direction, startTime, period, speed);
+                        case OBJ_ROLLER:
+                            /*int direction = GetMapValue(tile);
+                            int startTime = GetMapValue(tile);
+                            int period = GetMapValue(tile);
+                            int speed = GetMapValue(tile);
+                            CreateRoller(x, y, direction, startTime, period, speed);*/
+                        default:
+                            // Unsupported object (shooter?)
+                            break;
+                    }
+                    return null;
+                }
+            }
+        }
+        object MovingObjectAt(ushort[,] map, int x, int y)
+        {
+            int tile = TileAt(x, y);
+            int type = tile & 0x3FF;
+            switch (type)
+            {
+                case OBJ_LOOKUP_OBJECT_INFO:
+                    return RetrieveObjectDataExt(map, x, y);
+                case OBJ_PISTON:
+                    if (y >= 4)
+                        return RetrievePistonData(map, x, y);
+                    break;
+                case OBJ_ROLLER:
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        public Piston[] Pistons
+        {
+            get { return pistons; }
+        }
+
     }
 }

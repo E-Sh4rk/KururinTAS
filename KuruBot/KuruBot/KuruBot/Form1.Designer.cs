@@ -72,6 +72,7 @@
             this.minInvulScore = new System.Windows.Forms.NumericUpDown();
             this.playMove = new System.Windows.Forms.Button();
             this.bonusCostMap = new System.Windows.Forms.Button();
+            this.showObjects = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).BeginInit();
@@ -115,11 +116,11 @@
             this.showGMap.AutoSize = true;
             this.showGMap.Checked = true;
             this.showGMap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showGMap.Location = new System.Drawing.Point(728, 586);
+            this.showGMap.Location = new System.Drawing.Point(693, 586);
             this.showGMap.Name = "showGMap";
-            this.showGMap.Size = new System.Drawing.Size(122, 17);
+            this.showGMap.Size = new System.Drawing.Size(94, 17);
             this.showGMap.TabIndex = 3;
-            this.showGMap.Text = "Show graphical map";
+            this.showGMap.Text = "Graphical map";
             this.showGMap.UseVisualStyleBackColor = true;
             this.showGMap.CheckedChanged += new System.EventHandler(this.showGPMap_CheckedChanged);
             // 
@@ -129,9 +130,9 @@
             this.showPMap.AutoSize = true;
             this.showPMap.Location = new System.Drawing.Point(605, 586);
             this.showPMap.Name = "showPMap";
-            this.showPMap.Size = new System.Drawing.Size(117, 17);
+            this.showPMap.Size = new System.Drawing.Size(88, 17);
             this.showPMap.TabIndex = 4;
-            this.showPMap.Text = "Show physical map";
+            this.showPMap.Text = "Physical map";
             this.showPMap.UseVisualStyleBackColor = true;
             this.showPMap.CheckedChanged += new System.EventHandler(this.showGPMap_CheckedChanged);
             // 
@@ -543,11 +544,26 @@
             this.bonusCostMap.UseVisualStyleBackColor = true;
             this.bonusCostMap.Click += new System.EventHandler(this.bonusCostMap_Click);
             // 
+            // showObjects
+            // 
+            this.showObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.showObjects.AutoSize = true;
+            this.showObjects.Checked = true;
+            this.showObjects.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showObjects.Location = new System.Drawing.Point(788, 586);
+            this.showObjects.Name = "showObjects";
+            this.showObjects.Size = new System.Drawing.Size(62, 17);
+            this.showObjects.TabIndex = 42;
+            this.showObjects.Text = "Objects";
+            this.showObjects.UseVisualStyleBackColor = true;
+            this.showObjects.CheckedChanged += new System.EventHandler(this.showGPMap_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.showObjects);
             this.Controls.Add(this.bonusCostMap);
             this.Controls.Add(this.playMove);
             this.Controls.Add(this.minInvulScore);
@@ -645,6 +661,7 @@
         private System.Windows.Forms.NumericUpDown minInvulScore;
         private System.Windows.Forms.Button playMove;
         private System.Windows.Forms.Button bonusCostMap;
+        private System.Windows.Forms.CheckBox showObjects;
     }
 }
 

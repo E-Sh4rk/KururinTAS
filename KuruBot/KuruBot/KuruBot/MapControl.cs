@@ -36,6 +36,7 @@ namespace KuruBot
         bool showC = false;
         bool showG = true;
         bool showP = false;
+        bool showO = true;
         Bitmap bmap = null;
         GraphicalHelirin? helirin = null;
 
@@ -51,11 +52,11 @@ namespace KuruBot
         int computed_bmp_start_y = 0;
         float computed_scale = 0;
 
-        public MapControl(Form1 p, Map m, bool showG, bool showP, bool showC)
+        public MapControl(Form1 p, Map m, bool showG, bool showP, bool showO, bool showC)
         {
             InitializeComponent();
             BackColor = Color.White;
-            SetSettings(m, showG, showP, showC);
+            SetSettings(m, showG, showP, showO, showC);
 
             this.p = p;
             MouseClick += Control1_MouseClick;
@@ -204,11 +205,12 @@ namespace KuruBot
             Refresh();
         }
 
-        public void SetSettings(Map m, bool showG, bool showP, bool showC)
+        public void SetSettings(Map m, bool showG, bool showP, bool showO, bool showC)
         {
             this.m = m;
             this.showG = showG;
             this.showP = showP;
+            this.showO = showO;
             this.showC = showC;
             if (!start_pixel.HasValue || !end_pixel.HasValue)
                 highlight_map = null;
@@ -413,16 +415,27 @@ namespace KuruBot
 
             int real_start_x = start_x - (int)(computed_start_pixel.x * scale);
             int real_start_y = start_y - (int)(computed_start_pixel.y * scale);
-            if (m != null && (helirin == null || !helirin.Value.hasBonus)) {
-                Rectangle? bonus = m.GetBonusPxRect();
-                if (bonus.HasValue)
+            void drawRectangle(Rectangle r, Brush b)
+            {
+                float x = r.X;
+                float y = r.Y;
+                float w = r.Width;
+                float h = r.Height;
+                g.FillRectangle(b, real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+            }
+            if (showO)
+            {
+                if (m != null && (helirin == null || !helirin.Value.hasBonus))
                 {
-                    float x = bonus.Value.X;
-                    float y = bonus.Value.Y;
-                    float w = bonus.Value.Width;
-                    float h = bonus.Value.Height;
-                    Brush b = new SolidBrush(Color.MediumPurple);
-                    g.FillRectangle(b, real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+                    Rectangle? bonus = m.GetBonusPxRect();
+                    if (bonus.HasValue)
+                        drawRectangle(bonus.Value, new SolidBrush(Color.MediumPurple));
+                }
+                if (m != null)
+                {
+                    Brush b = new SolidBrush(Color.FromArgb(0x55, 0xAA, 0x22, 0x77));
+                    foreach (Piston p in m.Pistons)
+                        drawRectangle(p.dangerArea, b);
                 }
             }
                 
