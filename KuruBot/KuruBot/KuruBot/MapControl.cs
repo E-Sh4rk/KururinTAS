@@ -431,20 +431,44 @@ namespace KuruBot
 
             int real_start_x = start_x - (int)(computed_start_pixel.x * scale);
             int real_start_y = start_y - (int)(computed_start_pixel.y * scale);
-            void drawRectangle(Rectangle r, Brush b)
+            void drawRectangle(Rectangle r, Color c, bool fill = true)
             {
                 float x = r.X;
                 float y = r.Y;
                 float w = r.Width;
                 float h = r.Height;
-                g.FillRectangle(b, real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+                if (fill)
+                    g.FillRectangle(new SolidBrush(c), real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+                else
+                    g.DrawRectangle(new Pen(c, 1), real_start_x + x * scale, real_start_y + y * scale, (w-1) * scale, (h-1) * scale);
+            }
+            void drawCircle(int cx, int cy, int r, Color c, bool fill = true)
+            {
+                float x = cx - r;
+                float y = cy - r;
+                float w = 2*r - 1;
+                float h = 2*r - 1;
+                if (fill)
+                    g.FillEllipse(new SolidBrush(c), real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
+                else
+                    g.DrawEllipse(new Pen(c, 1), real_start_x + x * scale, real_start_y + y * scale, w * scale, h * scale);
             }
             if (showO && m != null && (helirin == null || !helirin.Value.hasBonus))
             {
                 Rectangle? bonus = m.GetBonusPxRect();
                 if (bonus.HasValue)
-                    drawRectangle(bonus.Value, new SolidBrush(Color.MediumPurple));
-                // TODO: Show moving objects precise boxes
+                    drawRectangle(bonus.Value, Color.MediumPurple);
+                if (helirin != null)
+                {
+                    foreach (Piston p in m.Pistons)
+                        drawRectangle(p.PreciseBoxAtTime(helirin.Value.frameNumber), Color.FromArgb(0xFF, 0x77, 0x22, 0x77), false);
+                    foreach (Roller r in m.Rollers)
+                    {
+                        Roller.Ball b = r.PreciseBoxAtTime(helirin.Value.frameNumber);
+                        if (b != null)
+                            drawCircle(b.cx, b.cy, b.r, Color.FromArgb(0xFF, 0x77, 0x77, 0x22), false);
+                    }
+                }
             }
                 
             if (helirin != null)
