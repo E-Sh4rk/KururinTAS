@@ -14,6 +14,7 @@ namespace KuruBot
         public static byte full_life = 3;
         public static sbyte invul_frames = 20;
         public static bool bonus_required = false;
+        public static bool enable_moving_objects = false;
 
         // ---------- FLOODING SETTINGS ----------
 
@@ -89,6 +90,7 @@ namespace KuruBot
                 full_life = (byte)parseInt(data, "Game", "full_life", full_life);
                 invul_frames = (sbyte)parseInt(data, "Game", "invul_frames", invul_frames);
                 bonus_required = parseBool(data, "Game", "bonus_required", bonus_required);
+                enable_moving_objects = parseBool(data, "Game", "enable_moving_objects", enable_moving_objects);
 
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
                 damageless_healzone_bonus = parseFloat(data, "Flooding", "damageless_healzone_bonus", damageless_healzone_bonus);
@@ -152,6 +154,7 @@ namespace KuruBot
                 data["Game"]["full_life"] = ToString(full_life);
                 data["Game"]["invul_frames"] = ToString(invul_frames);
                 data["Game"]["bonus_required"] = ToString(bonus_required);
+                data["Game"]["enable_moving_objects"] = ToString(enable_moving_objects);
 
                 data["Flooding"]["ground_speed"] = ToString(ground_speed);
                 data["Flooding"]["damageless_healzone_bonus"] = ToString(damageless_healzone_bonus);

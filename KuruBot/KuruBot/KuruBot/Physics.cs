@@ -269,8 +269,7 @@ namespace KuruBot
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
 
-            // TODO: Handle moving objects
-            // 5/6. Collision mask & springs & bonuses
+            // 5/6. Collision mask & moving objects & springs & bonuses
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             uint collision_mask = 0;
             //SortedSet<int> already_visited = new SortedSet<int>();
@@ -289,7 +288,34 @@ namespace KuruBot
                 if (map.IsPixelInCollision(px, py))
                     collision_mask = collision_mask | ((uint)1 << i);
 
-                // 6. Action of springs & bonuses
+                // 6. Action of moving objects & springs & bonuses
+                if (Settings.enable_moving_objects)
+                {
+                    // TODO: Support for non-damageless (need to handle hit reaction)
+                    bool collisionWithMovingObj = false;
+                    foreach (Roller r in map.Rollers)
+                    {
+                        if (r.dangerArea.Contains(px, py))
+                            if (r.PreciseBoxAtTime(st.frameNumber).InCollisionWith(px, py))
+                                collisionWithMovingObj = true;
+                    }
+                    foreach (Piston p in map.Pistons)
+                    {
+                        if (p.dangerArea.Contains(px, py))
+                            if (p.PreciseBoxAtTime(st.frameNumber).Contains(px, py))
+                                collisionWithMovingObj = true;
+                    }
+                    if (collisionWithMovingObj)
+                    {
+                        if (new_st.life > 1 || new_st.invul > 0 || safe_zone)
+                            throw new NotSupportedException("Moving objects are only supported in damageless.");
+                        else
+                        {
+                            new_st.gs = GameState.Loose;
+                            return new_st;
+                        }    
+                    }
+                }
                 Map.Spring[] springs = map.IsPixelInSpring(px, py);
                 foreach (Map.Spring spr in springs)
                 {

@@ -458,7 +458,7 @@ namespace KuruBot
                 Rectangle? bonus = m.GetBonusPxRect();
                 if (bonus.HasValue)
                     drawRectangle(bonus.Value, Color.MediumPurple);
-                if (helirin != null)
+                if (helirin != null && Settings.enable_moving_objects)
                 {
                     foreach (Piston p in m.Pistons)
                         drawRectangle(p.PreciseBoxAtTime(helirin.Value.frameNumber), Color.FromArgb(0xFF, 0x77, 0x22, 0x77), false);

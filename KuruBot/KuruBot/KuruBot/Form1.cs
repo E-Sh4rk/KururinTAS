@@ -565,7 +565,10 @@ namespace KuruBot
         private void loadConfig_Click(object sender, EventArgs e)
         {
             if (loadIniDialog.ShowDialog() == DialogResult.OK)
+            {
                 Settings.LoadConfig(loadIniDialog.FileName);
+                mapc.Refresh();
+            }
         }
 
         private void saveConfig_Click(object sender, EventArgs e)
