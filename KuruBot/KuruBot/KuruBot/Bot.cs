@@ -109,8 +109,9 @@ namespace KuruBot
 
             int pos_reduction = Settings.pos_reduction;
             int bump_reduction = Settings.bump_reduction;
-            short rot_precision = Settings.rot_precision;
-            short rot_rate_precision = Settings.rot_rate_precision;
+            ushort rot_precision = Settings.rot_precision;
+            ushort rot_rate_precision = Settings.rot_rate_precision;
+            ushort frame_nb_precision = Settings.frame_nb_precision;
             float additional_reduction_dist_multiplier = Settings.additional_reduction_dist_multiplier;
             int max_additional_reduction = Settings.max_additional_reduction;
             if (f.IsHealZone(px, py))
@@ -119,6 +120,7 @@ namespace KuruBot
                 bump_reduction = Settings.healzone_bump_reduction;
                 rot_precision = Settings.healzone_rot_precision;
                 rot_rate_precision = Settings.healzone_rot_rate_precision;
+                frame_nb_precision = Settings.healzone_frame_nb_precision;
                 additional_reduction_dist_multiplier = Settings.healzone_additional_reduction_dist_multiplier;
                 max_additional_reduction = Settings.healzone_max_additional_reduction;
             }
@@ -138,7 +140,7 @@ namespace KuruBot
             if (!Settings.bonus_required && !st.IsTerminal())
                 st.gs = GameState.InGame;
 
-            st.frameNumber = 0; // TODO: Add a setting to keep frameNumber
+            st.frameNumber = (ushort)((st.frameNumber / frame_nb_precision) * frame_nb_precision);
 
             return st;
         }

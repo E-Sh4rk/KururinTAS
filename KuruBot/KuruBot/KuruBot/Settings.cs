@@ -45,10 +45,12 @@ namespace KuruBot
         public static float healzone_additional_reduction_dist_multiplier = 1f / 8f;
         public static int healzone_max_additional_reduction = 6;
 
-        public static short rot_precision = Physics.default_srate;
-        public static short rot_rate_precision = Physics.default_srate;
-        public static short healzone_rot_precision = Physics.default_srate;
-        public static short healzone_rot_rate_precision = Physics.default_srate;
+        public static ushort rot_precision = (ushort)Physics.default_srate;
+        public static ushort rot_rate_precision = (ushort)Physics.default_srate;
+        public static ushort healzone_rot_precision = (ushort)Physics.default_srate;
+        public static ushort healzone_rot_rate_precision = (ushort)Physics.default_srate;
+        public static ushort frame_nb_precision = 0xFFFF;
+        public static ushort healzone_frame_nb_precision = 0xFFFF;
         // TODO: state reduction for invulnerability?
 
         public static float cost_multiplier = 1;
@@ -112,10 +114,12 @@ namespace KuruBot
                 max_additional_reduction = parseInt(data, "Solver", "max_additional_reduction", max_additional_reduction);
                 healzone_additional_reduction_dist_multiplier = parseFloat(data, "Solver", "healzone_additional_reduction_dist_multiplier", healzone_additional_reduction_dist_multiplier);
                 healzone_max_additional_reduction = parseInt(data, "Solver", "healzone_max_additional_reduction", healzone_max_additional_reduction);
-                rot_precision = (short)parseInt(data, "Solver", "rot_precision", rot_precision);
-                rot_rate_precision = (short)parseInt(data, "Solver", "rot_rate_precision", rot_rate_precision);
-                healzone_rot_precision = (short)parseInt(data, "Solver", "healzone_rot_precision", healzone_rot_precision);
-                healzone_rot_rate_precision = (short)parseInt(data, "Solver", "healzone_rot_rate_precision", healzone_rot_rate_precision);
+                rot_precision = (ushort)parseInt(data, "Solver", "rot_precision", rot_precision);
+                rot_rate_precision = (ushort)parseInt(data, "Solver", "rot_rate_precision", rot_rate_precision);
+                healzone_rot_precision = (ushort)parseInt(data, "Solver", "healzone_rot_precision", healzone_rot_precision);
+                healzone_rot_rate_precision = (ushort)parseInt(data, "Solver", "healzone_rot_rate_precision", healzone_rot_rate_precision);
+                frame_nb_precision = (ushort)parseInt(data, "Solver", "frame_nb_precision", frame_nb_precision);
+                healzone_frame_nb_precision = (ushort)parseInt(data, "Solver", "healzone_frame_nb_precision", healzone_frame_nb_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
                 min_ab_speed = parseInt(data, "Solver", "min_ab_speed", min_ab_speed);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
@@ -177,6 +181,8 @@ namespace KuruBot
                 data["Solver"]["rot_rate_precision"] = ToString(rot_rate_precision);
                 data["Solver"]["healzone_rot_precision"] = ToString(healzone_rot_precision);
                 data["Solver"]["healzone_rot_rate_precision"] = ToString(healzone_rot_rate_precision);
+                data["Solver"]["frame_nb_precision"] = ToString(frame_nb_precision);
+                data["Solver"]["healzone_frame_nb_precision"] = ToString(healzone_frame_nb_precision);
                 data["Solver"]["cost_multiplier"] = ToString(cost_multiplier);
                 data["Solver"]["min_ab_speed"] = ToString(min_ab_speed);
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
