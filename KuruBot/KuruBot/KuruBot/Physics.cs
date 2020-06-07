@@ -307,7 +307,7 @@ namespace KuruBot
                     }
                     if (collisionWithMovingObj)
                     {
-                        if (new_st.life > 1 || new_st.invul > 0 || safe_zone)
+                        if (new_st.life != 1 || new_st.invul != 0 || safe_zone)
                             throw new NotSupportedException("Moving objects are only supported in damageless.");
                         else
                         {
