@@ -311,7 +311,12 @@ namespace KuruBot
                     if (collisionWithMovingObj)
                     {
                         if (new_st.life != 1 || new_st.invul != 0 || safe_zone)
-                            throw new NotSupportedException("Moving objects are only supported in damageless.");
+                        {
+                            // throw new NotSupportedException("Moving objects are only supported in damageless.");
+                            // TODO: This is NOT a correct result, but it is a safe approximation relatively to the solver.
+                            new_st.gs = GameState.Loose;
+                            return new_st;
+                        }
                         else
                         {
                             new_st.gs = GameState.Loose;
