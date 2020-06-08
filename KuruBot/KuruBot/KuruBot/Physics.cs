@@ -220,13 +220,13 @@ namespace KuruBot
             }
             if ((collision_mask & (up_mask | down_mask)) != 0)
             {
-                dir -= st.rot;
+                dir -= (short)((st.rot >> 8) << 8);
                 if ((collision_mask & up_mask) != 0)
                     dir = (short)(dir + 0x8000);
                 if (dir >= 0)
-                    st.rot_rate = -0x400;
+                    st.rot_rate = -rot_bump_rate;
                 else
-                    st.rot_rate = 0x400;
+                    st.rot_rate = rot_bump_rate;
             }
         }
 
