@@ -313,7 +313,6 @@ namespace KuruBot
             uint object_collision_mask = 0;
             if (Settings.enable_moving_objects)
             {
-                // TODO: Support for non-damageless (need to handle hit reaction)
                 List<Roller.Ball> balls = new List<Roller.Ball>();
                 foreach (Roller r in map.Rollers)
                 {
@@ -334,29 +333,32 @@ namespace KuruBot
                         if (ball.InCollisionWith(px, py))
                             elt_collision_mask |= ((uint)1 << i);
                     }
-                    object_collision_mask |= elt_collision_mask;
+                    if (elt_collision_mask != 0)
+                    {
+                        object_collision_mask |= elt_collision_mask;
+                        ObjectHitReact(st, elt_collision_mask, ball.cx, ball.cy);
+                    }
                 }
                 foreach (Piston p in map.Pistons)
                 {
+                    Rectangle? box = null;
                     uint elt_collision_mask = 0;
                     for (int i = 0; i < helirin_points.Length; i++)
                     {
                         short px = pxs[i];
                         short py = pys[i];
                         if (p.dangerArea.Contains(px, py))
-                            if (p.PreciseBoxAtTime(st.frameNumber).Contains(px, py))
+                        {
+                            if (box == null)
+                                box = p.PreciseBoxAtTime(st.frameNumber);
+                            if (box.Value.Contains(px, py))
                                 elt_collision_mask |= ((uint)1 << i);
+                        }
                     }
-                    object_collision_mask |= elt_collision_mask;
-                }
-                // TODO: Temporary... This is NOT a correct result, but it is a safe approximation relatively to the solver.
-                if (object_collision_mask != 0)
-                {
-                    if (st.life != 1 || st.invul != 0 || safe_zone)
+                    if (elt_collision_mask != 0)
                     {
-                        // throw new NotSupportedException("Moving objects are only supported in damageless.");
-                        st.gs = GameState.Loose;
-                        return st;
+                        object_collision_mask |= elt_collision_mask;
+                        ObjectHitReact(st, elt_collision_mask, box.Value.X + (box.Value.Width-1) / 2, box.Value.Y + (box.Value.Height-1) / 2);
                     }
                 }
             }
