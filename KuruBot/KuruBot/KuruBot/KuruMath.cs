@@ -13,12 +13,15 @@ namespace KuruBot
         int factor;
         int[] cos_table = null;
         int[] sin_table = null;
+        int atan2_dist_bits;
+        int[,] atan2_table = null;
 
-        public KuruMath(int nb_bits_angle_precision = 8, int sin_cos_factor = 0x100)
+        public KuruMath(int nb_bits_angle_precision = 8, int sin_cos_factor = 0x100, int atan2_nb_bits_dist_precision = 6)
         {
             shift_angle = 16 - nb_bits_angle_precision;
             factor = sin_cos_factor;
-            // Init tables
+            atan2_dist_bits = atan2_nb_bits_dist_precision;
+            // Init sin/cos tables
             int nb_angles = 1 << nb_bits_angle_precision;
             cos_table = new int[nb_angles];
             sin_table = new int[nb_angles];
@@ -26,6 +29,16 @@ namespace KuruBot
             {
                 cos_table[i] = (int)(Math.Cos(2 * Math.PI * i / nb_angles) * sin_cos_factor);
                 sin_table[i] = (int)(Math.Sin(2 * Math.PI * i / nb_angles) * sin_cos_factor);
+            }
+            // Init atan2 table
+            int nb_dists = 1 << atan2_nb_bits_dist_precision;
+            atan2_table = new int[nb_dists, nb_dists];
+            for (uint j = 0; j < nb_dists; j++)
+            {
+                for (uint i = 0; i < nb_dists; i++)
+                {
+                    atan2_table[i, j] = (int)(2 * Math.Atan2(i, j) * 0x40 / Math.PI);
+                }
             }
         }
 
@@ -40,6 +53,34 @@ namespace KuruBot
         {
             int angle = (ushort)rot >> shift_angle;
             return (radius * sin_table[angle]) / factor;
+        }
+
+        int most_significant_bit(int v)
+        {
+            int res = -1;
+            while (v > 0)
+            {
+                res++;
+                v >>= 1;
+            }
+            return res;
+        }
+        public short atan2(int dx, int dy)
+        {
+            int atanx = Math.Abs(dx);
+            int atany = Math.Abs(dy);
+            int sz = Math.Max(most_significant_bit(atanx), most_significant_bit(atany)) + 1;
+            if (sz > atan2_dist_bits)
+            {
+                atanx >>= sz - atan2_dist_bits;
+                atany >>= sz - atan2_dist_bits;
+            }
+            int res = atan2_table[atanx, atany];
+            if (dx < 0)
+                res = -res;
+            if (dy >= 0)
+                res = (sbyte)(0x80 - res);
+            return (short)(res << 8);
         }
     }
 }

@@ -157,18 +157,18 @@ namespace KuruBot
         const int speed0 = (3 * 0x10000) / 2;
         const int speed1 = (3 * speed0) / 2;
         const int speed2 = 2 * speed0;
-        int[] input_speeds = new int[] { speed0, speed1, speed2 };
+        readonly int[] input_speeds = new int[] { speed0, speed1, speed2 };
 
         const int speed0_2 = 69504;
         const int speed1_2 = (3 * speed0_2) / 2;
         const int speed2_2 = 2 * speed0_2;
-        int[] input_speeds_2 = new int[] { speed0_2, speed1_2, speed2_2 };
+        readonly int[] input_speeds_2 = new int[] { speed0_2, speed1_2, speed2_2 };
 
         // Various constants
         const short rotation_rate_decr = 91;
         const int bump_speed_diff_frac = 4;
-        short[] helirin_points = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 24, -24, 28, -28, 31, -31 };
-        int[] helirin_points_order_for_springs = new int[] { 16, 14, 12, 10, 8, 6, 4, 2, 15, 13, 11, 9, 7, 5, 3, 1, 0 };
+        readonly short[] helirin_points = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 24, -24, 28, -28, 31, -31 };
+        readonly int[] helirin_points_order_for_springs = new int[] { 16, 14, 12, 10, 8, 6, 4, 2, 15, 13, 11, 9, 7, 5, 3, 1, 0 };
         const uint up_mask = 0x15554;
         const uint down_mask = 0xAAAA;
         const int middle_mask = 0x7;
@@ -205,6 +205,11 @@ namespace KuruBot
             else
                 return -(0x10000 / 4);
         }
+
+        /*void ObjectHitReact(HelirinState st, uint collision_mask, int objx, int objy)
+        {
+
+        }*/
 
         public HelirinState Next(HelirinState st, Action a)
         {
@@ -268,62 +273,81 @@ namespace KuruBot
 
             // From this point we create a new state so that we can still access old values of the state.
             HelirinState new_st = st.ShallowCopy();
-
-            // 5/6. Collision mask & moving objects & springs & bonuses
+            // We also precompute all the helirin physical points and the collision mask
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
+            short[] pxs = new short[helirin_points.Length];
+            short[] pys = new short[helirin_points.Length];
             uint collision_mask = 0;
-            //SortedSet<int> already_visited = new SortedSet<int>();
+            for (int i = 0; i < helirin_points.Length; i++)
+            {
+                int radius = helirin_points[i];
+                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
+                short px = (short)(xpix - math.sin(radius, st.rot));
+                short py = (short)(ypix + math.cos(radius, st.rot));
+                pxs[i] = px;
+                pys[i] = py;
+                // Compute collision mask
+                if (map.IsPixelInCollision(px, py))
+                    collision_mask |= ((uint)1 << i);
+            }
+
+            // 5. Action of moving objects
+            uint object_collision_mask = 0;
+            if (Settings.enable_moving_objects)
+            {
+                // TODO: Support for non-damageless (need to handle hit reaction)
+                foreach (Roller r in map.Rollers)
+                {
+                    uint elt_collision_mask = 0;
+                    for (int i = 0; i < helirin_points.Length; i++)
+                    {
+                        short px = pxs[i];
+                        short py = pys[i];
+                        if (r.dangerArea.Contains(px, py))
+                        {
+                            Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
+                            if (ball != null && ball.InCollisionWith(px, py))
+                                elt_collision_mask |= ((uint)1 << i);
+                        }
+                    }
+                    object_collision_mask |= elt_collision_mask;
+                }
+                foreach (Piston p in map.Pistons)
+                {
+                    uint elt_collision_mask = 0;
+                    for (int i = 0; i < helirin_points.Length; i++)
+                    {
+                        short px = pxs[i];
+                        short py = pys[i];
+                        if (p.dangerArea.Contains(px, py))
+                            if (p.PreciseBoxAtTime(st.frameNumber).Contains(px, py))
+                                elt_collision_mask |= ((uint)1 << i);
+                    }
+                    object_collision_mask |= elt_collision_mask;
+                }
+                // TODO: Temporary... This is NOT a correct result, but it is a safe approximation relatively to the solver.
+                if (object_collision_mask != 0)
+                {
+                    if (new_st.life != 1 || new_st.invul != 0 || safe_zone)
+                    {
+                        // throw new NotSupportedException("Moving objects are only supported in damageless.");
+                        new_st.gs = GameState.Loose;
+                        return new_st;
+                    }
+                }
+            }
+
+            // 6. Action of springs & bonus
             HashSet<int> spring_already_visited = new HashSet<int>();
             bool invert_rotation = false;
             bool update_rot_rate = false;
             foreach (int i in helirin_points_order_for_springs) // Order is important for spring actions.
             {
                 int radius = helirin_points[i];
+                short px = pxs[i];
+                short py = pys[i];
 
-                // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
-                short px = (short)(xpix - math.sin(radius, st.rot));
-                short py = (short)(ypix + math.cos(radius, st.rot));
-
-                // 5. Compute collision mask
-                if (map.IsPixelInCollision(px, py))
-                    collision_mask = collision_mask | ((uint)1 << i);
-
-                // 6. Action of moving objects & springs & bonuses
-                if (Settings.enable_moving_objects)
-                {
-                    // TODO: Support for non-damageless (need to handle hit reaction)
-                    bool collisionWithMovingObj = false;
-                    foreach (Roller r in map.Rollers)
-                    {
-                        if (r.dangerArea.Contains(px, py))
-                        {
-                            Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
-                            if (ball != null && ball.InCollisionWith(px, py))
-                                collisionWithMovingObj = true;
-                        }
-                    }
-                    foreach (Piston p in map.Pistons)
-                    {
-                        if (p.dangerArea.Contains(px, py))
-                            if (p.PreciseBoxAtTime(st.frameNumber).Contains(px, py))
-                                collisionWithMovingObj = true;
-                    }
-                    if (collisionWithMovingObj)
-                    {
-                        if (new_st.life != 1 || new_st.invul != 0 || safe_zone)
-                        {
-                            // throw new NotSupportedException("Moving objects are only supported in damageless.");
-                            // TODO: This is NOT a correct result, but it is a safe approximation relatively to the solver.
-                            new_st.gs = GameState.Loose;
-                            return new_st;
-                        }
-                        else
-                        {
-                            new_st.gs = GameState.Loose;
-                            return new_st;
-                        }    
-                    }
-                }
+                // Action of springs
                 Map.Spring[] springs = map.IsPixelInSpring(px, py);
                 foreach (Map.Spring spr in springs)
                 {
@@ -371,12 +395,12 @@ namespace KuruBot
                         new_st.ypos += new_st.yb;
                     }
                 }
+                // Action of bonus
                 if (map.IsPixelInBonus(px, py) != Map.BonusType.None)
                     new_st.gs = GameState.InGameWithBonus;
             }
             if (invert_rotation)
                 new_st.rot_srate = (short)(-st.rot_srate);
-            // Update rot rate
             if (update_rot_rate)
             {
                 new_st.rot_rate = (short)(Math.Sign(new_st.rot_srate) * rot_bump_rate_spring);
@@ -384,9 +408,9 @@ namespace KuruBot
                     new_st.rot_rate = -rot_bump_rate_spring;
             }
 
-            if (collision_mask != 0) // If collision
+            if (collision_mask != 0 || object_collision_mask != 0) // If collision with a wall OR a moving object
             {
-                // 7. Damage
+                // 7. Damage and substract input speed (XS and YS) to position
                 if (!safe_zone)
                 {
                     if (new_st.invul == 0)
@@ -395,50 +419,53 @@ namespace KuruBot
                         new_st.life--;
                     }
                 }
-
-                // 8. Bump action
-                //  - Substract input speed (XS and YS) to position
-                //  - Modify bump speed and rot rate (XB, YB and Rot_rate) accordingly if relevant
-                //  - If modified, apply this newly computed bump speed to position
                 new_st.xpos -= xs;
                 new_st.ypos -= ys;
-                bool up_side = (collision_mask & up_mask) != 0;
-                bool down_side = (collision_mask & down_mask) != 0;
-                if (up_side && !down_side)
-                {
-                    new_st.xb = - math.sin(auto_bump_speed, st.rot);
-                    new_st.yb =   math.cos(auto_bump_speed, st.rot);
-                }
-                if (!up_side && down_side)
-                {
-                    new_st.xb =   math.sin(auto_bump_speed, st.rot);
-                    new_st.yb = - math.cos(auto_bump_speed, st.rot);
-                }
-                new_st.rot_rate = (short)(-Math.Sign(st.rot_rate) * rot_bump_rate);
-                if (new_st.rot_rate == 0)
-                    new_st.rot_rate = rot_bump_rate;
-                if (up_side != down_side)
-                {
-                    new_st.xpos += new_st.xb;
-                    new_st.ypos += new_st.yb;
-                }
 
-                // 9. If mask has collision at one of the 3 lowest bits :
-                //  - Modify bump speed (XB and YB) depending on input (if any)
-                //  - If modified, apply this newly computed bump speed to position
-                if ((collision_mask & middle_mask) != 0 && (e.x != Direction1.None || e.y != Direction1.None))
+                if (collision_mask != 0) // If collision with a wall
                 {
-                    int bump_speed = input_bump_speed;
-                    if (e.x != Direction1.None && e.y != Direction1.None)
-                        bump_speed = input_bump_speed_2;
-                    new_st.xb = -(int)e.x * bump_speed;
-                    new_st.yb = -(int)e.y * bump_speed;
-                    new_st.xpos += new_st.xb;
-                    new_st.ypos += new_st.yb;
+                    // 8. Bump action
+                    // - Modify bump speed and rot rate (XB, YB and Rot_rate) accordingly if relevant
+                    // - If modified, apply this newly computed bump speed to position
+                    bool up_side = (collision_mask & up_mask) != 0;
+                    bool down_side = (collision_mask & down_mask) != 0;
+                    if (up_side && !down_side)
+                    {
+                        new_st.xb = -math.sin(auto_bump_speed, st.rot);
+                        new_st.yb = math.cos(auto_bump_speed, st.rot);
+                    }
+                    if (!up_side && down_side)
+                    {
+                        new_st.xb = math.sin(auto_bump_speed, st.rot);
+                        new_st.yb = -math.cos(auto_bump_speed, st.rot);
+                    }
+                    new_st.rot_rate = (short)(-Math.Sign(st.rot_rate) * rot_bump_rate);
+                    if (new_st.rot_rate == 0)
+                        new_st.rot_rate = rot_bump_rate;
+                    if (up_side != down_side)
+                    {
+                        new_st.xpos += new_st.xb;
+                        new_st.ypos += new_st.yb;
+                    }
+
+                    // 9. If mask has collision at one of the 3 lowest bits :
+                    //  - Modify bump speed (XB and YB) depending on input (if any)
+                    //  - If modified, apply this newly computed bump speed to position
+                    if ((collision_mask & middle_mask) != 0 && (e.x != Direction1.None || e.y != Direction1.None))
+                    {
+                        int bump_speed = input_bump_speed;
+                        if (e.x != Direction1.None && e.y != Direction1.None)
+                            bump_speed = input_bump_speed_2;
+                        new_st.xb = -(int)e.x * bump_speed;
+                        new_st.yb = -(int)e.y * bump_speed;
+                        new_st.xpos += new_st.xb;
+                        new_st.ypos += new_st.yb;
+                    }
                 }
             }
 
             // Loose?
+            // TODO: Move up so that some useless computation can be avoided when loosing
             if (new_st.life == 0)
                 new_st.gs = GameState.Loose;
 
