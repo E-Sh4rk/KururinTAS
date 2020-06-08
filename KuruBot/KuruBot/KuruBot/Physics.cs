@@ -296,8 +296,11 @@ namespace KuruBot
                     foreach (Roller r in map.Rollers)
                     {
                         if (r.dangerArea.Contains(px, py))
-                            if (r.PreciseBoxAtTime(st.frameNumber).InCollisionWith(px, py))
+                        {
+                            Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
+                            if (ball != null && ball.InCollisionWith(px, py))
                                 collisionWithMovingObj = true;
+                        }
                     }
                     foreach (Piston p in map.Pistons)
                     {
