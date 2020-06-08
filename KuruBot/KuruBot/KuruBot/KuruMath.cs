@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -30,16 +31,36 @@ namespace KuruBot
                 cos_table[i] = (int)(Math.Cos(2 * Math.PI * i / nb_angles) * sin_cos_factor);
                 sin_table[i] = (int)(Math.Sin(2 * Math.PI * i / nb_angles) * sin_cos_factor);
             }
-            // Init atan2 table
+            // Testing: dump sin/cos tables (should match 0x1CF34)
+            /*FileStream sinfs = File.OpenWrite("sin.bin");
+            FileStream cosfs = File.OpenWrite("cos.bin");
+            for (uint i = 0; i < nb_angles; i++)
+            {
+                sinfs.Write(BitConverter.GetBytes(sin_table[i]), 0, 2);
+                cosfs.Write(BitConverter.GetBytes(cos_table[i]), 0, 2);
+            }
+            sinfs.Close();
+            cosfs.Close();*/
+            // Init atan2 table (should match 0x1D334)
             int nb_dists = 1 << atan2_nb_bits_dist_precision;
             atan2_table = new int[nb_dists, nb_dists];
             for (uint j = 0; j < nb_dists; j++)
             {
                 for (uint i = 0; i < nb_dists; i++)
                 {
-                    atan2_table[i, j] = (int)(2 * Math.Atan2(i, j) * 0x40 / Math.PI);
+                    atan2_table[i, j] = (int)Math.Round(2 * Math.Atan2(i, j) * 0x40 / Math.PI);
                 }
             }
+            // Testing: dump atan2 table
+            /*FileStream atfs = File.OpenWrite("atan2.bin");
+            for (uint j = 0; j < nb_dists; j++)
+            {
+                for (uint i = 0; i < nb_dists; i++)
+                {
+                    atfs.WriteByte((byte)atan2_table[i, j]);
+                }
+            }
+            atfs.Close();*/
         }
 
         // /!\ Overflow: radius * factor should be smaller than 2^31
