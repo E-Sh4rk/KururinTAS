@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -180,6 +181,7 @@ namespace KuruBot
         const int input_bump_speed_2 = 185344;
         const short rot_bump_rate_spring = 768;
         const int bump_speed_spring = 0x10000;
+        const int moving_object_bump_speed = 3 * 0x10000;
 
         public Physics(Map map)
         {
@@ -206,10 +208,27 @@ namespace KuruBot
                 return -(0x10000 / 4);
         }
 
-        /*void ObjectHitReact(HelirinState st, uint collision_mask, int objx, int objy)
+        void ObjectHitReact(HelirinState st, uint collision_mask, int objx, int objy)
         {
-
-        }*/
+            short dir = math.atan2(pos_to_px(st.xpos) - objx, pos_to_px(st.ypos) - objy);
+            if ((collision_mask & middle_mask) != 0)
+            {
+                st.xb = math.sin(moving_object_bump_speed, dir);
+                st.yb = -math.cos(moving_object_bump_speed, dir);
+                st.xpos += st.xb;
+                st.ypos += st.yb;
+            }
+            if ((collision_mask & (up_mask | down_mask)) != 0)
+            {
+                dir -= st.rot;
+                if ((collision_mask & up_mask) != 0)
+                    dir = (short)(dir + 0x8000);
+                if (dir >= 0)
+                    st.rot_rate = -0x400;
+                else
+                    st.rot_rate = 0x400;
+            }
+        }
 
         public HelirinState Next(HelirinState st, Action a)
         {
@@ -256,9 +275,7 @@ namespace KuruBot
             // 4. Detection of healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
             bool safe_zone = false;
-            short xpix = pos_to_px(st.xpos);
-            short ypix = pos_to_px(st.ypos);
-            Map.Zone zone = map.IsPixelInZone(xpix, ypix);
+            Map.Zone zone = map.IsPixelInZone(pos_to_px(st.xpos), pos_to_px(st.ypos));
             if (zone == Map.Zone.Healing || zone == Map.Zone.Starting)
             {
                 safe_zone = true;
@@ -271,8 +288,9 @@ namespace KuruBot
                 return st;
             }
 
-            // From this point we create a new state so that we can still access old values of the state.
-            HelirinState new_st = st.ShallowCopy();
+            // At this point, we backup the rotation data (will be needed later)
+            short rot_rate_bkp = st.rot_rate;
+            short rot_bkp = st.rot;
             // We also precompute all the helirin physical points and the collision mask
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             short[] pxs = new short[helirin_points.Length];
@@ -282,8 +300,8 @@ namespace KuruBot
             {
                 int radius = helirin_points[i];
                 // Position seems to be converted to px BEFORE adding the result of the sin/cos (it seems to ignore subpixels, even in negative positions).
-                short px = (short)(xpix - math.sin(radius, st.rot));
-                short py = (short)(ypix + math.cos(radius, st.rot));
+                short px = (short)(pos_to_px(st.xpos) - math.sin(radius, st.rot));
+                short py = (short)(pos_to_px(st.ypos) + math.cos(radius, st.rot));
                 pxs[i] = px;
                 pys[i] = py;
                 // Compute collision mask
@@ -296,19 +314,25 @@ namespace KuruBot
             if (Settings.enable_moving_objects)
             {
                 // TODO: Support for non-damageless (need to handle hit reaction)
+                List<Roller.Ball> balls = new List<Roller.Ball>();
                 foreach (Roller r in map.Rollers)
+                {
+                    Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
+                    if (ball != null)
+                        balls.Add(ball);
+                }
+                balls.Sort((x, y) => x < y ? -1 : (x > y ? 1 : 0));
+                foreach (Roller.Ball ball in balls)
                 {
                     uint elt_collision_mask = 0;
                     for (int i = 0; i < helirin_points.Length; i++)
                     {
-                        short px = pxs[i];
-                        short py = pys[i];
-                        if (r.dangerArea.Contains(px, py))
-                        {
-                            Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
-                            if (ball != null && ball.InCollisionWith(px, py))
-                                elt_collision_mask |= ((uint)1 << i);
-                        }
+                        // For rollers, position of physical points must be recomputed to take into account last position/rotation changes
+                        int radius = helirin_points[i];
+                        short px = (short)(pos_to_px(st.xpos) - math.sin(radius, st.rot));
+                        short py = (short)(pos_to_px(st.ypos) + math.cos(radius, st.rot));
+                        if (ball.InCollisionWith(px, py))
+                            elt_collision_mask |= ((uint)1 << i);
                     }
                     object_collision_mask |= elt_collision_mask;
                 }
@@ -328,11 +352,11 @@ namespace KuruBot
                 // TODO: Temporary... This is NOT a correct result, but it is a safe approximation relatively to the solver.
                 if (object_collision_mask != 0)
                 {
-                    if (new_st.life != 1 || new_st.invul != 0 || safe_zone)
+                    if (st.life != 1 || st.invul != 0 || safe_zone)
                     {
                         // throw new NotSupportedException("Moving objects are only supported in damageless.");
-                        new_st.gs = GameState.Loose;
-                        return new_st;
+                        st.gs = GameState.Loose;
+                        return st;
                     }
                 }
             }
@@ -373,39 +397,39 @@ namespace KuruBot
                         // Position bump
                         if (spr.type == Map.SpringType.Up)
                         {
-                            new_st.xb = 0;
-                            new_st.yb = -bump_speed_spring;
+                            st.xb = 0;
+                            st.yb = -bump_speed_spring;
                         }
                         if (spr.type == Map.SpringType.Down)
                         {
-                            new_st.xb = 0;
-                            new_st.yb = bump_speed_spring;
+                            st.xb = 0;
+                            st.yb = bump_speed_spring;
                         }
                         if (spr.type == Map.SpringType.Left)
                         {
-                            new_st.xb = -bump_speed_spring;
-                            new_st.yb = 0;
+                            st.xb = -bump_speed_spring;
+                            st.yb = 0;
                         }
                         if (spr.type == Map.SpringType.Right)
                         {
-                            new_st.xb = bump_speed_spring;
-                            new_st.yb = 0;
+                            st.xb = bump_speed_spring;
+                            st.yb = 0;
                         }
-                        new_st.xpos += new_st.xb;
-                        new_st.ypos += new_st.yb;
+                        st.xpos += st.xb;
+                        st.ypos += st.yb;
                     }
                 }
                 // Action of bonus
                 if (map.IsPixelInBonus(px, py) != Map.BonusType.None)
-                    new_st.gs = GameState.InGameWithBonus;
+                    st.gs = GameState.InGameWithBonus;
             }
             if (invert_rotation)
-                new_st.rot_srate = (short)(-st.rot_srate);
+                st.rot_srate = (short)(-st.rot_srate);
             if (update_rot_rate)
             {
-                new_st.rot_rate = (short)(Math.Sign(new_st.rot_srate) * rot_bump_rate_spring);
-                if (new_st.rot_rate == 0)
-                    new_st.rot_rate = -rot_bump_rate_spring;
+                st.rot_rate = (short)(Math.Sign(st.rot_srate) * rot_bump_rate_spring);
+                if (st.rot_rate == 0)
+                    st.rot_rate = -rot_bump_rate_spring;
             }
 
             if (collision_mask != 0 || object_collision_mask != 0) // If collision with a wall OR a moving object
@@ -413,14 +437,14 @@ namespace KuruBot
                 // 7. Damage and substract input speed (XS and YS) to position
                 if (!safe_zone)
                 {
-                    if (new_st.invul == 0)
+                    if (st.invul == 0)
                     {
-                        new_st.invul = Settings.invul_frames;
-                        new_st.life--;
+                        st.invul = Settings.invul_frames;
+                        st.life--;
                     }
                 }
-                new_st.xpos -= xs;
-                new_st.ypos -= ys;
+                st.xpos -= xs;
+                st.ypos -= ys;
 
                 if (collision_mask != 0) // If collision with a wall
                 {
@@ -431,21 +455,21 @@ namespace KuruBot
                     bool down_side = (collision_mask & down_mask) != 0;
                     if (up_side && !down_side)
                     {
-                        new_st.xb = -math.sin(auto_bump_speed, st.rot);
-                        new_st.yb = math.cos(auto_bump_speed, st.rot);
+                        st.xb = -math.sin(auto_bump_speed, rot_bkp);
+                        st.yb = math.cos(auto_bump_speed, rot_bkp);
                     }
                     if (!up_side && down_side)
                     {
-                        new_st.xb = math.sin(auto_bump_speed, st.rot);
-                        new_st.yb = -math.cos(auto_bump_speed, st.rot);
+                        st.xb = math.sin(auto_bump_speed, rot_bkp);
+                        st.yb = -math.cos(auto_bump_speed, rot_bkp);
                     }
-                    new_st.rot_rate = (short)(-Math.Sign(st.rot_rate) * rot_bump_rate);
-                    if (new_st.rot_rate == 0)
-                        new_st.rot_rate = rot_bump_rate;
+                    st.rot_rate = (short)(-Math.Sign(rot_rate_bkp) * rot_bump_rate);
+                    if (st.rot_rate == 0)
+                        st.rot_rate = rot_bump_rate;
                     if (up_side != down_side)
                     {
-                        new_st.xpos += new_st.xb;
-                        new_st.ypos += new_st.yb;
+                        st.xpos += st.xb;
+                        st.ypos += st.yb;
                     }
 
                     // 9. If mask has collision at one of the 3 lowest bits :
@@ -456,20 +480,20 @@ namespace KuruBot
                         int bump_speed = input_bump_speed;
                         if (e.x != Direction1.None && e.y != Direction1.None)
                             bump_speed = input_bump_speed_2;
-                        new_st.xb = -(int)e.x * bump_speed;
-                        new_st.yb = -(int)e.y * bump_speed;
-                        new_st.xpos += new_st.xb;
-                        new_st.ypos += new_st.yb;
+                        st.xb = -(int)e.x * bump_speed;
+                        st.yb = -(int)e.y * bump_speed;
+                        st.xpos += st.xb;
+                        st.ypos += st.yb;
                     }
                 }
             }
 
             // Loose?
             // TODO: Move up so that some useless computation can be avoided when loosing
-            if (new_st.life == 0)
-                new_st.gs = GameState.Loose;
+            if (st.life == 0)
+                st.gs = GameState.Loose;
 
-            return new_st;
+            return st;
         }
 
     }
