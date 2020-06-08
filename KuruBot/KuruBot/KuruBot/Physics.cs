@@ -309,61 +309,7 @@ namespace KuruBot
                     collision_mask |= ((uint)1 << i);
             }
 
-            // 5. Action of moving objects
-            uint object_collision_mask = 0;
-            if (Settings.enable_moving_objects)
-            {
-                List<Roller.Ball> balls = new List<Roller.Ball>();
-                foreach (Roller r in map.Rollers)
-                {
-                    Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
-                    if (ball != null)
-                        balls.Add(ball);
-                }
-                balls.Sort((x, y) => x < y ? -1 : (x > y ? 1 : 0));
-                foreach (Roller.Ball ball in balls)
-                {
-                    uint elt_collision_mask = 0;
-                    for (int i = 0; i < helirin_points.Length; i++)
-                    {
-                        // For rollers, position of physical points must be recomputed to take into account last position/rotation changes
-                        int radius = helirin_points[i];
-                        short px = (short)(pos_to_px(st.xpos) - math.sin(radius, st.rot));
-                        short py = (short)(pos_to_px(st.ypos) + math.cos(radius, st.rot));
-                        if (ball.InCollisionWith(px, py))
-                            elt_collision_mask |= ((uint)1 << i);
-                    }
-                    if (elt_collision_mask != 0)
-                    {
-                        object_collision_mask |= elt_collision_mask;
-                        ObjectHitReact(st, elt_collision_mask, ball.cx, ball.cy);
-                    }
-                }
-                foreach (Piston p in map.Pistons)
-                {
-                    Rectangle? box = null;
-                    uint elt_collision_mask = 0;
-                    for (int i = 0; i < helirin_points.Length; i++)
-                    {
-                        short px = pxs[i];
-                        short py = pys[i];
-                        if (p.dangerArea.Contains(px, py))
-                        {
-                            if (box == null)
-                                box = p.PreciseBoxAtTime(st.frameNumber);
-                            if (box.Value.Contains(px, py))
-                                elt_collision_mask |= ((uint)1 << i);
-                        }
-                    }
-                    if (elt_collision_mask != 0)
-                    {
-                        object_collision_mask |= elt_collision_mask;
-                        ObjectHitReact(st, elt_collision_mask, box.Value.X + (box.Value.Width-1) / 2, box.Value.Y + (box.Value.Height-1) / 2);
-                    }
-                }
-            }
-
-            // 6. Action of springs & bonus
+            // 5. Action of springs & bonus
             HashSet<int> spring_already_visited = new HashSet<int>();
             bool invert_rotation = false;
             bool update_rot_rate = false;
@@ -432,6 +378,63 @@ namespace KuruBot
                 st.rot_rate = (short)(Math.Sign(st.rot_srate) * rot_bump_rate_spring);
                 if (st.rot_rate == 0)
                     st.rot_rate = -rot_bump_rate_spring;
+            }
+
+            // 6. Action of moving objects
+            uint object_collision_mask = 0;
+            if (Settings.enable_moving_objects)
+            {
+                List<Roller.Ball> balls = new List<Roller.Ball>();
+                foreach (Roller r in map.Rollers)
+                {
+                    Roller.Ball ball = r.PreciseBoxAtTime(st.frameNumber);
+                    if (ball != null)
+                        balls.Add(ball);
+                }
+                balls.Sort((x, y) => x < y ? -1 : (x > y ? 1 : 0));
+                foreach (Roller.Ball ball in balls)
+                {
+                    uint elt_collision_mask = 0;
+                    for (int i = 0; i < helirin_points.Length; i++)
+                    {
+                        // For rollers, position of physical points must be recomputed to take into account last position/rotation changes
+                        // EDIT: Seems not... At least, spring actions should not affect it
+                        /*int radius = helirin_points[i];
+                        short px = (short)(pos_to_px(st.xpos) - math.sin(radius, st.rot));
+                        short py = (short)(pos_to_px(st.ypos) + math.cos(radius, st.rot));*/
+                        short px = pxs[i];
+                        short py = pys[i];
+                        if (ball.InCollisionWith(px, py))
+                            elt_collision_mask |= ((uint)1 << i);
+                    }
+                    if (elt_collision_mask != 0)
+                    {
+                        object_collision_mask |= elt_collision_mask;
+                        ObjectHitReact(st, elt_collision_mask, ball.cx, ball.cy);
+                    }
+                }
+                foreach (Piston p in map.Pistons)
+                {
+                    Rectangle? box = null;
+                    uint elt_collision_mask = 0;
+                    for (int i = 0; i < helirin_points.Length; i++)
+                    {
+                        short px = pxs[i];
+                        short py = pys[i];
+                        if (p.dangerArea.Contains(px, py))
+                        {
+                            if (box == null)
+                                box = p.PreciseBoxAtTime(st.frameNumber);
+                            if (box.Value.Contains(px, py))
+                                elt_collision_mask |= ((uint)1 << i);
+                        }
+                    }
+                    if (elt_collision_mask != 0)
+                    {
+                        object_collision_mask |= elt_collision_mask;
+                        ObjectHitReact(st, elt_collision_mask, box.Value.X + (box.Value.Width-1) / 2, box.Value.Y + (box.Value.Height-1) / 2);
+                    }
+                }
             }
 
             if (collision_mask != 0 || object_collision_mask != 0) // If collision with a wall OR a moving object
