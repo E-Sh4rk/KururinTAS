@@ -102,6 +102,7 @@
     <Content Include="Bot.txt" />
     <Content Include="Resources\bk2_headers.txt" />
     <Content Include="Resources\bk2_line.txt" />
+    <None Include="Resources\atan2.bin" />
     <None Include="Resources\void_sprites.txt" />
     <None Include="Resources\sprites.png" />
   </ItemGroup>

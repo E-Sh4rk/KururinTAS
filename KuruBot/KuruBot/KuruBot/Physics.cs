@@ -208,9 +208,9 @@ namespace KuruBot
                 return -(0x10000 / 4);
         }
 
-        void ObjectHitReact(HelirinState st, uint collision_mask, int objx, int objy)
+        void ObjectHitReact(HelirinState st, uint collision_mask, short px, short py, int objx, int objy)
         {
-            short dir = math.atan2(pos_to_px(st.xpos) - objx, pos_to_px(st.ypos) - objy);
+            short dir = math.atan2(px - objx, py - objy);
             if ((collision_mask & middle_mask) != 0)
             {
                 st.xb = math.sin(moving_object_bump_speed, dir);
@@ -289,8 +289,7 @@ namespace KuruBot
             }
 
             // At this point, we backup the rotation data (will be needed later)
-            short rot_rate_bkp = st.rot_rate;
-            short rot_bkp = st.rot;
+            short rot_rate_bkp = st.rot_rate; // No need to backup st.rot because it will not change anymore
             // We also precompute all the helirin physical points and the collision mask
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             short[] pxs = new short[helirin_points.Length];
@@ -410,7 +409,7 @@ namespace KuruBot
                     if (elt_collision_mask != 0)
                     {
                         object_collision_mask |= elt_collision_mask;
-                        ObjectHitReact(st, elt_collision_mask, ball.cx, ball.cy);
+                        ObjectHitReact(st, elt_collision_mask, /*pxs[0], pys[0],*/pos_to_px(st.xpos), pos_to_px(st.ypos), ball.cx, ball.cy);
                     }
                 }
                 foreach (Piston p in map.Pistons)
@@ -432,7 +431,8 @@ namespace KuruBot
                     if (elt_collision_mask != 0)
                     {
                         object_collision_mask |= elt_collision_mask;
-                        ObjectHitReact(st, elt_collision_mask, box.Value.X + (box.Value.Width-1) / 2, box.Value.Y + (box.Value.Height-1) / 2);
+                        ObjectHitReact(st, elt_collision_mask, /*pxs[0], pys[0],*/pos_to_px(st.xpos), pos_to_px(st.ypos),
+                            box.Value.X + (box.Value.Width-1) / 2, box.Value.Y + (box.Value.Height-1) / 2);
                     }
                 }
             }
@@ -460,13 +460,13 @@ namespace KuruBot
                     bool down_side = (collision_mask & down_mask) != 0;
                     if (up_side && !down_side)
                     {
-                        st.xb = -math.sin(auto_bump_speed, rot_bkp);
-                        st.yb = math.cos(auto_bump_speed, rot_bkp);
+                        st.xb = -math.sin(auto_bump_speed, st.rot);
+                        st.yb = math.cos(auto_bump_speed, st.rot);
                     }
                     if (!up_side && down_side)
                     {
-                        st.xb = math.sin(auto_bump_speed, rot_bkp);
-                        st.yb = -math.cos(auto_bump_speed, rot_bkp);
+                        st.xb = math.sin(auto_bump_speed, st.rot);
+                        st.yb = -math.cos(auto_bump_speed, st.rot);
                     }
                     st.rot_rate = (short)(-Math.Sign(rot_rate_bkp) * rot_bump_rate);
                     if (st.rot_rate == 0)

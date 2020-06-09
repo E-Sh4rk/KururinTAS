@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace KuruBot
@@ -42,13 +43,15 @@ namespace KuruBot
             sinfs.Close();
             cosfs.Close();*/
             // Init atan2 table (should match 0x1D334)
+            byte[] flat = Properties.Resources.atan2;
             int nb_dists = 1 << atan2_nb_bits_dist_precision;
             atan2_table = new int[nb_dists, nb_dists];
             for (uint j = 0; j < nb_dists; j++)
             {
                 for (uint i = 0; i < nb_dists; i++)
                 {
-                    atan2_table[i, j] = (int)Math.Round(2 * Math.Atan2(i, j) * 0x40 / Math.PI);
+                    //atan2_table[i, j] = (int)Math.Round(Math.Atan2(i, j) * 0x80 / Math.PI);
+                    atan2_table[i, j] = flat[i + nb_dists * j];
                 }
             }
             // Testing: dump atan2 table
