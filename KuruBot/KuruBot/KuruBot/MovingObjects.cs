@@ -19,7 +19,7 @@ namespace KuruBot
 
         Direction dir;
         const byte w = 4*8, h = 4*8;
-        ushort x, y;
+        short x, y;
         ushort startTime;
         ushort period;
         const ushort midwaitStart = 0x7FFF, midwait = 0;
@@ -55,14 +55,13 @@ namespace KuruBot
                 case Direction.Up: y -= offset; break;
                 case Direction.Right: x += offset; break;
             }
-            x >>= 16; y >>= 16;
-            return new Rectangle(x, y, w+1, h+1);
+            return new Rectangle(x >>= 16, y >>= 16, w+1, h+1);
         }
 
         public Piston(int x, int y, int dir, int startTime, int waitTime, int speed)
         {
-            this.x = (ushort)(x * 8);
-            this.y = (ushort)(y * 8);
+            this.x = (short)(x * 8);
+            this.y = (short)(y * 8);
             this.startTime = (ushort)startTime;
             period = (ushort)waitTime;
             period += (ushort)((0x10000 + speed - 1) / speed);
@@ -133,9 +132,9 @@ namespace KuruBot
 
         short x, y;
         int vx, vy;
-        short period;
-        short startTime;
-        short endTime;
+        ushort period;
+        ushort startTime;
+        ushort endTime;
 
         public Rectangle dangerArea;
 
@@ -169,7 +168,7 @@ namespace KuruBot
             if ((dir & 0x2000) != 0)
                 roller.x -= 8;
             roller.y = (short)(y * 8 + 16);
-            roller.startTime = (short)startTime;
+            roller.startTime = (ushort)startTime;
             // Roll through the level until it collides with something
             int colxoffs = KuruMath.instance.sin(15, (short)dir);
             int colyoffs = -KuruMath.instance.cos(15, (short)dir);
@@ -197,20 +196,20 @@ namespace KuruBot
             int maxy = Math.Max(roller.y, ypos >> 16) + 14;
             roller.dangerArea = Rectangle.FromLTRB(minx, miny, maxx + 1, maxy + 1);
 
-            roller.endTime = (short)t;
+            roller.endTime = (ushort)t;
             period++;
             int remainder = t % period;
             if (remainder != 0)
                 t += period - remainder;
-            roller.period = (short)t;
+            roller.period = (ushort)t;
 
             List<Roller> res = new List<Roller>();
             for (; t > 0; t -= period)
             {
                 res.Add(roller);
                 roller = (Roller)roller.MemberwiseClone();
-                roller.startTime += (short)period;
-                //roller.endTime += (short)period;
+                roller.startTime += (ushort)period;
+                //roller.endTime += (ushort)period;
             }
             return res;
         }

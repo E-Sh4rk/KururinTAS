@@ -79,6 +79,11 @@ namespace KuruBot
             return (radius * sin_table[angle]) / factor;
         }
 
+        public int RadiusForFullPrecision
+        {
+            get { return factor; }
+        }
+
         int most_significant_bit(int v)
         {
             int res = -1;
