@@ -167,7 +167,8 @@ namespace KuruBot
 
         // Various constants
         const short rotation_rate_decr = 91;
-        const int bump_speed_diff_frac = 4;
+        const int bump_speed_decrease_numerator = 3;
+        const int bump_speed_decrease_denominator = 4;
         readonly short[] helirin_points = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 24, -24, 28, -28, 31, -31 };
         readonly int[] helirin_points_order_for_springs = new int[] { 16, 14, 12, 10, 8, 6, 4, 2, 15, 13, 11, 9, 7, 5, 3, 1, 0 };
         const uint up_mask = 0x15554;
@@ -189,13 +190,6 @@ namespace KuruBot
             math = KuruMath.instance;//new KuruMath();
         }
 
-        static int DecreaseBumpSpeed(int bs)
-        {
-            int diff = bs / bump_speed_diff_frac;
-            if (bs % bump_speed_diff_frac != 0)
-                diff += Math.Sign(bs);
-            return bs - diff;
-        }
         static short AngleOfSpring(Map.SpringType t)
         {
             if (t == Map.SpringType.Down)
@@ -262,8 +256,8 @@ namespace KuruBot
             if (rot_diff > rotation_rate_decr)
                 rot_diff = rotation_rate_decr;
             st.rot_rate = (short)(st.rot_rate + rot_diff);
-            st.xb = DecreaseBumpSpeed(st.xb);
-            st.yb = DecreaseBumpSpeed(st.yb);
+            st.xb = st.xb * bump_speed_decrease_numerator / bump_speed_decrease_denominator;
+            st.yb = st.yb * bump_speed_decrease_numerator / bump_speed_decrease_denominator;
             if (st.invul > 0)
                 st.invul--;
 
