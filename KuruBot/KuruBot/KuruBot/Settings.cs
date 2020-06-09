@@ -53,7 +53,7 @@ namespace KuruBot
         public static ushort healzone_rot_rate_precision = (ushort)Physics.default_srate;
         public static ushort frame_nb_precision = 0xFFFF;
         public static ushort healzone_frame_nb_precision = 0xFFFF;
-        // TODO: state reduction for invulnerability?
+        public static ushort invul_precision = 1;
 
         public static float cost_multiplier = 1;
         public static int min_ab_speed = 0;
@@ -124,6 +124,7 @@ namespace KuruBot
                 healzone_rot_rate_precision = (ushort)parseInt(data, "Solver", "healzone_rot_rate_precision", healzone_rot_rate_precision);
                 frame_nb_precision = (ushort)parseInt(data, "Solver", "frame_nb_precision", frame_nb_precision);
                 healzone_frame_nb_precision = (ushort)parseInt(data, "Solver", "healzone_frame_nb_precision", healzone_frame_nb_precision);
+                invul_precision = (ushort)parseInt(data, "Solver", "invul_precision", invul_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
                 min_ab_speed = parseInt(data, "Solver", "min_ab_speed", min_ab_speed);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
@@ -189,6 +190,7 @@ namespace KuruBot
                 data["Solver"]["healzone_rot_rate_precision"] = ToString(healzone_rot_rate_precision);
                 data["Solver"]["frame_nb_precision"] = ToString(frame_nb_precision);
                 data["Solver"]["healzone_frame_nb_precision"] = ToString(healzone_frame_nb_precision);
+                data["Solver"]["invul_precision"] = ToString(invul_precision);
                 data["Solver"]["cost_multiplier"] = ToString(cost_multiplier);
                 data["Solver"]["min_ab_speed"] = ToString(min_ab_speed);
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);

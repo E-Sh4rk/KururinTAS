@@ -141,6 +141,7 @@ namespace KuruBot
                 st.gs = GameState.InGame;
 
             st.frameNumber = (ushort)((st.frameNumber / frame_nb_precision) * frame_nb_precision);
+            st.invul = (sbyte)(((st.invul-1) / Settings.invul_precision + 1) * Settings.invul_precision);
 
             return st;
         }
