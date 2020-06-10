@@ -24,27 +24,26 @@
 
 ### Configuring the bot
 
-- Depending on what kind of problem you want to solve, you can configure the bot by clicking on `Load config` and choosing the right configuration file
+- Depending on what kind of problem you want to solve, you can configure the bot by clicking on `Load config` and choosing the right configuration file.
 - These configuration files have the extension `.ini`. They contain some parameters for the bot.
-- In term of complexity, damageless < noWC < WC. Here is a quick description of the predefined configruations:
-  - `config_wc_k`: Full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (it could perform very tricky wall clips) but will explore less the map.
-  - `config_no_wc_strict`: Disable wall clips by forbidding to be in a wall.
-  - `config_no_wc_relaxed`: Disable wall clips without forbidding to be in a wall. Useful when the starting state is in a wall, but that no new wall clip should be performed.
-  - `config_damageless`: For damageless (of course, no wall clip possible).
-- The configuration files below must be loaded after another config:
-  - `damageless_checkpoint_at_healzones`: For damageless configurations, once an healing zone is reached, stop optimizing what has already been done before.
-  - `decrease_cost_map`: Decrease the importance given to the cost map so that the bot will be less greedy.
-  - `increase_cost_map`: Increase the importance given to the cost map so that the bot will be greedier.
-  - `disable_waiting`: Decrease rotation precision. Reduce the search space but make the bot unable to deliberately wait (for changing its rotation).
-  - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant when the bot must briefly quit the legal zone with very low life and invulnerability.
-  - `disable_life`: Disable the life constraints. The helirin will be considered as invincible.
+- You first have to select a base configuration in the `Base_configs` folder:
+  - `config_damageless_xxx`: activate the damageless mode and focus the search on the exploration. `xxx` determines which aspect to prioritize in term of precision (`precise` for both, `approx` for none).
+  - `config_no_wc_xxx`: disable wall clips and focus the search on the exploration. The `relaxed` version still allows to be inside a wall (useful when the starting state is in a wall, but that no new wall clip should be performed).
+  - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
+- Then the `Configs_modifier` folder allows you to modify the behavior of the previously selected configuration (you can load multiple configurations there):
+  - `damageless_checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
+  - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant for wall-clip configurations when the bot must briefly quit the legal zone with very low life and invulnerability.
+- The `independent` folder contains some configurations, independent from the base configurations, that can be used to change some behaviors (you can load multiple configurations there):
+  - `disable_life`: Disable the life system (the life of the helirin will not be checked, which allows to reduce the search space a lot).
+  - `enable_bonus_xxx`: Asks the bot to collect the bonus of the level (if any) before reaching the target. If `with_checkpoint`, once the bonus is collected, stop optimizing what has already been done before.
+  - `enable_moving_objects_xxx`: Take the moving objects into account (except the shooters, which are not supported). It can slow down the search process. If `with_frame_counter`, the search space will be extended to take time into account (can give better results when waiting is needed to pass some moving objects).
 
 ### Loading a map
 
 - If the bot is connected to Bizhawk, you can load the current ingame map by clicking on the button `Download map`
 - Alternatively, you can load a previously saved map by clicking on the button `LM` (Load Map)
 - You can save a map by clicking on the button `SM` (Save Map)
-- You can visualize the whole map with out of bounds by checking `Show physical map`
+- You can visualize the whole map with out of bounds by checking `Physical map`
 
 ### Loading the state of the helirin
 
@@ -52,9 +51,10 @@
 - Alternatively, you can load a previously saved state by clicking on the button `LS` (Load State)
 - You can save a state by clicking on the button `SS` (Save State)
 - If you want to manually edit a state file, here is the list of values that it contains:  
-`x_pos y_pos x_bump_speed y_bump_speed rotation rotation_rate rotation_default_rate hearts invulnerability_frames`
+`x_pos y_pos x_bump_speed y_bump_speed rotation rotation_rate rotation_default_rate hearts invulnerability_frames has_bonus frame_number`
 - The buttons `BS` (Backup State) and `RS` (Restore State) are shortcuts to backup the current state and restore it later
 - You can also set the current state by clicking on the canvas. The helirin will be initialized with full life. A left click will make it rotate clockwise, and a right click counter-clockwise
+- Note about moving objects: in order to correctly initialize the moving objects, the `kuruCOM` script must have been active when the level started (because it must keep track of the global frame number at the start of the level). If you have directly loaded a state in the middle of the level using TAS Studio, please go back a little, play the beginning of the level, and then you are free to load any later state of the level.
 
 ### Solving!
 
@@ -68,7 +68,7 @@ The three first steps must be done again if you change the map or the configurat
 ### Visualizing the solution and saving it
 
 - If a solution has been found, you can save it by clicking on `SI` (Save Input). You will be able to load it later by clicking on `LI` (Load Input).
-- If you want to play the solution in the game, just click on `Send last inputs` (the bot must be connected to Bizhawk).
+- If you want to play the solution in the game, just click on `Send last inputs` (the bot must be connected to Bizhawk). The helirin will automatically be teleported to the good starting position (please ensure the correct level is loaded). Warning: the positions of moving objects will not be initialized, so you must ensure they match with the initial state of your search.
 
 ### Exporting the solution in bk2
 
