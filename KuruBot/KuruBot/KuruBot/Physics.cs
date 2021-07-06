@@ -12,7 +12,7 @@ namespace KuruBot
         InGameWithBonus,
         Win,
         WinWithBonus,
-        Loose
+        Lose
     }
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
@@ -487,10 +487,10 @@ namespace KuruBot
                 }
             }
 
-            // Loose?
-            // TODO: Move up so that some useless computation can be avoided when loosing
+            // Lose?
+            // TODO: Move up so that some useless computation can be avoided when losing
             if (st.life == 0)
-                st.gs = GameState.Loose;
+                st.gs = GameState.Lose;
 
             return st;
         }
