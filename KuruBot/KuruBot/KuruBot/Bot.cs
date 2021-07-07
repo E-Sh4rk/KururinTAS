@@ -234,9 +234,9 @@ namespace KuruBot
                     HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 
-                    // Loose / Not enough life / Out of search space ?
+                    // Lose / Not enough life / Out of search space ?
                     int life_score = Flooding.GetRealInvul(nst.life, nst.invul);
-                    if (nst.gs == GameState.Loose || (life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(nst.xpos, nst.ypos))
+                    if (nst.gs == GameState.Lose || (life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(nst.xpos, nst.ypos))
                         continue;
 
                     // Already enqueued with more life ?
