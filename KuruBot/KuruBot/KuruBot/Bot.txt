@@ -9,7 +9,7 @@ Rot
 RotRate
 RotSleepRate
 
-State (ingame/win/loose)
+State (ingame/win/lose)
 Lives
 Invulnerability
 
@@ -37,5 +37,5 @@ Flooding could get a little constant bonus when infiltrating into walls, and a l
 It could propagate inside walls (maybe at the same speed than on ground, because it can't stay into wall forever due to lives).
 (/!\ result will not be optimal)
 
-Bonus for infiltrating walls decrease when the player loose a life (or more precisely, when the player spend invulnerability time):
+Bonus for infiltrating walls decrease when the player lose a life (or more precisely, when the player spend invulnerability time):
 at least one cost map per heart should be generated, the last one (1 heart) disallowing to start a new complete wall clip.
