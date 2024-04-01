@@ -31,6 +31,8 @@
   - `config_no_wc_xxx`: disable wall clips and focus the search on the exploration. The `relaxed` version still allows to be inside a wall (useful when the starting state is in a wall, but that no new wall clip should be performed).
   - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
 - Then the `Configs_modifier` folder allows you to modify the behavior of the previously selected configuration (you can load multiple configurations there):
+  - `increase_cost_map_k`/`decrease_cost_map_k`: scale the cost map. Increasing it will make the solver more focused in direction of the target, while decreasing it will
+  make the solver more likely to explore backward, etc.
   - `damageless_checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
   - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant for wall-clip configurations when the bot must briefly quit the legal zone with very low life and invulnerability.
 - The `independent` folder contains some configurations, independent from the base configurations, that can be used to change some behaviors (you can load multiple configurations there):

@@ -226,10 +226,21 @@ namespace KuruBot
                 target = this.target;
                 if (target == null)
                 {
-                    target = new bool[height, width];
-                    for (short y = PixelStart.y; y <= PixelEnd.y; y++)
-                        for (short x = PixelStart.x; x <= PixelEnd.x; x++)
-                            target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                    if (Settings.target_is_oob)
+                    {
+                        // TODO
+                        target = new bool[height, width];
+                        for (short y = PixelStart.y; y <= PixelEnd.y; y++)
+                            for (short x = PixelStart.x; x <= PixelEnd.x; x++)
+                                target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                    }
+                    else
+                    {
+                        target = new bool[height, width];
+                        for (short y = PixelStart.y; y <= PixelEnd.y; y++)
+                            for (short x = PixelStart.x; x <= PixelEnd.x; x++)
+                                target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                    }
                 }
             }
 

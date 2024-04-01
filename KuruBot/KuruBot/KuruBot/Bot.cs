@@ -217,7 +217,7 @@ namespace KuruBot
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
                 st_data.already_treated = true;
-                weight = st_data.weight + 1;
+                weight = st_data.weight + Settings.frame_cost;
 
                 // ProgressBar and preview settings
                 preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
@@ -231,6 +231,7 @@ namespace KuruBot
                 for (int i = 24; i >= min_input; i--)
                 {
                     Action a = (Action)i;
+                    // TODO: input_change_cost
                     HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 

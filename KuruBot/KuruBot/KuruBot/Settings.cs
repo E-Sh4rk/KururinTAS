@@ -34,6 +34,7 @@ namespace KuruBot
         public static float complete_wall_clip_max_dist = 24; // Distance of a wall at which the the helirin is not considered performing a wall clip.
         public static int complete_wall_clip_duration = 9; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
+        public static bool target_is_oob = false; // Target will be OOB zones instead of ending.
 
         // ---------- SOLVER SETTINGS ----------
 
@@ -59,6 +60,10 @@ namespace KuruBot
         public static int min_ab_speed = 0;
         public static bool allow_state_visit_with_less_life = false;
         public static int nb_iterations_before_ui_update = 25000;
+
+        public static float input_change_cost = 0;
+        public static float frame_cost = 1;
+        public static bool reexplore_state_if_different_last_input = false;
 
         // ---------- SAVE/LOAD METHODS ----------
 
@@ -108,6 +113,7 @@ namespace KuruBot
                 complete_wall_clip_max_dist = parseFloat(data, "Flooding", "complete_wall_clip_max_dist", complete_wall_clip_max_dist);
                 complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
                 cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
+                target_is_oob = parseBool(data, "Flooding", "target_is_oob", target_is_oob);
 
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
@@ -129,6 +135,9 @@ namespace KuruBot
                 min_ab_speed = parseInt(data, "Solver", "min_ab_speed", min_ab_speed);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
                 nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
+                input_change_cost = parseFloat(data, "Solver", "input_change_cost", input_change_cost);
+                frame_cost = parseFloat(data, "Solver", "frame_cost", frame_cost);
+                reexplore_state_if_different_last_input = parseBool(data, "Flooding", "reexplore_state_if_different_last_input", reexplore_state_if_different_last_input);
             }
             catch { }
         }
@@ -174,6 +183,7 @@ namespace KuruBot
                 data["Flooding"]["complete_wall_clip_max_dist"] = ToString(complete_wall_clip_max_dist);
                 data["Flooding"]["complete_wall_clip_duration"] = ToString(complete_wall_clip_duration);
                 data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = ToString(cwc_max_dist_zero_in_legal_zone);
+                data["Flooding"]["target_is_oob"] = ToString(target_is_oob);
 
                 data["Solver"]["pos_reduction"] = ToString(pos_reduction);
                 data["Solver"]["bump_reduction"] = ToString(bump_reduction);
@@ -195,6 +205,9 @@ namespace KuruBot
                 data["Solver"]["min_ab_speed"] = ToString(min_ab_speed);
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
                 data["Solver"]["nb_iterations_before_ui_update"] = ToString(nb_iterations_before_ui_update);
+                data["Solver"]["input_change_cost"] = ToString(input_change_cost);
+                data["Solver"]["frame_cost"] = ToString(frame_cost);
+                data["Solver"]["reexplore_state_if_different_last_input"] = ToString(reexplore_state_if_different_last_input);
 
                 FileIniDataParser parser = new FileIniDataParser();
                 parser.WriteFile(filename, data);
