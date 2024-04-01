@@ -228,11 +228,10 @@ namespace KuruBot
                 {
                     if (Settings.target_is_oob)
                     {
-                        // TODO
                         target = new bool[height, width];
-                        for (short y = PixelStart.y; y <= PixelEnd.y; y++)
-                            for (short x = PixelStart.x; x <= PixelEnd.x; x++)
-                                target[y - PixelStart.y, x - PixelStart.x] = m.IsPixelInZone(x, y) == Map.Zone.Ending;
+                        for (short y = 0; y < legal_zones.GetLength(0); y++)
+                            for (short x = 0; x < legal_zones.GetLength(1); x++)
+                                target[y, x] = !legal_zones[y, x] && dist_to_wall[y,x] >= Settings.complete_wall_clip_max_dist;
                     }
                     else
                     {
