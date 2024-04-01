@@ -210,13 +210,18 @@ namespace KuruBot
             int since_last_update = 0;
 
             // A*
-            //float res_weight = 0;
             HelirinState result = null;
             while (q.Count > 0 && result == null)
             {
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
                 st_data.already_treated = true;
+                // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
+                if (st_data.cost <= 0)
+                {
+                    result = norm_st;
+                    break;
+                }
 
                 // ProgressBar and preview settings
                 preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
@@ -263,8 +268,8 @@ namespace KuruBot
                     cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul, nst.HasBonus());
                     if (cost >= float.PositiveInfinity)
                         continue;
-                    float total_cost = cost + weight;
-                    if (old != null && total_cost >= old.cost + old.weight)
+                    float queue_weight = cost + weight;
+                    if (old != null && queue_weight >= old.cost + old.weight)
                         continue;
 
                     // Is the state terminal without having completed the objective?
@@ -272,24 +277,15 @@ namespace KuruBot
                         continue;
 
                     // Everything's okay, we add the config to the data and queue
-
                     StateData nst_data = new StateData(nst, weight, cost, norm_st, false);
                     data[norm_nst] = nst_data;
                     if (life_data != null)
                         life_data[cleared_nst] = life_score;
 
-                    // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
-                    if (cost <= 0)
-                    {
-                        result = norm_nst;
-                        //res_weight = weight;
-                        break;
-                    }
-
                     // We don't use UpdatePriority because it does not change the InsertionIndex (first-in, first-out)
                     if (old != null)
                         q.Remove(norm_nst);
-                    q.Enqueue(norm_nst, total_cost);
+                    q.Enqueue(norm_nst, queue_weight);
                     /*
                     if (old == null)
                         q.Enqueue(norm_nst, total_cost);
@@ -311,7 +307,6 @@ namespace KuruBot
                 result = sd.previous_state;
             }
             res.Reverse();
-            //Console.WriteLine("Weight: " + res_weight);
             return res.ToArray();
         }
     }
