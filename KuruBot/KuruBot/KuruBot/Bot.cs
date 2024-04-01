@@ -211,7 +211,7 @@ namespace KuruBot
 
             // A*
             HelirinState result = null;
-            while (q.Count > 0 && result == null)
+            while (q.Count > 0)
             {
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
@@ -302,7 +302,7 @@ namespace KuruBot
             while (result != null)
             {
                 StateData sd = data[result];
-                if (sd.exact_state.lastAction.HasValue)
+                if (sd.previous_state != null)
                     res.Add(sd.exact_state.lastAction.Value);
                 result = sd.previous_state;
             }
