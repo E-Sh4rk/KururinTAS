@@ -84,19 +84,17 @@ namespace KuruBot
         // It avoid useless copies and allows us to modify some values without accessing again the dictionnary.
         class StateData
         {
-            public StateData(HelirinState es, float w, float c, Action? a, HelirinState ps, bool at)
+            public StateData(HelirinState es, float w, float c, HelirinState ps, bool at)
             {
                 exact_state = es;
                 weight = w;
                 cost = c;
-                action = a;
                 previous_state = ps;
                 already_treated = at;
             }
             public HelirinState exact_state;
             public float weight;
             public float cost;
-            public Action? action;
             public HelirinState previous_state;
             public bool already_treated;
         }
@@ -142,6 +140,9 @@ namespace KuruBot
 
             st.frameNumber = (ushort)((st.frameNumber / frame_nb_precision) * frame_nb_precision);
             st.invul = (sbyte)(((st.invul-1) / Settings.invul_precision + 1) * Settings.invul_precision);
+
+            if (!Settings.reexplore_state_if_different_last_input)
+                st.lastAction = null;
 
             return st;
         }
@@ -201,7 +202,7 @@ namespace KuruBot
             float weight = 0;
             float total_cost = cost + weight;
             q.Enqueue(norm_init, total_cost);
-            data.Add(norm_init, new StateData(init, weight, cost, null, null, false));
+            data.Add(norm_init, new StateData(init, weight, cost, null, false));
             if (life_data != null)
                 life_data.Add(ClearLifeDataOfState(norm_init), Flooding.GetRealInvul(init.life, init.invul));
 
@@ -231,7 +232,8 @@ namespace KuruBot
                 for (int i = 24; i >= min_input; i--)
                 {
                     Action a = (Action)i;
-                    // TODO: input_change_cost
+                    if (a != st_data.exact_state.lastAction)
+                        weight += Settings.input_change_cost;
                     HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 
@@ -272,7 +274,7 @@ namespace KuruBot
 
                     // Everything's okay, we add the config to the data and queue
 
-                    StateData nst_data = new StateData(nst, weight, cost, a, norm_st, false);
+                    StateData nst_data = new StateData(nst, weight, cost, norm_st, false);
                     data[norm_nst] = nst_data;
                     if (life_data != null)
                         life_data[cleared_nst] = life_score;
@@ -304,8 +306,8 @@ namespace KuruBot
             while (result != null)
             {
                 StateData sd = data[result];
-                if (sd.action.HasValue)
-                    res.Add(sd.action.Value);
+                if (sd.exact_state.lastAction.HasValue)
+                    res.Add(sd.exact_state.lastAction.Value);
                 result = sd.previous_state;
             }
             res.Reverse();

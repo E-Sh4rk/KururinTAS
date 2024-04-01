@@ -7,7 +7,7 @@ using System.Text;
 
 namespace KuruBot
 {
-    enum Action
+    public enum Action
     {
         NoButton = 0,
 

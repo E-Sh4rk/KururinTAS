@@ -77,7 +77,17 @@ namespace KuruBot
                     MessageBox.Show(this, "No solution found!", "No solution");
                 else
                 {
-                    MessageBox.Show(this, "Solution found : " + res.Length + " frames.", "Solution");
+                    int nbInputChanges = 0;
+                    Action? lastAction = null;
+                    foreach (Action a in res)
+                    {
+                        if (a != lastAction)
+                        {
+                            lastAction = a;
+                            nbInputChanges++;
+                        }
+                    }
+                    MessageBox.Show(this, "Solution found : " + res.Length + " frames, " + nbInputChanges + " input changes.", "Solution");
                     ExecuteInputs(res);
                 }
             });

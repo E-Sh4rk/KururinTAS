@@ -29,6 +29,7 @@ namespace KuruBot
             this.life = life;
             this.invul = invul;
             this.frameNumber = frameNumber;
+            this.lastAction = null;
             gs = hasBonus ? GameState.InGameWithBonus : GameState.InGame;
         }
 
@@ -64,7 +65,8 @@ namespace KuruBot
                    rot_srate == other.rot_srate &&
                    invul == other.invul &&
                    life == other.life &&
-                   gs == other.gs;
+                   gs == other.gs &&
+                   lastAction == other.lastAction;
         }
 
         public override int GetHashCode()
@@ -81,6 +83,7 @@ namespace KuruBot
             hashCode = hashCode * -1521134295 + invul.GetHashCode();
             hashCode = hashCode * -1521134295 + life.GetHashCode();
             hashCode = hashCode * -1521134295 + gs.GetHashCode();
+            hashCode = hashCode * -1521134295 + lastAction.GetHashCode();
             return hashCode;
         }
 
@@ -96,6 +99,7 @@ namespace KuruBot
         public sbyte invul;
         public GameState gs;
         public ushort frameNumber; // 2 bytes is enough for more than 10 minutes
+        public Action? lastAction;
 
         public static bool operator ==(HelirinState state1, HelirinState state2)
         {
@@ -234,6 +238,7 @@ namespace KuruBot
             ActionEffect e = Controller.action_to_effect(a);
             st = st.ShallowCopy();
 
+            st.lastAction = a;
             st.frameNumber += 1;
 
             if (st.life > Settings.full_life)
