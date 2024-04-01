@@ -199,10 +199,8 @@ namespace KuruBot
             // Init
             HelirinState norm_init = NormaliseState(init);
             float cost = GetCost(init.xpos, init.ypos, init.life, init.invul, init.HasBonus());
-            float weight = 0;
-            float total_cost = cost + weight;
-            q.Enqueue(norm_init, total_cost);
-            data.Add(norm_init, new StateData(init, weight, cost, null, false));
+            q.Enqueue(norm_init, cost);
+            data.Add(norm_init, new StateData(init, 0, cost, null, false));
             if (life_data != null)
                 life_data.Add(ClearLifeDataOfState(norm_init), Flooding.GetRealInvul(init.life, init.invul));
 
@@ -212,13 +210,13 @@ namespace KuruBot
             int since_last_update = 0;
 
             // A*
+            //float res_weight = 0;
             HelirinState result = null;
             while (q.Count > 0 && result == null)
             {
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
                 st_data.already_treated = true;
-                weight = st_data.weight + Settings.frame_cost;
 
                 // ProgressBar and preview settings
                 preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
@@ -232,6 +230,7 @@ namespace KuruBot
                 for (int i = 24; i >= min_input; i--)
                 {
                     Action a = (Action)i;
+                    float weight = st_data.weight + Settings.frame_cost;
                     if (a != st_data.exact_state.lastAction)
                         weight += Settings.input_change_cost;
                     HelirinState nst = p.Next(st_data.exact_state, a);
@@ -264,7 +263,7 @@ namespace KuruBot
                     cost = GetCost(nst.xpos, nst.ypos, nst.life, nst.invul, nst.HasBonus());
                     if (cost >= float.PositiveInfinity)
                         continue;
-                    total_cost = cost + weight;
+                    float total_cost = cost + weight;
                     if (old != null && total_cost >= old.cost + old.weight)
                         continue;
 
@@ -283,6 +282,7 @@ namespace KuruBot
                     if (cost <= 0)
                     {
                         result = norm_nst;
+                        //res_weight = weight;
                         break;
                     }
 
@@ -311,6 +311,7 @@ namespace KuruBot
                 result = sd.previous_state;
             }
             res.Reverse();
+            //Console.WriteLine("Weight: " + res_weight);
             return res.ToArray();
         }
     }
