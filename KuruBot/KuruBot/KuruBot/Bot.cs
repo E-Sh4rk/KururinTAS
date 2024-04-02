@@ -235,9 +235,9 @@ namespace KuruBot
                 for (int i = 24; i >= min_input; i--)
                 {
                     Action a = (Action)i;
-                    float weight = st_data.weight + Settings.frame_cost;
+                    float weight = st_data.weight + Settings.frame_weight;
                     if (a != st_data.exact_state.lastAction)
-                        weight += Settings.input_change_cost;
+                        weight += Settings.input_change_weight;
                     HelirinState nst = p.Next(st_data.exact_state, a);
                     HelirinState norm_nst = NormaliseState(nst);
 

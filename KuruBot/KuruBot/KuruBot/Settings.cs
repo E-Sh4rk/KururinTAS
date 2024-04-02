@@ -25,8 +25,8 @@ namespace KuruBot
         public static float back_before_bonus_malus = 0;
         public static bool allow_wall_clip = true;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
-        public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: weight/frame.
-        public static float wall_bonus_required_cost = 2.5f /*7 / ground_speed*/; // Min weight required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
+        public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: cost/frame.
+        public static float wall_bonus_required_cost = 2.5f /*7 / ground_speed*/; // Min cost required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
         public static float wall_clip_malus = 16; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
         public static float wall_clip_malus_dist = 16; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
         public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
@@ -61,8 +61,8 @@ namespace KuruBot
         public static bool allow_state_visit_with_less_life = false;
         public static int nb_iterations_before_ui_update = 25000;
 
-        public static float input_change_cost = 0;
-        public static float frame_cost = 1;
+        public static float input_change_weight = 0;
+        public static float frame_weight = 1;
         public static bool reexplore_state_if_different_last_input = false;
 
         // ---------- SAVE/LOAD METHODS ----------
@@ -135,8 +135,8 @@ namespace KuruBot
                 min_ab_speed = parseInt(data, "Solver", "min_ab_speed", min_ab_speed);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
                 nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
-                input_change_cost = parseFloat(data, "Solver", "input_change_cost", input_change_cost);
-                frame_cost = parseFloat(data, "Solver", "frame_cost", frame_cost);
+                input_change_weight = parseFloat(data, "Solver", "input_change_weight", input_change_weight);
+                frame_weight = parseFloat(data, "Solver", "frame_weight", frame_weight);
                 reexplore_state_if_different_last_input = parseBool(data, "Flooding", "reexplore_state_if_different_last_input", reexplore_state_if_different_last_input);
             }
             catch { }
@@ -205,8 +205,8 @@ namespace KuruBot
                 data["Solver"]["min_ab_speed"] = ToString(min_ab_speed);
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
                 data["Solver"]["nb_iterations_before_ui_update"] = ToString(nb_iterations_before_ui_update);
-                data["Solver"]["input_change_cost"] = ToString(input_change_cost);
-                data["Solver"]["frame_cost"] = ToString(frame_cost);
+                data["Solver"]["input_change_weight"] = ToString(input_change_weight);
+                data["Solver"]["frame_weight"] = ToString(frame_weight);
                 data["Solver"]["reexplore_state_if_different_last_input"] = ToString(reexplore_state_if_different_last_input);
 
                 FileIniDataParser parser = new FileIniDataParser();

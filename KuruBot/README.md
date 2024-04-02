@@ -30,15 +30,17 @@
   - `config_damageless_xxx`: activate the damageless mode and focus the search on the exploration. `xxx` determines which aspect to prioritize in term of precision (`precise` for both, `approx` for none).
   - `config_no_wc_xxx`: disable wall clips and focus the search on the exploration. The `relaxed` version still allows to be inside a wall (useful when the starting state is in a wall, but that no new wall clip should be performed).
   - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
-- Then the `Configs_modifier` folder allows you to modify the behavior of the previously selected configuration (you can load multiple configurations there):
+- Then the `Configs_modifier` folder allows you to modify the behavior of the base configuration (you can load multiple configurations there):
   - `increase_cost_map_k`/`decrease_cost_map_k`: scale the cost map. Increasing it will make the solver more focused in direction of the target, while decreasing it will
   make the solver more likely to explore backward, etc.
-  - `damageless_checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
+  - `checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
   - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant for wall-clip configurations when the bot must briefly quit the legal zone with very low life and invulnerability.
-- The `independent` folder contains some configurations, independent from the base configurations, that can be used to change some behaviors (you can load multiple configurations there):
+  - `solve_for_human_setup`: Configure the solver to minimize the number of input changes instead of the number of frames.
+- The `Gameplay_modifiers` folder contains some configurations, independent from the base configuration, that can be used to change some behaviors related to the gameplay (you can load multiple configurations there):
   - `disable_life`: Disable the life system (the life of the helirin will not be checked, which allows to reduce the search space a lot).
   - `enable_bonus_xxx`: Asks the bot to collect the bonus of the level (if any) before reaching the target. If `with_checkpoint`, once the bonus is collected, stop optimizing what has already been done before.
   - `enable_moving_objects_xxx`: Take the moving objects into account (except the shooters, which are not supported). It can slow down the search process. If `with_frame_counter`, the search space will be extended to take time into account (can give better results when waiting is needed to pass some moving objects).
+  - `default_target_to_oob`: When no custom target is drawn, the default target when building the cost map will be any OOB area (instead of being the ending area).
 
 ### Loading a map
 
