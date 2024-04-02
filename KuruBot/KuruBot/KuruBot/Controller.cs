@@ -226,7 +226,7 @@ namespace KuruBot
             }
             return res.ToArray();
         }
-        public static string to_bz2_format(string[] lines)
+        public static string to_bz2_format(string[] lines, bool header)
         {
             char[] keys = new char[] { 'A', 'B', 'U', 'D', 'L', 'R' };
             StringBuilder sb = new StringBuilder();
@@ -240,7 +240,7 @@ namespace KuruBot
                 }
                 sb.AppendLine(str);
             }
-            return Resources.bk2_headers.Replace("$CONTENT$", sb.ToString());
+            return header ? Resources.bk2_headers.Replace("$CONTENT$", sb.ToString()) : sb.ToString();
         }
     }
 }

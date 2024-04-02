@@ -274,7 +274,7 @@ namespace KuruBot
                     string filename = loadFileDialog.FileName;
                     string new_filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
                     new_filename += "_conv.txt";
-                    File.WriteAllText(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename)));
+                    File.WriteAllText(new_filename, Controller.to_bz2_format(File.ReadAllLines(filename), true));
                 }
             }
             catch { }
@@ -472,6 +472,7 @@ namespace KuruBot
 
         private void buildSolver_Click(object sender, EventArgs e)
         {
+            if (map == null) return;
             Pixel start = new Pixel(0, 0);
             Pixel end = new Pixel((short)(map.WidthPx - 1), (short)(map.HeightPx - 1));
             makeSolver(start, end);
@@ -479,6 +480,7 @@ namespace KuruBot
 
         private void buildSolverAny_Click(object sender, EventArgs e)
         {
+            if (map == null) return;
             Pixel start = new Pixel((short)(-map.WidthPx), 0);
             Pixel end = new Pixel((short)(map.WidthPx - 1), (short)(2 * map.HeightPx - 1));
             makeSolver(start, end);
@@ -587,5 +589,29 @@ namespace KuruBot
                 Settings.SaveConfig(saveIniDialog.FileName);
         }
 
+        private void copyInputs_Click(object sender, EventArgs e)
+        {
+            if (last_inputs == null)
+                return;
+            try
+            {
+                string[] lines = new string[last_inputs.Length];
+                for (int i = 0; i < lines.Length; i++)
+                    lines[i] += Controller.effect_to_string(Controller.action_to_effect(last_inputs[i])) + "\n";
+                string content = Controller.to_bz2_format(lines, false);
+                Clipboard.SetText(content);
+            }
+            catch { }
+        }
+
+        private void pasteInputs_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] content = Clipboard.GetText().Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                ExecuteInputsStr(Controller.from_bz2_format(content));
+            }
+            catch { }
+        }
     }
 }

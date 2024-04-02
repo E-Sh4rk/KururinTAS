@@ -40,7 +40,6 @@
             this.loadFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.backupPos = new System.Windows.Forms.Button();
             this.restorePos = new System.Windows.Forms.Button();
-            this.convertInputs = new System.Windows.Forms.Button();
             this.sendLastInputs = new System.Windows.Forms.Button();
             this.logLastMoves = new System.Windows.Forms.Button();
             this.saveLogFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -53,7 +52,6 @@
             this.buildSolver = new System.Windows.Forms.Button();
             this.computeCostMap = new System.Windows.Forms.Button();
             this.solve = new System.Windows.Forms.Button();
-            this.convertInputsToBk2 = new System.Windows.Forms.Button();
             this.buildSolverAny = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.abort = new System.Windows.Forms.Button();
@@ -73,6 +71,8 @@
             this.playMove = new System.Windows.Forms.Button();
             this.bonusCostMap = new System.Windows.Forms.Button();
             this.showObjects = new System.Windows.Forms.CheckBox();
+            this.copyInputs = new System.Windows.Forms.Button();
+            this.pasteInputs = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.brushRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.invulCostMap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minInvulScore)).BeginInit();
@@ -155,7 +155,7 @@
             // enterInputString
             // 
             this.enterInputString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterInputString.Location = new System.Drawing.Point(521, 548);
+            this.enterInputString.Location = new System.Drawing.Point(605, 548);
             this.enterInputString.Name = "enterInputString";
             this.enterInputString.Size = new System.Drawing.Size(29, 23);
             this.enterInputString.TabIndex = 7;
@@ -181,7 +181,7 @@
             // backupPos
             // 
             this.backupPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.backupPos.Location = new System.Drawing.Point(464, 548);
+            this.backupPos.Location = new System.Drawing.Point(538, 548);
             this.backupPos.Name = "backupPos";
             this.backupPos.Size = new System.Drawing.Size(31, 23);
             this.backupPos.TabIndex = 9;
@@ -192,24 +192,13 @@
             // restorePos
             // 
             this.restorePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.restorePos.Location = new System.Drawing.Point(427, 548);
+            this.restorePos.Location = new System.Drawing.Point(501, 548);
             this.restorePos.Name = "restorePos";
             this.restorePos.Size = new System.Drawing.Size(31, 23);
             this.restorePos.TabIndex = 10;
             this.restorePos.Text = "RS";
             this.restorePos.UseVisualStyleBackColor = true;
             this.restorePos.Click += new System.EventHandler(this.restorePos_Click);
-            // 
-            // convertInputs
-            // 
-            this.convertInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.convertInputs.Location = new System.Drawing.Point(605, 548);
-            this.convertInputs.Name = "convertInputs";
-            this.convertInputs.Size = new System.Drawing.Size(71, 23);
-            this.convertInputs.TabIndex = 11;
-            this.convertInputs.Text = "From bk2";
-            this.convertInputs.UseVisualStyleBackColor = true;
-            this.convertInputs.Click += new System.EventHandler(this.convertInputsFromBk2_Click);
             // 
             // sendLastInputs
             // 
@@ -240,7 +229,7 @@
             // saveInputs
             // 
             this.saveInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveInputs.Location = new System.Drawing.Point(556, 548);
+            this.saveInputs.Location = new System.Drawing.Point(640, 548);
             this.saveInputs.Name = "saveInputs";
             this.saveInputs.Size = new System.Drawing.Size(31, 23);
             this.saveInputs.TabIndex = 14;
@@ -251,7 +240,7 @@
             // loadPos
             // 
             this.loadPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadPos.Location = new System.Drawing.Point(357, 548);
+            this.loadPos.Location = new System.Drawing.Point(429, 548);
             this.loadPos.Name = "loadPos";
             this.loadPos.Size = new System.Drawing.Size(29, 23);
             this.loadPos.TabIndex = 15;
@@ -262,7 +251,7 @@
             // savePos
             // 
             this.savePos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.savePos.Location = new System.Drawing.Point(392, 548);
+            this.savePos.Location = new System.Drawing.Point(466, 548);
             this.savePos.Name = "savePos";
             this.savePos.Size = new System.Drawing.Size(29, 23);
             this.savePos.TabIndex = 16;
@@ -274,7 +263,7 @@
             // 
             this.loadMap.AccessibleName = "";
             this.loadMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadMap.Location = new System.Drawing.Point(260, 548);
+            this.loadMap.Location = new System.Drawing.Point(334, 548);
             this.loadMap.Name = "loadMap";
             this.loadMap.Size = new System.Drawing.Size(31, 23);
             this.loadMap.TabIndex = 17;
@@ -285,7 +274,7 @@
             // saveMap
             // 
             this.saveMap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveMap.Location = new System.Drawing.Point(297, 548);
+            this.saveMap.Location = new System.Drawing.Point(371, 548);
             this.saveMap.Name = "saveMap";
             this.saveMap.Size = new System.Drawing.Size(31, 23);
             this.saveMap.TabIndex = 18;
@@ -337,17 +326,6 @@
             this.solve.Text = "4. Solve";
             this.solve.UseVisualStyleBackColor = true;
             this.solve.Click += new System.EventHandler(this.solve_Click);
-            // 
-            // convertInputsToBk2
-            // 
-            this.convertInputsToBk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.convertInputsToBk2.Location = new System.Drawing.Point(682, 548);
-            this.convertInputsToBk2.Name = "convertInputsToBk2";
-            this.convertInputsToBk2.Size = new System.Drawing.Size(64, 23);
-            this.convertInputsToBk2.TabIndex = 23;
-            this.convertInputsToBk2.Text = "To bk2";
-            this.convertInputsToBk2.UseVisualStyleBackColor = true;
-            this.convertInputsToBk2.Click += new System.EventHandler(this.convertInputsToBk2_Click);
             // 
             // buildSolverAny
             // 
@@ -527,7 +505,7 @@
             this.playMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playMove.Location = new System.Drawing.Point(12, 548);
             this.playMove.Name = "playMove";
-            this.playMove.Size = new System.Drawing.Size(242, 23);
+            this.playMove.Size = new System.Drawing.Size(302, 23);
             this.playMove.TabIndex = 40;
             this.playMove.Text = "Play move (then use Ø/CTRL/ALT+Numpad)";
             this.playMove.UseVisualStyleBackColor = true;
@@ -558,11 +536,35 @@
             this.showObjects.UseVisualStyleBackColor = true;
             this.showObjects.CheckedChanged += new System.EventHandler(this.showGPMap_CheckedChanged);
             // 
+            // copyInputs
+            // 
+            this.copyInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.copyInputs.Location = new System.Drawing.Point(712, 548);
+            this.copyInputs.Name = "copyInputs";
+            this.copyInputs.Size = new System.Drawing.Size(31, 23);
+            this.copyInputs.TabIndex = 43;
+            this.copyInputs.Text = "CI";
+            this.copyInputs.UseVisualStyleBackColor = true;
+            this.copyInputs.Click += new System.EventHandler(this.copyInputs_Click);
+            // 
+            // pasteInputs
+            // 
+            this.pasteInputs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pasteInputs.Location = new System.Drawing.Point(677, 548);
+            this.pasteInputs.Name = "pasteInputs";
+            this.pasteInputs.Size = new System.Drawing.Size(29, 23);
+            this.pasteInputs.TabIndex = 44;
+            this.pasteInputs.Text = "PI";
+            this.pasteInputs.UseVisualStyleBackColor = true;
+            this.pasteInputs.Click += new System.EventHandler(this.pasteInputs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 617);
+            this.Controls.Add(this.pasteInputs);
+            this.Controls.Add(this.copyInputs);
             this.Controls.Add(this.showObjects);
             this.Controls.Add(this.bonusCostMap);
             this.Controls.Add(this.playMove);
@@ -580,7 +582,6 @@
             this.Controls.Add(this.abort);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buildSolverAny);
-            this.Controls.Add(this.convertInputsToBk2);
             this.Controls.Add(this.solve);
             this.Controls.Add(this.computeCostMap);
             this.Controls.Add(this.buildSolver);
@@ -592,7 +593,6 @@
             this.Controls.Add(this.saveInputs);
             this.Controls.Add(this.logLastMoves);
             this.Controls.Add(this.sendLastInputs);
-            this.Controls.Add(this.convertInputs);
             this.Controls.Add(this.restorePos);
             this.Controls.Add(this.backupPos);
             this.Controls.Add(this.downloadInputs);
@@ -629,7 +629,6 @@
         private System.Windows.Forms.OpenFileDialog loadFileDialog;
         private System.Windows.Forms.Button backupPos;
         private System.Windows.Forms.Button restorePos;
-        private System.Windows.Forms.Button convertInputs;
         private System.Windows.Forms.Button sendLastInputs;
         private System.Windows.Forms.Button logLastMoves;
         private System.Windows.Forms.SaveFileDialog saveLogFileDialog;
@@ -642,7 +641,6 @@
         private System.Windows.Forms.Button buildSolver;
         private System.Windows.Forms.Button computeCostMap;
         private System.Windows.Forms.Button solve;
-        private System.Windows.Forms.Button convertInputsToBk2;
         private System.Windows.Forms.Button buildSolverAny;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button abort;
@@ -662,6 +660,8 @@
         private System.Windows.Forms.Button playMove;
         private System.Windows.Forms.Button bonusCostMap;
         private System.Windows.Forms.CheckBox showObjects;
+        private System.Windows.Forms.Button copyInputs;
+        private System.Windows.Forms.Button pasteInputs;
     }
 }
 
