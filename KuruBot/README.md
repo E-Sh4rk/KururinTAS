@@ -76,11 +76,8 @@ The three first steps must be done again if you change the map or the configurat
 
 - If a solution has been found, you can save it by clicking on `SI` (Save Input). You will be able to load it later by clicking on `LI` (Load Input).
 - If you want to play the solution in the game, just click on `Send last inputs` (the bot must be connected to Bizhawk). The helirin will automatically be teleported to the good starting position (please ensure the correct level is loaded). Warning: the positions of moving objects will not be initialized, so you must ensure they match with the initial state of your search.
-
-### Exporting the solution in bk2
-
-- The simplest way to export the solution to a `.bk2` file is to play it in Bizhawk while recording (menu `File -> Movie` of Bizhawk).
-- If you are an expert of the bk2 format, you also convert an input file of the bot (saved with `SI`) into an input file for the bk2 format (usually called `Input Log.txt`) by clicking on the `To bk2` button. The reverse conversion can be achieved with the `From bk2` button.
+- Alternatively, if you have TAS studio opened, you can click on the `CI` (Copy Input) and paste the inputs in TAS studio.
+- Conversely, you can copy inputs from TAS studio and click on `PI` (Paste Input) to play them in the bot.
 
 ## Credits
 
