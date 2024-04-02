@@ -379,7 +379,7 @@
             this.setConstraints.Name = "setConstraints";
             this.setConstraints.Size = new System.Drawing.Size(212, 23);
             this.setConstraints.TabIndex = 28;
-            this.setConstraints.Text = "2. Set constraints to current drawing";
+            this.setConstraints.Text = "2. Set constraints according to drawing";
             this.setConstraints.UseVisualStyleBackColor = true;
             this.setConstraints.Click += new System.EventHandler(this.setConstraints_Click);
             // 
@@ -390,7 +390,7 @@
             this.setTarget.Name = "setTarget";
             this.setTarget.Size = new System.Drawing.Size(219, 23);
             this.setTarget.TabIndex = 29;
-            this.setTarget.Text = "2. Set target to current drawing";
+            this.setTarget.Text = "2. Set target according to drawing";
             this.setTarget.UseVisualStyleBackColor = true;
             this.setTarget.Click += new System.EventHandler(this.setTarget_Click);
             // 
