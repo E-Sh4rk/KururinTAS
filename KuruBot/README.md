@@ -27,21 +27,22 @@
 Depending on what kind of problem you want to solve, you can configure the bot by clicking on `Load config` and choosing the right configuration file.
 These configuration files have the extension `.ini`. They contain some parameters for the bot.
 
-1. You first have to select a base configuration in the `Base_configs` folder:
+1. You first have to select a base configuration in the `Bot_configs` folder:
      - `config_damageless_xxx`: activate the damageless mode and focus the search on the exploration. `xxx` determines which aspect to prioritize in term of precision (`precise` for both, `approx` for none).
      - `config_no_wc_xxx`: disable wall clips and focus the search on the exploration. The `relaxed` version still allows to be inside a wall (useful when the starting state is in a wall, but that no new wall clip should be performed).
      - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
-2. Then the `Configs_modifier` folder allows you to modify the behavior of the base configuration (you can load multiple configurations there):
+2. Then the `Bot_modifiers` folder allows you to modify the behavior of the bot configuration (you can load multiple configurations there). Reloading a bot configuration will reset these modifiers.
      - `increase_cost_map_k`/`decrease_cost_map_k`: scale the cost map. Increasing it will make the solver more focused in direction of the target, while decreasing it will
      make the solver more likely to explore backward, etc.
      - `checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
      - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant for wall-clip configurations when the bot must briefly quit the legal zone with very low life and invulnerability.
-     - `solve_for_human_setup`: Configure the solver to minimize the number of input changes instead of the number of frames.
-3. The `Gameplay_modifiers` folder contains some configurations independent from the two previous folders. They can be used to change some behaviors related to the gameplay (you can load multiple configurations there):
+3. The `Gameplay_configs` folder contains some configurations independent from the two previous folders. They can be used to change some behaviors related to the gameplay (you can load multiple configurations there).
+Reloading a bot configuration will not reset these modifiers (they are independent).
      - `disable_life`: Disable the life system (the life of the helirin will not be checked, which allows to reduce the search space a lot).
      - `enable_bonus_xxx`: Asks the bot to collect the bonus of the level (if any) before reaching the target. If `with_checkpoint`, once the bonus is collected, stop optimizing what has already been done before.
      - `enable_moving_objects_xxx`: Take the moving objects into account (except the shooters, which are not supported). It can slow down the search process. If `with_frame_counter`, the search space will be extended to take time into account (can give better results when waiting is needed to pass some moving objects).
      - `default_target_to_oob`: When no custom target is drawn, the default target when building the cost map will be any OOB area (instead of being the ending area).
+     - `solve_for_human_setup`: Configure the solver to minimize the number of input changes instead of the number of frames.
 
 NOTE: Some configuration files have an impact on the generation of the cost map. Thus, after loading a configuration, you should recompute the cost map.
 
