@@ -1,21 +1,27 @@
 # KuruBot
 
-## Instructions
+## Install
 
 ### Prerequisite
 
 - This bot has been designed for Windows, but it might also work on Linux or Mac.
-- For Windows systems, .NET Framework 4 (or more) need to be installed. For Linux or Mac, Mono can be used as an alternative.
-- This bot does not need to communicate with the game in order to work. However, we recommend to connect it to Bizhawk in order to easily transfer states and visualize solutions.
+- For Windows systems, .NET Framework 4.8 needs to be installed. For Linux or Mac, Mono can be used as an alternative.
+- Optionaly, the bot can be connected to Bizhawk in order to easily transfer states and visualize solutions.
 
-### Installation
+### Binaries
 
-- You just have to download the latest release (be sure to download the binaries and not the source code): `https://github.com/E-Sh4rk/KururinTAS/releases`
+- You just have to download the latest release: `https://github.com/E-Sh4rk/KururinTAS/releases`
 - To launch the bot, just run: `KuruBot/KuruBot.exe`
 - The folder `KuruBot_Configs` contains some predefined configuration files for the bot
 - The folder `KuruBot_Levels` contains the map and initial state of each level
 
-### Connecting the bot to Bizhawk
+## Using the bot
+
+If you are using this bot to find wall-clip setups for speedrun (not TAS), you should follow [these instructions](README_SPEEDRUN.md).
+
+### Connecting the bot to Bizhawk (optional)
+
+This section is optional: it is only required if you need to automatically import maps and states from a running Bizhawk instance.
 
 1. Place the script `kuruCOM.lua` in a folder with r/w permissions.
 2. Start Kuru Kuru Kururin in Bizhawk and load this LUA script.
@@ -76,8 +82,8 @@ The three first steps must be done again if you change the map or the configurat
 ### Visualizing the solution and saving it
 
 - If a solution has been found, you can save it by clicking on `SI` (Save Input). You will be able to load it later by clicking on `LI` (Load Input).
-- If you want to play the solution in the game, just click on `Send last inputs` (the bot must be connected to Bizhawk). The helirin will automatically be teleported to the good starting position (please ensure the correct level is loaded). Warning: the positions of moving objects will not be initialized, so you must ensure they match with the initial state of your search.
-- Alternatively, if you have TAS studio opened, you can click on the `CI` (Copy Input) and paste the inputs in TAS studio.
+- If the bot is connected to Bizhawk, you can play the solution in the game: just click on `Send last inputs`. The helirin will automatically be teleported to the good starting position (please ensure the correct level is loaded). Warning: the positions of moving objects will not be initialized, so you must ensure they match with the initial state of your search.
+- Alternatively, if you have TAS studio opened, you can click on `CI` (Copy Input) and paste the inputs in TAS studio.
 - Conversely, you can copy inputs from TAS studio and click on `PI` (Paste Input) to play them in the bot.
 
 ## Credits
