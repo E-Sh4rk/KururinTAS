@@ -16,6 +16,7 @@ NOTE: Some configuration files have an impact on the generation of the cost map.
 - You can load a map by clicking on the button `LM` (Load Map). Maps are located in the `KuruBot_Levels` folder.
 - You can load the initial state of the helirin by clicking on the button `LS` (Load State). Initial states are located in the `KuruBot_Levels` folder.
 - After loading the initial state, we recommend you to click on the button `BS` (Backup State). This way, you can easily restore the initial state later by clicking on `RS` (Restore State).
+- The combo box at the right of the `BS` button corresponds to the last move performed by the helirin. This has an influence on the solver: for instance, if set to `ABR`, the solver will prefer solutions starting with the `ABR` move as this first move will not count as an input change. By setting it to `-`, every initial move will count as an input change.
 
 ## Solving!
 
