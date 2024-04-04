@@ -57,13 +57,26 @@ namespace KuruBot
         public static ushort invul_precision = 1;
 
         public static float cost_multiplier = 1;
-        public static int min_ab_speed = 0;
+        public static string allowed_moves = "NUDLRUUDDUDLRUUDDUDLRUUDD";
         public static bool allow_state_visit_with_less_life = false;
         public static int nb_iterations_before_ui_update = 25000;
 
         public static float input_change_weight = 0;
         public static float frame_weight = 1;
         public static bool reexplore_state_if_different_last_input = false;
+
+        // ---------- ACCESSORS ----------
+
+        public static Action[] GetAllowedActions()
+        {
+            if (allowed_moves.Length != Enum.GetValues(typeof(Action)).Length) return new Action[0];
+            List<Action> actions = new List<Action>();
+            foreach (Action a in Enum.GetValues(typeof(Action)))
+            {
+                if (allowed_moves[(int)a] != '.') actions.Add(a);
+            }
+            return actions.ToArray();
+        }
 
         // ---------- SAVE/LOAD METHODS ----------
 
@@ -82,6 +95,12 @@ namespace KuruBot
         static bool parseBool(IniData data, string cat, string name, bool def)
         {
             try { return bool.Parse(data[cat][name]); }
+            catch { }
+            return def;
+        }
+        static string parseString(IniData data, string cat, string name, string def)
+        {
+            try { return data[cat][name]; }
             catch { }
             return def;
         }
@@ -132,7 +151,7 @@ namespace KuruBot
                 healzone_frame_nb_precision = (ushort)parseInt(data, "Solver", "healzone_frame_nb_precision", healzone_frame_nb_precision);
                 invul_precision = (ushort)parseInt(data, "Solver", "invul_precision", invul_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
-                min_ab_speed = parseInt(data, "Solver", "min_ab_speed", min_ab_speed);
+                allowed_moves = parseString(data, "Solver", "allowed_moves", allowed_moves);
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
                 nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
                 input_change_weight = parseFloat(data, "Solver", "input_change_weight", input_change_weight);
@@ -148,6 +167,10 @@ namespace KuruBot
         static string ToString(int o)
         {
             return o.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+        static string ToString(string o)
+        {
+            return o;
         }
         static string ToString(object o)
         {
@@ -202,7 +225,7 @@ namespace KuruBot
                 data["Solver"]["healzone_frame_nb_precision"] = ToString(healzone_frame_nb_precision);
                 data["Solver"]["invul_precision"] = ToString(invul_precision);
                 data["Solver"]["cost_multiplier"] = ToString(cost_multiplier);
-                data["Solver"]["min_ab_speed"] = ToString(min_ab_speed);
+                data["Solver"]["allowed_moves"] = ToString(allowed_moves);
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
                 data["Solver"]["nb_iterations_before_ui_update"] = ToString(nb_iterations_before_ui_update);
                 data["Solver"]["input_change_weight"] = ToString(input_change_weight);

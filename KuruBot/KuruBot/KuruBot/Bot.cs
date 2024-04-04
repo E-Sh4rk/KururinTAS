@@ -185,16 +185,7 @@ namespace KuruBot
             if (!Settings.allow_state_visit_with_less_life && Settings.invul_frames >= 0 && Settings.full_life >= 2)
                 life_data = new Dictionary<HelirinState, int>();
 
-            // Set range of possible inputs
-            int min_input = 0;
-            if (Settings.min_ab_speed == 1)
-                min_input = 1;
-            else if (Settings.min_ab_speed == 2)
-                min_input = 9;
-            else if (Settings.min_ab_speed == 3)
-                min_input = 17;
-            else if (Settings.min_ab_speed > 3)
-                min_input = 25;
+            Action[] actions = Settings.GetAllowedActions().Reverse().ToArray();
 
             // Init
             HelirinState norm_init = NormaliseState(init);
@@ -232,9 +223,8 @@ namespace KuruBot
                     parent.UpdateProgressBarAndHighlight(100 - st_data.cost * 100 / init_cost, preview);
                 }
 
-                for (int i = 24; i >= min_input; i--)
+                foreach (Action a in actions)
                 {
-                    Action a = (Action)i;
                     float weight = st_data.weight + Settings.frame_weight;
                     if (a != st_data.exact_state.lastAction)
                         weight += Settings.input_change_weight;

@@ -4,10 +4,11 @@
 
 You can configure the bot for finding speedrun wall-clip setups by clicking on `Load config` and choosing the right configuration files, located in the `KuruBot_Configs` folder:
 
-1. In the `Bot_configs` folder, load one of the `config_wc_k` files. Higher values of `k` means higher precision, but also larger search space (and thus increased solving time and RAM usage). We recommend you to start with `config_wc_3`, and if it is fast enough, you can then try `config_wc_4` or `config_wc_5`. 
-2. Then, in the `Gameplay_configs` folder, load `solve_for_human_setup` (it configures the solver to minimize the number of input changes instead of the number of frames) and `default_target_to_oob`.
+1. In the `Bot_configs` folder, load one of the `config_wc_k` files. Higher values of `k` means higher precision, but also larger search space (and thus increased solving time and RAM usage). We recommend you to start with `config_wc_3`, and if it is fast enough, you can then try `config_wc_4` or `config_wc_5`.
+2. Then, in the `Bot_modifiers` folder, load the `forbid_minimal_speed` file. This prevents solutions from containing minimal speed moves, as those do not allow performing frame buffering. If at some point you reload a configuration file in the `Bot_configs` folder, you have to perform this step again.
+3. Then, in the `Gameplay_configs` folder, load `solve_for_human_setup` (it configures the solver to minimize the number of input changes instead of the number of frames) and `default_target_to_oob`.
 
-NOTE: these two configuration folders are independent, you can thus load a new configuration file in `Bot_configs` without having to reload `Gameplay_configs` configuration files.
+NOTE: the step 3 is independent of the first two steps, thus you can load a new configuration file in `Bot_configs` and in `Bot_modifiers` without having to reload `Gameplay_configs` configuration files.
 
 NOTE: Some configuration files have an impact on the generation of the cost map. Thus, after loading a configuration, you should recompute the cost map (see below).
 
