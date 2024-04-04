@@ -36,6 +36,7 @@ namespace KuruBot
             main_panel.Controls.Add(mapc);
 
             updateSCMbutton();
+            initLastActionDropdown();
         }
 
         bool controls_enabled = true;
@@ -95,7 +96,7 @@ namespace KuruBot
 
         public void SetHelirinState(HelirinState st)
         {
-            this.UIThread(() => { hs = st; mapc.SetHelirin(hs); } );   
+            this.UIThread(() => { hs = st; mapc.SetHelirin(hs); updateLastActionDropdown(); } );   
         }
         public void UpdateProgressBarAndHighlight(float value, bool[,] highlight)
         {
@@ -134,6 +135,7 @@ namespace KuruBot
             {
                 hs = com.GetHelirin();
                 mapc.SetHelirin(hs);
+                updateLastActionDropdown();
             }
         }
 
@@ -164,6 +166,7 @@ namespace KuruBot
             this.last_positions = last_positions.ToArray();
             last_positions_emu = null;
             mapc.SetHelirin(hs);
+            updateLastActionDropdown();
         }
         private void ExecuteInputsStr(string[] inputs)
         {
@@ -223,6 +226,7 @@ namespace KuruBot
                 {
                     hs = phy.Next(hs, a);
                     mapc.SetHelirin(hs);
+                    updateLastActionDropdown();
                 }
             }
         }
@@ -235,6 +239,7 @@ namespace KuruBot
             string[] inputs = com.DownloadInputs(out hs);
             this.hs = hs;
             mapc.SetHelirin(hs);
+            updateLastActionDropdown();
             ExecuteInputsStr(inputs);
         }
 
@@ -248,6 +253,7 @@ namespace KuruBot
         {
             hs = hs_bkp;
             mapc.SetHelirin(hs);
+            updateLastActionDropdown();
         }
 
         private void convertInputsFromBk2_Click(object sender, EventArgs e)
@@ -361,8 +367,8 @@ namespace KuruBot
                 {
                     hs = Com.parse_hs(File.ReadAllLines(loadFileDialog.FileName)[0]);
                     mapc.SetHelirin(hs);
+                    updateLastActionDropdown();
                 }
-                   
             }
             catch { }
         }
@@ -396,6 +402,26 @@ namespace KuruBot
 
             }
             catch { }
+        }
+
+        private void updateLastActionDropdown()
+        {
+            if (hs == null)
+            {
+                lastMove.SelectedIndex = 0;
+                return;
+            }
+            if (hs.lastAction.HasValue) lastMove.SelectedIndex = ((int)hs.lastAction.Value) + 1;
+            else lastMove.SelectedIndex = 0;
+        }
+        private void initLastActionDropdown()
+        {
+            lastMove.Items.Add("-");
+            foreach (Action a in Enum.GetValues(typeof(Action)))
+            {
+                lastMove.Items.Add(Controller.effect_to_string(Controller.action_to_effect(a)));
+            }
+            updateLastActionDropdown();
         }
 
         private void updateSCMbutton()
@@ -612,6 +638,18 @@ namespace KuruBot
                 ExecuteInputsStr(Controller.from_bz2_format(content));
             }
             catch { }
+        }
+
+        private void lastMove_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (hs == null)
+            {
+                lastMove.SelectedIndex = 0;
+                return;
+            }
+            int i = lastMove.SelectedIndex;
+            if (i == 0) hs.lastAction = null;
+            else hs.lastAction = (Action)(i-1);
         }
     }
 }
