@@ -65,7 +65,7 @@ NOTE: Some configuration files have an impact on the generation of the cost map.
 - Alternatively, you can load a previously saved state by clicking on the button `LS` (Load State)
 - You can save a state by clicking on the button `SS` (Save State)
 - If you want to manually edit a state file, here is the list of values that it contains:  
-`x_pos y_pos x_bump_speed y_bump_speed rotation rotation_rate rotation_default_rate hearts invulnerability_frames has_bonus frame_number`
+`x_pos y_pos x_bump_speed y_bump_speed rotation rotation_rate rotation_default_rate hearts invulnerability_frames has_bonus frame_number timer_started`
 - The buttons `BS` (Backup State) and `RS` (Restore State) are shortcuts to backup the current state and restore it later
 - You can also set the current state by clicking on the canvas. The helirin will be initialized with full life. A left click will make it rotate clockwise, and a right click counter-clockwise
 - Note about moving objects: in order to correctly initialize the moving objects, the `kuruCOM` script must have been active when the level started (because it must keep track of the global frame number at the start of the level). If you have directly loaded a state in the middle of the level using TAS Studio, please go back a little, play the beginning of the level, and then you are free to load any later state of the level.

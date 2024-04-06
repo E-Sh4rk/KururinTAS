@@ -6,18 +6,16 @@ using System.Text;
 
 namespace KuruBot
 {
-    public enum GameState
-    {
-        InGame = 0,
-        InGameWithBonus,
-        Win,
-        WinWithBonus,
-        Lose
-    }
     // /!\ For efficiency reason, we use a class instead of a struct. Copies need to be performed manually when needed.
     public class HelirinState : IEquatable<HelirinState>
     {
-        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul, bool hasBonus, ushort frameNumber)
+        public const byte TERMINAL_FLAG = 1;
+        public const byte WIN_FLAG = 2;
+        public const byte BONUS_FLAG = 4;
+        public const byte TIMER_FLAG = 8;
+
+        public HelirinState(int xpos, int ypos, int xb, int yb, short rot, short rot_rate, short rot_srate, byte life, sbyte invul, bool hasBonus, ushort frameNumber,
+            bool timerStarted)
         {
             this.xpos = xpos;
             this.ypos = ypos;
@@ -29,17 +27,23 @@ namespace KuruBot
             this.life = life;
             this.invul = invul;
             this.frameNumber = frameNumber;
-            this.lastAction = null;
-            gs = hasBonus ? GameState.InGameWithBonus : GameState.InGame;
+            lastAction = null;
+            gs = 0;
+            if (hasBonus) gs |= BONUS_FLAG;
+            if (timerStarted) gs |= TIMER_FLAG;
         }
 
         public bool IsTerminal()
         {
-            return gs != GameState.InGameWithBonus && gs != GameState.InGame;
+            return (gs & TERMINAL_FLAG) > 0;
         }
         public bool HasBonus()
         {
-            return gs == GameState.InGameWithBonus || gs == GameState.WinWithBonus;
+            return (gs & BONUS_FLAG) > 0;
+        }
+        public bool TimerStarted()
+        {
+            return (gs & TIMER_FLAG) > 0;
         }
 
         public HelirinState ShallowCopy()
@@ -97,7 +101,7 @@ namespace KuruBot
 
         public byte life;
         public sbyte invul;
-        public GameState gs;
+        public byte gs;
         public ushort frameNumber; // 2 bytes is enough for more than 10 minutes
         public Action? lastAction;
 
@@ -147,7 +151,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus, (ushort)h.frameNumber);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus, (ushort)h.frameNumber, false);
         }
 
         Map map = null;
@@ -283,7 +287,7 @@ namespace KuruBot
             }
             if (zone == Map.Zone.Ending)
             {
-                st.gs = st.gs == GameState.InGameWithBonus ? GameState.WinWithBonus : GameState.Win;
+                st.gs |= HelirinState.TERMINAL_FLAG | HelirinState.WIN_FLAG;
                 return st;
             }
 
@@ -367,7 +371,7 @@ namespace KuruBot
                 }
                 // Action of bonus
                 if (map.IsPixelInBonus(px, py) != Map.BonusType.None)
-                    st.gs = GameState.InGameWithBonus;
+                    st.gs |= HelirinState.BONUS_FLAG;
             }
             if (invert_rotation)
                 st.rot_srate = (short)(-st.rot_srate);
@@ -495,7 +499,7 @@ namespace KuruBot
             // Lose?
             // TODO: Move up so that some useless computation can be avoided when losing
             if (st.life == 0)
-                st.gs = GameState.Lose;
+                st.gs |= HelirinState.TERMINAL_FLAG;
 
             return st;
         }

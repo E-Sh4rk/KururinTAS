@@ -7,7 +7,7 @@ using System.Text;
 
 namespace KuruBot
 {
-    public enum Action
+    public enum Action : byte
     {
         NoButton = 0,
 
@@ -38,13 +38,13 @@ namespace KuruBot
         DownLeft3,
         DownRight3
     }
-    enum Direction1
+    enum Direction1 : sbyte
     {
         Backward=-1,
         None=0,
         Forward=1
     }
-    enum Speed
+    enum Speed : byte
     {
         Speed0 = 0,
         Speed1 = 1,

@@ -135,8 +135,10 @@ namespace KuruBot
             st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
             st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
 
-            if (!Settings.bonus_required && !st.IsTerminal())
-                st.gs = GameState.InGame;
+            if (!Settings.bonus_required)
+                st.gs &= 0xFF ^ HelirinState.BONUS_FLAG;
+            if (!Settings.reexplore_state_if_timer_started)
+                st.gs &= 0xFF ^ HelirinState.TIMER_FLAG;
 
             st.frameNumber = (ushort)((st.frameNumber / frame_nb_precision) * frame_nb_precision);
             st.invul = (sbyte)(((st.invul-1) / Settings.invul_precision + 1) * Settings.invul_precision);
@@ -207,15 +209,23 @@ namespace KuruBot
                 HelirinState norm_st = q.Dequeue();
                 StateData st_data = data[norm_st];
                 st_data.already_treated = true;
+                HelirinState st = st_data.exact_state;
+                // Not enough life / Out of search space ?
+                int life_score = Flooding.GetRealInvul(st.life, st.invul);
+                if ((life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(st.xpos, st.ypos))
+                    continue;
                 // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
                 if (st_data.cost <= 0)
                 {
                     result = norm_st;
                     break;
                 }
+                // Is the state terminal without having completed the objective?
+                if (st.IsTerminal())
+                    continue;
 
                 // ProgressBar and preview settings
-                preview[Physics.pos_to_px(st_data.exact_state.ypos)-f.PixelStart.y, Physics.pos_to_px(st_data.exact_state.xpos)-f.PixelStart.x] = true;
+                preview[Physics.pos_to_px(st.ypos)-f.PixelStart.y, Physics.pos_to_px(st.xpos)-f.PixelStart.x] = true;
                 since_last_update++;
                 if (since_last_update >= Settings.nb_iterations_before_ui_update)
                 {
@@ -226,24 +236,21 @@ namespace KuruBot
                 foreach (Action a in actions)
                 {
                     float weight = st_data.weight + Settings.frame_weight;
-                    if (a != st_data.exact_state.lastAction)
+                    if (a != st.lastAction)
                         weight += Settings.input_change_weight;
-                    HelirinState nst = p.Next(st_data.exact_state, a);
+                    HelirinState nst = p.Next(st, a);
                     HelirinState norm_nst = NormaliseState(nst);
-
-                    // Lose / Not enough life / Out of search space ?
-                    int life_score = Flooding.GetRealInvul(nst.life, nst.invul);
-                    if (nst.gs == GameState.Lose || (life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(nst.xpos, nst.ypos))
-                        continue;
 
                     // Already enqueued with more life ?
                     HelirinState cleared_nst = null;
+                    int nlife_score = 0;
                     if (life_data!= null)
                     {
+                        nlife_score = Flooding.GetRealInvul(nst.life, nst.invul);
                         cleared_nst = ClearLifeDataOfState(norm_nst);
                         int old_life_score;
                         life_data.TryGetValue(cleared_nst, out old_life_score); // Default value for 'old_life_score' (type int) is 0.
-                        if (old_life_score > life_score)
+                        if (old_life_score > nlife_score)
                             continue;
                     }
 
@@ -262,15 +269,11 @@ namespace KuruBot
                     if (old != null && queue_weight >= old.cost + old.weight)
                         continue;
 
-                    // Is the state terminal without having completed the objective?
-                    if (cost > 0 && nst.IsTerminal())
-                        continue;
-
                     // Everything's okay, we add the config to the data and queue
                     StateData nst_data = new StateData(nst, weight, cost, norm_st, false);
                     data[norm_nst] = nst_data;
                     if (life_data != null)
-                        life_data[cleared_nst] = life_score;
+                        life_data[cleared_nst] = nlife_score;
 
                     // We don't use UpdatePriority because it does not change the InsertionIndex (first-in, first-out)
                     if (old != null)
