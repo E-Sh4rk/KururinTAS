@@ -102,9 +102,7 @@ namespace KuruBot
         }
         static string parseString(IniData data, string cat, string name, string def)
         {
-            try { return data[cat][name]; }
-            catch { }
-            return def;
+            return data[cat][name] == null ? def : data[cat][name];
         }
 
         public static void LoadConfig(string filename)

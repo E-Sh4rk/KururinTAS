@@ -6,7 +6,7 @@ You can configure the bot for finding speedrun wall-clip setups by clicking on `
 
 1. In the `Bot_configs` folder, load one of the `config_wc_k` files. Higher values of `k` means higher precision, but also larger search space (and thus increased solving time and RAM usage). We recommend you to start with `config_wc_3`, and if it is fast enough, you can then try `config_wc_4` or `config_wc_5`.
 2. Then, in the `Bot_modifiers` folder, load the `forbid_minimal_speed` file. This prevents solutions from containing minimal speed moves, as those do not allow performing frame buffering. If at some point you reload a configuration file in the `Bot_configs` folder, you have to perform this step again.
-3. Then, in the `Gameplay_configs` folder, load `solve_for_human_setup` (it configures the solver to minimize the number of input changes instead of the number of frames) and `default_target_to_oob`.
+3. Then, in the `Gameplay_configs` folder, load `solve_for_human_setup` (it configures the solver to minimize the number of input changes instead of the number of frames) and `default_target_to_oob`. Alternatively, you can load `solve_for_human_timer_setup` if you want to prefer setups for which input changes happen with the timer active.
 
 NOTE: the step 3 is independent of the first two steps, thus you can load a new configuration file in `Bot_configs` and in `Bot_modifiers` without having to reload `Gameplay_configs` configuration files.
 

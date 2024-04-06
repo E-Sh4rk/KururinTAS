@@ -275,7 +275,7 @@ namespace KuruBot
             st.ypos += ys + st.yb;
             st.rot += st.rot_rate;
 
-            // 4. Detection of healing/ending zones
+            // 4. Detection of starting/healing/ending zones
             // Position seems to be converted to px with a shift: subpixels seem to be ignored even in negative positions.
             bool safe_zone = false;
             Map.Zone zone = map.IsPixelInZone(pos_to_px(st.xpos), pos_to_px(st.ypos));
@@ -285,6 +285,7 @@ namespace KuruBot
                 if (st.life < Settings.full_life)
                     st.life = Settings.full_life;
             }
+            if (zone != Map.Zone.Starting) { st.gs |= HelirinState.TIMER_FLAG; }
             if (zone == Map.Zone.Ending)
             {
                 st.gs |= HelirinState.TERMINAL_FLAG | HelirinState.WIN_FLAG;
@@ -497,7 +498,6 @@ namespace KuruBot
             }
 
             // Lose?
-            // TODO: Move up so that some useless computation can be avoided when losing
             if (st.life == 0)
                 st.gs |= HelirinState.TERMINAL_FLAG;
 

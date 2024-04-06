@@ -237,7 +237,11 @@ namespace KuruBot
                 {
                     float weight = st_data.weight + Settings.frame_weight;
                     if (a != st.lastAction)
+                    {
                         weight += Settings.input_change_weight;
+                        if (!st.TimerStarted())
+                            weight += Settings.input_change_notimer_additional_weight;
+                    }
                     HelirinState nst = p.Next(st, a);
                     HelirinState norm_nst = NormaliseState(nst);
 
