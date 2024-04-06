@@ -62,8 +62,10 @@ namespace KuruBot
         public static int nb_iterations_before_ui_update = 25000;
 
         public static float input_change_weight = 0;
+        public static float input_change_notimer_additional_weight = 0; // Additional weight of an input change if no timer is active
         public static float frame_weight = 1;
         public static bool reexplore_state_if_different_last_input = false;
+        public static bool reexplore_state_if_timer_started = false;
 
         // ---------- ACCESSORS ----------
 
@@ -155,8 +157,10 @@ namespace KuruBot
                 allow_state_visit_with_less_life = parseBool(data, "Solver", "allow_state_visit_with_less_life", allow_state_visit_with_less_life);
                 nb_iterations_before_ui_update = parseInt(data, "Solver", "nb_iterations_before_ui_update", nb_iterations_before_ui_update);
                 input_change_weight = parseFloat(data, "Solver", "input_change_weight", input_change_weight);
+                input_change_notimer_additional_weight = parseFloat(data, "Solver", "input_change_notimer_additional_weight", input_change_notimer_additional_weight);
                 frame_weight = parseFloat(data, "Solver", "frame_weight", frame_weight);
-                reexplore_state_if_different_last_input = parseBool(data, "Flooding", "reexplore_state_if_different_last_input", reexplore_state_if_different_last_input);
+                reexplore_state_if_different_last_input = parseBool(data, "Solver", "reexplore_state_if_different_last_input", reexplore_state_if_different_last_input);
+                reexplore_state_if_timer_started = parseBool(data, "Solver", "reexplore_state_if_timer_started", reexplore_state_if_timer_started);
             }
             catch { }
         }
@@ -229,8 +233,10 @@ namespace KuruBot
                 data["Solver"]["allow_state_visit_with_less_life"] = ToString(allow_state_visit_with_less_life);
                 data["Solver"]["nb_iterations_before_ui_update"] = ToString(nb_iterations_before_ui_update);
                 data["Solver"]["input_change_weight"] = ToString(input_change_weight);
+                data["Solver"]["input_change_notimer_additional_weight"] = ToString(input_change_notimer_additional_weight);
                 data["Solver"]["frame_weight"] = ToString(frame_weight);
                 data["Solver"]["reexplore_state_if_different_last_input"] = ToString(reexplore_state_if_different_last_input);
+                data["Solver"]["reexplore_state_if_timer_started"] = ToString(reexplore_state_if_timer_started);
 
                 FileIniDataParser parser = new FileIniDataParser();
                 parser.WriteFile(filename, data);
