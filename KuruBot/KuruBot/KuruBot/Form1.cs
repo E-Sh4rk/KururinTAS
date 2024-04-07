@@ -432,7 +432,7 @@ namespace KuruBot
         private void updateCostMapDisplay()
         {
             mapc.SetCostMap(b.GetCostMap((byte)cm_preview_l, (sbyte)invulCostMap.Value, !cm_preview_bonus),
-                  Flooding.GetRealInvul((byte)cm_preview_l, (sbyte)invulCostMap.Value));
+                  CostMap.GetRealInvul((byte)cm_preview_l, (sbyte)invulCostMap.Value));
         }
 
         int cm_preview_l = Settings.full_life;

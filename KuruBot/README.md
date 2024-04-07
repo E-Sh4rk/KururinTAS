@@ -35,13 +35,12 @@ These configuration files have the extension `.ini`. They contain some parameter
 
 1. You first have to select a base configuration in the `Bot_configs` folder:
      - `config_damageless_xxx`: activate the damageless mode and focus the search on the exploration. `xxx` determines which aspect to prioritize in term of precision (`precise` for both, `approx` for none).
-     - `config_no_wc_xxx`: disable wall clips and focus the search on the exploration. The `relaxed` version still allows to be inside a wall (useful when the starting state is in a wall, but that no new wall clip should be performed).
+     - `config_no_wc`: disable wall clips and focus the search on the exploration.
      - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
 2. Then the `Bot_modifiers` folder allows you to modify the behavior of the bot configuration (you can load multiple configurations there). Reloading a bot configuration will reset these modifiers.
      - `increase_cost_map_k`/`decrease_cost_map_k`: scale the cost map. Increasing it will make the solver more focused in direction of the target, while decreasing it will
      make the solver more likely to explore backward, etc.
      - `checkpoint_at_healzones`: Once an healing zone is reached, stop optimizing what has already been done before (very useful for damageless configurations).
-     - `disable_life_prediction`: Disable the life prediction optimisation. Can be relevant for wall-clip configurations when the bot must briefly quit the legal zone with very low life and invulnerability.
 3. The `Gameplay_configs` folder contains some configurations independent from the two previous folders. They can be used to change some behaviors related to the gameplay (you can load multiple configurations there).
 Reloading a bot configuration will not reset these modifiers (they are independent).
      - `disable_life`: Disable the life system (the life of the helirin will not be checked, which allows to reduce the search space a lot).
@@ -77,7 +76,7 @@ The three first steps must be done again if you change the map or the configurat
 1. The first step is to build the solver. If you want to focus the search on the inbound ending, click on `1. Build solver (legal ending)`. Otherwise, click on `1. Build solver (any ending)`.
 2. The second step is optionnal. If you want to set a custom target (different than the regular ending zone), you can do it by clicking on `2. Draw`, drawing your custom ending zone on the map (right click to clear) and clicking on `2. Set target according to drawing`. You can also add custom bounds (in order to restrict the search space) by drawing some additional walls around the area to explore, and clicking on `2. Set constraints according to drawing`. The radius of the brush can be changed in the spinbox at the right of the button `2. Draw`.
 3. The third step is to build the cost map. Just click on the button `3. Cost map` (it can take some times depending on the size of the map and the configuration of the bot). You can then visualize the cost map by checking `Show cost map` (if you have set custom bounds and/or target in the step 2, you can check that it has been taken into account).
-4. Last step: click on `4. Solve` and wait! A message box will appear if a solution is found. The spin box at the left correspond to a minimal "life score" (going below is treated as a death). For instance, setting it to 20 prevents the helirin from having less than 2 hearts. You can abort the search at anytime by clicking on the `Abort` button.
+4. Last step: click on `4. Solve` and wait! A message box will appear if a solution is found. The spin box at the left corresponds to the minimal number of invulnerability frames the helirin should have left (going below is treated as a death). If you want the helirin to have at least 2 hearts when reaching the target, you should load the config modifier `start_with_2_hearts`. You can abort the search at anytime by clicking on the `Abort` button.
 
 ### Visualizing the solution and saving it
 

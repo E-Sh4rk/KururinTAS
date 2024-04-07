@@ -12,7 +12,7 @@ namespace KuruBot
         // ---------- GAME SETTINGS ----------
 
         public static byte full_life = 3;
-        public static sbyte invul_frames = 20;
+        public static sbyte invul_frames = 20; // < 0 for infinite
         public static bool bonus_required = false;
         public static bool enable_moving_objects = false;
 
@@ -24,16 +24,10 @@ namespace KuruBot
         public static float damageless_back_before_healzone_malus = 0;
         public static float back_before_bonus_malus = 0;
         public static bool allow_wall_clip = true;
+        public static int wall_clip_minimum_invul = 1;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
         public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: cost/frame.
         public static float wall_bonus_required_cost = 2.5f /*7 / ground_speed*/; // Min cost required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
-        public static float wall_clip_malus = 16; // Malus applied everytime we leave a wall clip, in order to capture the fact that doing the other way could be expensive.
-        public static float wall_clip_malus_dist = 16; // Distance from the wall after which the full wall-ground malus is applied. It is applied linearly.
-        public static bool restrict_complete_wall_clip_when_one_heart = true; // If set to true, can generate some infinite cost in narrow places.
-        public static byte nb_additional_cost_maps = 1;
-        public static float complete_wall_clip_max_dist = 24; // Distance of a wall at which the the helirin is not considered performing a wall clip.
-        public static int complete_wall_clip_duration = 9; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
-        public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
         public static bool target_is_oob = false; // Target will be OOB zones instead of ending.
         public static float target_oob_dist = 16;
 
@@ -123,16 +117,10 @@ namespace KuruBot
                 damageless_back_before_healzone_malus = parseFloat(data, "Flooding", "damageless_back_before_healzone_malus", damageless_back_before_healzone_malus);
                 back_before_bonus_malus = parseFloat(data, "Flooding", "back_before_bonus_malus", back_before_bonus_malus);
                 allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
+                wall_clip_minimum_invul = parseInt(data, "Flooding", "wall_clip_minimum_invul", wall_clip_minimum_invul);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
                 wall_bonus_per_invul = parseFloat(data, "Flooding", "wall_bonus_per_invul", wall_bonus_per_invul);
                 wall_bonus_required_cost = parseFloat(data, "Flooding", "wall_bonus_required_cost", wall_bonus_required_cost);
-                wall_clip_malus = parseFloat(data, "Flooding", "wall_clip_malus", wall_clip_malus);
-                wall_clip_malus_dist = parseFloat(data, "Flooding", "wall_clip_malus_dist", wall_clip_malus_dist);
-                restrict_complete_wall_clip_when_one_heart = parseBool(data, "Flooding", "restrict_complete_wall_clip_when_one_heart", restrict_complete_wall_clip_when_one_heart);
-                nb_additional_cost_maps = (byte)parseInt(data, "Flooding", "nb_additional_cost_maps", nb_additional_cost_maps);
-                complete_wall_clip_max_dist = parseFloat(data, "Flooding", "complete_wall_clip_max_dist", complete_wall_clip_max_dist);
-                complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
-                cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
                 target_is_oob = parseBool(data, "Flooding", "target_is_oob", target_is_oob);
                 target_oob_dist = parseFloat(data, "Flooding", "target_oob_dist", target_oob_dist);
 
@@ -200,16 +188,10 @@ namespace KuruBot
                 data["Flooding"]["damageless_back_before_healzone_malus"] = ToString(damageless_back_before_healzone_malus);
                 data["Flooding"]["back_before_bonus_malus"] = ToString(back_before_bonus_malus);
                 data["Flooding"]["allow_wall_clip"] = ToString(allow_wall_clip);
+                data["Flooding"]["wall_clip_minimum_invul"] = ToString(wall_clip_minimum_invul);
                 data["Flooding"]["wall_speed"] = ToString(wall_speed);
                 data["Flooding"]["wall_bonus_per_invul"] = ToString(wall_bonus_per_invul);
                 data["Flooding"]["wall_bonus_required_cost"] = ToString(wall_bonus_required_cost);
-                data["Flooding"]["wall_clip_malus"] = ToString(wall_clip_malus);
-                data["Flooding"]["wall_clip_malus_dist"] = ToString(wall_clip_malus_dist);
-                data["Flooding"]["restrict_complete_wall_clip_when_one_heart"] = ToString(restrict_complete_wall_clip_when_one_heart);
-                data["Flooding"]["nb_additional_cost_maps"] = ToString(nb_additional_cost_maps);
-                data["Flooding"]["complete_wall_clip_max_dist"] = ToString(complete_wall_clip_max_dist);
-                data["Flooding"]["complete_wall_clip_duration"] = ToString(complete_wall_clip_duration);
-                data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = ToString(cwc_max_dist_zero_in_legal_zone);
                 data["Flooding"]["target_is_oob"] = ToString(target_is_oob);
                 data["Flooding"]["target_oob_dist"] = ToString(target_oob_dist);
 

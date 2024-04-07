@@ -11,7 +11,8 @@ namespace KuruBot
         Flooding f = null;
         Physics p = null;
         Form1 parent = null;
-        ExtendedCostMap[][] cost_maps = null;
+        ExtendedCostMap cost_map = null;
+        ExtendedCostMap min_life_cost_map = null;
 
         public Bot(Form1 parent, Map m, Physics p, Pixel start, Pixel end)
         {
@@ -34,50 +35,27 @@ namespace KuruBot
 
         public void ComputeNewCostMaps()
         {
-            ExtendedCostMap full_life_cost_map;
             if (!Settings.allow_wall_clip)
-                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoWallClip, 0);
-            else if (Settings.full_life <= 1 && Settings.restrict_complete_wall_clip_when_one_heart)
-                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoCompleteWallClip, 0);
+                cost_map = f.ComputeExtendedCostMap(true);
             else
-                full_life_cost_map = f.ComputeExtendedCostMap(Flooding.WallClipSetting.Allow, 0);
+                cost_map = f.ComputeExtendedCostMap(false);
 
-            if (!Settings.allow_wall_clip || !Settings.restrict_complete_wall_clip_when_one_heart || Settings.full_life <= 1 || Settings.invul_frames < 0)
-            {
-                cost_maps = new ExtendedCostMap[1][];
-                cost_maps[0] = new ExtendedCostMap[] { full_life_cost_map };
-            }
+            parent.UpdateProgressBarAndHighlight(50, null);
+
+            if (!Settings.allow_wall_clip)
+                min_life_cost_map = cost_map;
             else
-            {
-                int total_op = 2 + Settings.nb_additional_cost_maps;
-                parent.UpdateProgressBarAndHighlight(100 / total_op, null);
-
-                cost_maps = new ExtendedCostMap[2][];
-                cost_maps[1] = new ExtendedCostMap[] { full_life_cost_map };
-                
-                int current_op = 1;
-                ExtendedCostMap[] cms = new ExtendedCostMap[Settings.nb_additional_cost_maps + 1];
-                for (int i = 0; i < cms.Length; i++)
-                {
-                    int invul = i * (Settings.invul_frames+1) / cms.Length;
-                    cms[i] = f.ComputeExtendedCostMap(Flooding.WallClipSetting.NoCompleteWallClip, Flooding.GetRealInvul(1,(sbyte)invul));
-                    current_op++;
-                    parent.UpdateProgressBarAndHighlight(100 * current_op / total_op, null);
-                }
-                cost_maps[0] = cms;
-            }
+                min_life_cost_map = f.ComputeExtendedCostMap(true);
         }
 
         public CostMap GetCostMap(byte life, sbyte invul, bool hasBonus)
         {
-            if (cost_maps == null || life < 1)
+            if (cost_map == null || min_life_cost_map == null || life < 1)
                 return null;
 
-            ExtendedCostMap[] cms = cost_maps[Math.Min(cost_maps.Length - 1, life - 1)];
-            if (Settings.invul_frames < 0)
-                return cms[cms.Length - 1].Get(hasBonus);
-            int invul_index = Math.Max(0, (int)invul) * cms.Length / (Settings.invul_frames+1);
-            return cms[Math.Min(cms.Length - 1, invul_index)].Get(hasBonus);
+            int ri = CostMap.GetRealInvul(life, invul);
+            ExtendedCostMap cm = ri >= 0 && ri < Settings.wall_clip_minimum_invul ? min_life_cost_map : cost_map;
+            return cm.Get(hasBonus);
         }
 
         // /!\ For efficiency reason, we use a class instead of a struct.
@@ -165,7 +143,7 @@ namespace KuruBot
             
             short xpix = Physics.pos_to_px(xpos);
             short ypix = Physics.pos_to_px(ypos);
-            float cost = cm.CostAtPx(xpix, ypix, Flooding.GetRealInvul(life, invul));
+            float cost = cm.CostAtPx(xpix, ypix, CostMap.GetRealInvul(life, invul));
             float mult_cost = cost * Settings.cost_multiplier;
             return cost > 0 && mult_cost <= 0 ? float.Epsilon : mult_cost;
         }
@@ -179,7 +157,7 @@ namespace KuruBot
 
         public Action[] Solve (HelirinState init, int min_life_score)
         {
-            if (cost_maps == null || init == null)
+            if (cost_map == null || init == null)
                 return null;
             SimplePriorityQueue<HelirinState> q = new SimplePriorityQueue<HelirinState>();
             Dictionary<HelirinState, StateData> data = new Dictionary<HelirinState, StateData>();
@@ -195,11 +173,11 @@ namespace KuruBot
             q.Enqueue(norm_init, cost);
             data.Add(norm_init, new StateData(init, 0, cost, null, false));
             if (life_data != null)
-                life_data.Add(ClearLifeDataOfState(norm_init), Flooding.GetRealInvul(init.life, init.invul));
+                life_data.Add(ClearLifeDataOfState(norm_init), CostMap.GetRealInvul(init.life, init.invul));
 
             // ProgressBar and preview settings
             float init_cost = cost;
-            bool[,] preview = new bool[cost_maps[0][0].Get(true).Height, cost_maps[0][0].Get(true).Width];
+            bool[,] preview = new bool[cost_map.Get(true).Height, cost_map.Get(true).Width];
             int since_last_update = 0;
 
             // A*
@@ -211,7 +189,7 @@ namespace KuruBot
                 st_data.already_treated = true;
                 HelirinState st = st_data.exact_state;
                 // Not enough life / Out of search space ?
-                int life_score = Flooding.GetRealInvul(st.life, st.invul);
+                int life_score = CostMap.GetRealInvul(st.life, st.invul);
                 if ((life_score < min_life_score && life_score >= 0) || IsOutOfSearchSpace(st.xpos, st.ypos))
                     continue;
                 // Target reached ? We look at the cost rather than the game state, because the target can be different than winning
@@ -250,7 +228,7 @@ namespace KuruBot
                     int nlife_score = 0;
                     if (life_data!= null)
                     {
-                        nlife_score = Flooding.GetRealInvul(nst.life, nst.invul);
+                        nlife_score = CostMap.GetRealInvul(nst.life, nst.invul);
                         cleared_nst = ClearLifeDataOfState(norm_nst);
                         int old_life_score;
                         life_data.TryGetValue(cleared_nst, out old_life_score); // Default value for 'old_life_score' (type int) is 0.

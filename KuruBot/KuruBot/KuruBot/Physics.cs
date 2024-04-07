@@ -498,7 +498,7 @@ namespace KuruBot
             }
 
             // Lose?
-            if (st.life == 0)
+            if (st.life <= 0)
                 st.gs |= HelirinState.TERMINAL_FLAG;
 
             return st;

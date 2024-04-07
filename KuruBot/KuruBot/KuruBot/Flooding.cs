@@ -62,6 +62,11 @@ namespace KuruBot
             return zone == Map.Zone.Healing || zone == Map.Zone.Starting;
         }
 
+        public bool IsWall(short x, short y)
+        {
+            return m.IsPixelInCollision(x, y);
+        }
+
         Pixel[] DiagNeighbors(Pixel p)
         {
             List<Pixel> res = new List<Pixel>();
@@ -198,14 +203,11 @@ namespace KuruBot
             return res;
         }
 
-        CostMap ComputeCostMap(float allow_wall_ground_dist, bool no_wall_clip, bool targetBonus)
+        CostMap ComputeCostMap(bool no_wall_clip, bool targetBonus)
         {
             // Simple Dijkstra algorithm with some extra parameters.
             // Ground wall bonus is not applied during the Dijkstra algorithm because it would generate negative weights.
             // Instead, it will be applied after, when asking a specific cost, to each pixel in collision (proportionally if current weight is smaller than gwb min dist).
-
-            float wgm_dist = Settings.wall_clip_malus_dist < 1 ? 1 : Settings.wall_clip_malus_dist;
-            float wgm_per_px = Settings.wall_clip_malus / wgm_dist;
 
             int width = PixelEnd.x - PixelStart.x + 1;
             int height = PixelEnd.y - PixelStart.y + 1;
@@ -263,9 +265,7 @@ namespace KuruBot
             {
                 Pixel p = q.Dequeue();
                 float weight = res[p.y - PixelStart.y, p.x - PixelStart.x];
-                float from_wall_dist = dist_to_wall[p.y - PixelStart.y, p.x - PixelStart.x];
-                bool from_wall = from_wall_dist <= 0;
-                bool from_wc_allowed_zone = from_wall_dist <= allow_wall_ground_dist;
+                bool from_wall = IsWall(p.x, p.y);
                 bool from_healzone = IsHealZone(p.x,p.y);
 
                 PixelDist[] neighbors = Neighbors(p);
@@ -277,34 +277,17 @@ namespace KuruBot
                     if (constraints != null && constraints[npy, npx])
                         continue;
 
-                    float to_wall_dist = dist_to_wall[npy, npx];
-                    bool to_wall = to_wall_dist <= 0;
-                    bool to_wc_allowed_zone = to_wall_dist <= allow_wall_ground_dist;
-                    bool to_legal_zone = legal_zones[npy, npx];
+                    bool to_wall = IsWall(npd.px.x, npd.px.y);
                     bool to_healzone = IsHealZone(npd.px.x, npd.px.y);
 
-                    float wgm = Math.Min(to_wall_dist, wgm_dist) - from_wall_dist;
-                    if (wgm <= 0)
-                        wgm = 0;
-                    else
-                        wgm *= wgm_per_px;
-
-                    if (no_wall_clip && to_wall)
+                    if (no_wall_clip && !to_wall && from_wall)
                         continue;
 
-                    if (Settings.cwc_max_dist_zero_in_legal_zone && allow_wall_ground_dist < float.PositiveInfinity && to_legal_zone)
-                    {
-                        from_wc_allowed_zone = from_wall;
-                        to_wc_allowed_zone = to_wall;
-                    }
-
                     float nw = weight;
-                    if (from_wc_allowed_zone && !to_wc_allowed_zone)
-                        nw = float.PositiveInfinity;
-                    else if (from_wall && to_wall)
+                    if (from_wall && to_wall)
                         nw += npd.dist / Settings.wall_speed;
                     else
-                        nw += npd.dist / Settings.ground_speed + wgm;
+                        nw += npd.dist / Settings.ground_speed;
 
                     if (from_healzone && !to_healzone)
                         nw += Settings.damageless_back_before_healzone_malus;
@@ -321,7 +304,7 @@ namespace KuruBot
                 }
             }
 
-            // Post-procedure (some post-procedure has been moved to the CostMap class)
+            // Post-procedure (some post-procedure have been moved to the CostMap class)
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -342,39 +325,13 @@ namespace KuruBot
             return new CostMap(res, dist_to_wall, PixelStart, !no_wall_clip);
         }
 
-        public enum WallClipSetting
+        public ExtendedCostMap ComputeExtendedCostMap(bool no_wall_clip)
         {
-            NoWallClip = 0,     // No wall clip
-            NoCompleteWallClip, // No complete wall clip (the helirin can't perform a new wall clip to reach the ending zone)
-            Allow
-        }
-
-        CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames, bool targetBonus)
-        {
-            if (wcs == WallClipSetting.NoWallClip)
-                return ComputeCostMap(0, true, targetBonus);
-            else if (wcs == WallClipSetting.Allow)
-                return ComputeCostMap(float.PositiveInfinity, false, targetBonus);
-            else
-                return ComputeCostMap(
-                    invul_frames >= Settings.complete_wall_clip_duration
-                    ? Settings.complete_wall_clip_max_dist
-                    : Settings.complete_wall_clip_max_dist * invul_frames / Settings.complete_wall_clip_duration,
-                    false, targetBonus);
-        }
-
-        public CostMap ComputeCostMap(WallClipSetting wcs, int invul_frames)
-        {
-            return ComputeCostMap(wcs, invul_frames, false);
-        }
-
-        public ExtendedCostMap ComputeExtendedCostMap(WallClipSetting wcs, int invul_frames)
-        {
-            CostMap targetCM = ComputeCostMap(wcs, invul_frames);
+            CostMap targetCM = ComputeCostMap(no_wall_clip, false);
             CostMap bonusCM = null;
             if (m.HasBonus != Map.BonusType.None && Settings.bonus_required)
             {
-                bonusCM = ComputeCostMap(wcs, invul_frames, true);
+                bonusCM = ComputeCostMap(no_wall_clip, true);
                 float max = 0;
                 Rectangle r = m.GetBonusPxRect().Value;
                 for (int y = r.Top; y < r.Bottom; y++)
@@ -383,13 +340,6 @@ namespace KuruBot
                 bonusCM.GlobalMalus += max + Settings.back_before_bonus_malus;
             }
             return new ExtendedCostMap(targetCM, bonusCM);
-        }
-
-        public static int GetRealInvul(byte life, sbyte invul)
-        {
-            if (life <= 0 || Settings.invul_frames < 0)
-                return -1;
-            return (life-1) * Settings.invul_frames + Math.Max(0, invul-1);
         }
     }
 }

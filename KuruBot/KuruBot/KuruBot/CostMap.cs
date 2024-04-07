@@ -44,6 +44,13 @@ namespace KuruBot
             wb_rc = Settings.wall_bonus_required_cost;
         }
 
+        public static int GetRealInvul(byte life, sbyte invul)
+        {
+            if (Settings.invul_frames < 0)
+                return -1;
+            return Math.Max(0, life - 1) * Settings.invul_frames + Math.Max(0, invul - 1);
+        }
+
         public float GlobalMalus
         {
             get { return global_malus; }
@@ -65,17 +72,16 @@ namespace KuruBot
 
         public float CostAtIndex(int x, int y, int invul_frames)
         {
+            if (invul_frames < 0 || invul_frames > 1024) invul_frames = 1024;
             float cost = cmap[y, x];
             if (add_bonus_to_walls && cost > 0)
             {
-                float wb = this.wb * invul_frames;
-                float wb_rc = this.wb_rc * invul_frames;
                 if (wall_dist[y, x] <= 0)
                 {
-                    if (cost >= wb_rc)
-                        cost -= wb;
-                    else
-                        cost -= wb * cost / wb_rc;
+                    float wb = this.wb * invul_frames;
+                    float wb_rc = this.wb_rc * invul_frames;
+                    float coef = Math.Min(1f, cost / wb_rc);
+                    cost -= wb * coef;
                 }
                 if (cost <= 0)
                     cost = float.Epsilon;
