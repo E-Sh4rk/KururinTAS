@@ -35,7 +35,7 @@ These configuration files have the extension `.ini`. They contain some parameter
 
 1. You first have to select a base configuration in the `Bot_configs` folder:
      - `config_damageless_xxx`: activate the damageless mode and focus the search on the exploration. `xxx` determines which aspect to prioritize in term of precision (`precise` for both, `approx` for none).
-     - `config_no_wc`: disable wall clips and focus the search on the exploration.
+     - `config_no_oob`: no oob shortcut, the bot is encouraged to follow the map.
      - `config_wc_k`: full wall clip support. `k` correspond to the precision: higher values of `k` will be more precise (in order to perform very tricky wall clips) but will explore less the map.
 2. Then the `Bot_modifiers` folder allows you to modify the behavior of the bot configuration (you can load multiple configurations there). Reloading a bot configuration will reset these modifiers.
      - `increase_cost_map_k`/`decrease_cost_map_k`: scale the cost map. Increasing it will make the solver more focused in direction of the target, while decreasing it will
