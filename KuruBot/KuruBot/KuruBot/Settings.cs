@@ -35,6 +35,7 @@ namespace KuruBot
         public static int complete_wall_clip_duration = 9; // Invulnerability time needed to benefit from full complete_wall_clip_max_dist.
         public static bool cwc_max_dist_zero_in_legal_zone = true; // Avoid infinite cost in narrow places in the legal zone.
         public static bool target_is_oob = false; // Target will be OOB zones instead of ending.
+        public static float target_oob_dist = 16;
 
         // ---------- SOLVER SETTINGS ----------
 
@@ -133,6 +134,7 @@ namespace KuruBot
                 complete_wall_clip_duration = parseInt(data, "Flooding", "complete_wall_clip_duration", complete_wall_clip_duration);
                 cwc_max_dist_zero_in_legal_zone = parseBool(data, "Flooding", "cwc_max_dist_zero_in_legal_zone", cwc_max_dist_zero_in_legal_zone);
                 target_is_oob = parseBool(data, "Flooding", "target_is_oob", target_is_oob);
+                target_oob_dist = parseFloat(data, "Flooding", "target_oob_dist", target_oob_dist);
 
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
@@ -209,6 +211,7 @@ namespace KuruBot
                 data["Flooding"]["complete_wall_clip_duration"] = ToString(complete_wall_clip_duration);
                 data["Flooding"]["cwc_max_dist_zero_in_legal_zone"] = ToString(cwc_max_dist_zero_in_legal_zone);
                 data["Flooding"]["target_is_oob"] = ToString(target_is_oob);
+                data["Flooding"]["target_oob_dist"] = ToString(target_oob_dist);
 
                 data["Solver"]["pos_reduction"] = ToString(pos_reduction);
                 data["Solver"]["bump_reduction"] = ToString(bump_reduction);

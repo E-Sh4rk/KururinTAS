@@ -231,7 +231,7 @@ namespace KuruBot
                         target = new bool[height, width];
                         for (short y = 0; y < legal_zones.GetLength(0); y++)
                             for (short x = 0; x < legal_zones.GetLength(1); x++)
-                                target[y, x] = !legal_zones[y, x] && dist_to_wall[y,x] >= Settings.complete_wall_clip_max_dist;
+                                target[y, x] = !legal_zones[y, x] && dist_to_wall[y,x] >= Settings.target_oob_dist;
                     }
                     else
                     {
