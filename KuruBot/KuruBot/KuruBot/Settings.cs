@@ -20,14 +20,13 @@ namespace KuruBot
 
         // All these values must be non-negative
         public static float ground_speed = 3;
-        public static float damageless_healzone_bonus = 0;
-        public static float damageless_back_before_healzone_malus = 0;
+        public static float enter_healzone_cost = 0;
         public static float back_before_bonus_malus = 0;
-        public static bool allow_wall_clip = true;
-        public static int wall_clip_minimum_invul = 1;
+        public static int enter_wall_minimum_invul = 1;
+        public static float enter_wall_cost = 10;
         public static float wall_speed = ground_speed; // Should be equal to ground speed (we can't benefit from wall speed for ever, so a constant bonus is more adapted).
         public static float wall_bonus_per_invul = 1 /*(7 - ground_speed) / ground_speed*/; // Bonus applied to each pixel in a wall (in a post procedure) in order to encourage wall exploration. Unit: cost/frame.
-        public static float wall_bonus_required_cost = 2.5f /*7 / ground_speed*/; // Min cost required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
+        public static float wall_bonus_required_cost = 2 /*7 / ground_speed*/; // Min cost required for a wall to benefit from full bonus. Must be greater than wall_bonus_per_invul. Unit: dist/frame.
         public static bool target_is_oob = false; // Target will be OOB zones instead of ending.
         public static float target_oob_dist = 16;
 
@@ -113,11 +112,10 @@ namespace KuruBot
                 enable_moving_objects = parseBool(data, "Game", "enable_moving_objects", enable_moving_objects);
 
                 ground_speed = parseFloat(data,"Flooding","ground_speed", ground_speed);
-                damageless_healzone_bonus = parseFloat(data, "Flooding", "damageless_healzone_bonus", damageless_healzone_bonus);
-                damageless_back_before_healzone_malus = parseFloat(data, "Flooding", "damageless_back_before_healzone_malus", damageless_back_before_healzone_malus);
+                enter_healzone_cost = parseFloat(data, "Flooding", "enter_healzone_cost", enter_healzone_cost);
                 back_before_bonus_malus = parseFloat(data, "Flooding", "back_before_bonus_malus", back_before_bonus_malus);
-                allow_wall_clip = parseBool(data, "Flooding", "allow_wall_clip", allow_wall_clip);
-                wall_clip_minimum_invul = parseInt(data, "Flooding", "wall_clip_minimum_invul", wall_clip_minimum_invul);
+                enter_wall_minimum_invul = parseInt(data, "Flooding", "enter_wall_minimum_invul", enter_wall_minimum_invul);
+                enter_wall_cost = parseFloat(data, "Flooding", "enter_wall_cost", enter_wall_cost);
                 wall_speed = parseFloat(data, "Flooding", "wall_speed", wall_speed);
                 wall_bonus_per_invul = parseFloat(data, "Flooding", "wall_bonus_per_invul", wall_bonus_per_invul);
                 wall_bonus_required_cost = parseFloat(data, "Flooding", "wall_bonus_required_cost", wall_bonus_required_cost);
@@ -184,11 +182,10 @@ namespace KuruBot
                 data["Game"]["enable_moving_objects"] = ToString(enable_moving_objects);
 
                 data["Flooding"]["ground_speed"] = ToString(ground_speed);
-                data["Flooding"]["damageless_healzone_bonus"] = ToString(damageless_healzone_bonus);
-                data["Flooding"]["damageless_back_before_healzone_malus"] = ToString(damageless_back_before_healzone_malus);
+                data["Flooding"]["enter_healzone_cost"] = ToString(enter_healzone_cost);
                 data["Flooding"]["back_before_bonus_malus"] = ToString(back_before_bonus_malus);
-                data["Flooding"]["allow_wall_clip"] = ToString(allow_wall_clip);
-                data["Flooding"]["wall_clip_minimum_invul"] = ToString(wall_clip_minimum_invul);
+                data["Flooding"]["enter_wall_minimum_invul"] = ToString(enter_wall_minimum_invul);
+                data["Flooding"]["enter_wall_cost"] = ToString(enter_wall_cost);
                 data["Flooding"]["wall_speed"] = ToString(wall_speed);
                 data["Flooding"]["wall_bonus_per_invul"] = ToString(wall_bonus_per_invul);
                 data["Flooding"]["wall_bonus_required_cost"] = ToString(wall_bonus_required_cost);

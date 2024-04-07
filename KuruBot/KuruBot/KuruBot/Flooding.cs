@@ -280,17 +280,20 @@ namespace KuruBot
                     bool to_wall = IsWall(npd.px.x, npd.px.y);
                     bool to_healzone = IsHealZone(npd.px.x, npd.px.y);
 
-                    if (no_wall_clip && !to_wall && from_wall)
+                    if (no_wall_clip && from_wall && !to_wall)
                         continue;
 
                     float nw = weight;
-                    if (from_wall && to_wall)
+                    if (to_wall)
                         nw += npd.dist / Settings.wall_speed;
                     else
                         nw += npd.dist / Settings.ground_speed;
 
+                    if (from_wall && !to_wall)
+                        nw += Settings.enter_wall_cost;
+
                     if (from_healzone && !to_healzone)
-                        nw += Settings.damageless_back_before_healzone_malus;
+                        nw += Settings.enter_healzone_cost;
 
                     float ow = res[npy, npx];
                     if (nw < ow)
@@ -301,24 +304,6 @@ namespace KuruBot
                         else
                             q.Enqueue(npd.px, nw);
                     }
-                }
-            }
-
-            // Post-procedure (some post-procedure have been moved to the CostMap class)
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    float w = res[y, x];
-                    // Healzone bonus
-                    if (IsHealZone((short)(x + PixelStart.x), (short)(y + PixelStart.y)))
-                        w -= Settings.damageless_healzone_bonus;
-
-                    if (w <= 0 && !target[y, x])
-                        w = float.Epsilon;
-                    else if (w < 0)
-                        w = 0;
-                    res[y, x] = w;
                 }
             }
 

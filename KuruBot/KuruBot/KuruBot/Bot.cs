@@ -12,7 +12,7 @@ namespace KuruBot
         Physics p = null;
         Form1 parent = null;
         ExtendedCostMap cost_map = null;
-        ExtendedCostMap min_life_cost_map = null;
+        ExtendedCostMap nc_cost_map = null;
 
         public Bot(Form1 parent, Map m, Physics p, Pixel start, Pixel end)
         {
@@ -35,26 +35,19 @@ namespace KuruBot
 
         public void ComputeNewCostMaps()
         {
-            if (!Settings.allow_wall_clip)
-                cost_map = f.ComputeExtendedCostMap(true);
-            else
-                cost_map = f.ComputeExtendedCostMap(false);
-
+            cost_map = f.ComputeExtendedCostMap(false);
             parent.UpdateProgressBarAndHighlight(50, null);
-
-            if (!Settings.allow_wall_clip)
-                min_life_cost_map = cost_map;
-            else
-                min_life_cost_map = f.ComputeExtendedCostMap(true);
+            nc_cost_map = f.ComputeExtendedCostMap(true);
+            parent.UpdateProgressBarAndHighlight(100, null);
         }
 
         public CostMap GetCostMap(byte life, sbyte invul, bool hasBonus)
         {
-            if (cost_map == null || min_life_cost_map == null || life < 1)
+            if (cost_map == null || nc_cost_map == null || life < 1)
                 return null;
 
             int ri = CostMap.GetRealInvul(life, invul);
-            ExtendedCostMap cm = ri >= 0 && ri < Settings.wall_clip_minimum_invul ? min_life_cost_map : cost_map;
+            ExtendedCostMap cm = ri >= 0 && ri < Settings.enter_wall_minimum_invul ? nc_cost_map : cost_map;
             return cm.Get(hasBonus);
         }
 
