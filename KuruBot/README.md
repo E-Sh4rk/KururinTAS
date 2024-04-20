@@ -44,6 +44,7 @@ These configuration files have the extension `.ini`. They contain some parameter
 3. The `Gameplay_configs` folder contains some configurations independent from the two previous folders. They can be used to change some behaviors related to the gameplay (you can load multiple configurations there).
 Reloading a bot configuration will not reset these modifiers (they are independent).
      - `disable_life`: Disable the life system (the life of the helirin will not be checked, which allows to reduce the search space a lot).
+     - `easy_mode`: For the easy mode (shorter helirin).
      - `enable_bonus_xxx`: Asks the bot to collect the bonus of the level (if any) before reaching the target. If `with_checkpoint`, once the bonus is collected, stop optimizing what has already been done before.
      - `enable_moving_objects_xxx`: Take the moving objects into account (except the shooters, which are not supported). It can slow down the search process. If `with_frame_counter`, the search space will be extended to take time into account (can give better results when waiting is needed to pass some moving objects).
      - `default_target_to_oob`: When no custom target is drawn, the default target when building the cost map will be any OOB area (instead of being the ending area).
