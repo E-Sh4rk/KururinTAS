@@ -178,6 +178,7 @@ namespace KuruBot
         const int bump_speed_decrease_numerator = 3;
         const int bump_speed_decrease_denominator = 4;
         readonly short[] helirin_points = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 24, -24, 28, -28, 31, -31 };
+        readonly short[] helirin_points_easy = new short[] { 0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 21, -21 };
         readonly int[] helirin_points_order_for_springs = new int[] { 16, 14, 12, 10, 8, 6, 4, 2, 15, 13, 11, 9, 7, 5, 3, 1, 0 };
         const uint up_mask = 0x15554;
         const uint down_mask = 0xAAAA;
@@ -238,6 +239,8 @@ namespace KuruBot
                 return null;
             if (st.IsTerminal())
                 return st;
+
+            short[] helirin_points = Settings.easy_mode ? this.helirin_points_easy : this.helirin_points;
 
             ActionEffect e = Controller.action_to_effect(a);
             st = st.ShallowCopy();
@@ -318,6 +321,7 @@ namespace KuruBot
             bool update_rot_rate = false;
             foreach (int i in helirin_points_order_for_springs) // Order is important for spring actions.
             {
+                if (i >= helirin_points.Length) continue;
                 int radius = helirin_points[i];
                 short px = pxs[i];
                 short py = pys[i];
@@ -400,11 +404,6 @@ namespace KuruBot
                     uint elt_collision_mask = 0;
                     for (int i = 0; i < helirin_points.Length; i++)
                     {
-                        // For rollers, position of physical points must be recomputed to take into account last position/rotation changes
-                        // EDIT: Seems not... At least, spring actions should not affect it
-                        /*int radius = helirin_points[i];
-                        short px = (short)(pos_to_px(st.xpos) - math.sin(radius, st.rot));
-                        short py = (short)(pos_to_px(st.ypos) + math.cos(radius, st.rot));*/
                         short px = pxs[i];
                         short py = pys[i];
                         if (ball.InCollisionWith(px, py))

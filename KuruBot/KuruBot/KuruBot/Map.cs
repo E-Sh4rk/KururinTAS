@@ -13,6 +13,7 @@ namespace KuruBot
         public const int tile_size = 8;
         public const int spring_size = 2*8 + 1;
         public const int helirin_radius = 32; // Not really... This value is only used for rendering.
+        public const int helirin_radius_easy = 22; // Not really... This value is only used for rendering.
 
         const int OBJ_LOOKUP_OBJECT_INFO = 240;
         const int OBJ_OBJECT_INFO = 241;

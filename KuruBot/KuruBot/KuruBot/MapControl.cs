@@ -475,10 +475,11 @@ namespace KuruBot
             {
                 GraphicalHelirin h = helirin.Value;
                 Pen myPen = new Pen(Color.Black, 1);
+                int helirin_radius = Settings.easy_mode ? Map.helirin_radius_easy : Map.helirin_radius;
 
-                int offset_x = h.pixelX - Map.helirin_radius;
-                int offset_y = h.pixelY - Map.helirin_radius;
-                int size = Map.helirin_radius * 2;
+                int offset_x = h.pixelX - helirin_radius;
+                int offset_y = h.pixelY - helirin_radius;
+                int size = helirin_radius * 2;
                 g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
 
                 offset_x = h.pixelX - 2;
@@ -487,8 +488,8 @@ namespace KuruBot
                 g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
 
                 Size o = new Size(real_start_x, real_start_y);
-                Point p1 = new Point((int)(h.pixelX + Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY - Math.Cos(h.angle) * Map.helirin_radius));
-                Point p2 = new Point((int)(h.pixelX - Math.Sin(h.angle) * Map.helirin_radius), (int)(h.pixelY + Math.Cos(h.angle) * Map.helirin_radius));
+                Point p1 = new Point((int)(h.pixelX + Math.Sin(h.angle) * helirin_radius), (int)(h.pixelY - Math.Cos(h.angle) * helirin_radius));
+                Point p2 = new Point((int)(h.pixelX - Math.Sin(h.angle) * helirin_radius), (int)(h.pixelY + Math.Cos(h.angle) * helirin_radius));
                 p1 = new Point((int)(p1.X * scale), (int)(p1.Y * scale));
                 p2 = new Point((int)(p2.X * scale), (int)(p2.Y * scale));
                 g.DrawLine(myPen, Point.Add(p1,o), Point.Add(p2,o));
