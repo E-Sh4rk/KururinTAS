@@ -15,13 +15,15 @@ namespace KuruBot
 
         public struct GraphicalHelirin
         {
-            public GraphicalHelirin(int px, int py, float a, bool bonus, int fn)
+            public GraphicalHelirin(int px, int py, float a, bool bonus, int fn, int l, int inv)
             {
                 pixelX = px;
                 pixelY = py;
                 angle = a;
                 hasBonus = bonus;
                 frameNumber = fn;
+                life = l;
+                invul = inv;
             }
 
             public int pixelX;
@@ -29,6 +31,8 @@ namespace KuruBot
             public float angle;
             public bool hasBonus;
             public int frameNumber;
+            public int life;
+            public int invul;
         }
 
         Form1 p;
@@ -120,13 +124,15 @@ namespace KuruBot
             if (e.Button == MouseButtons.Left)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0,
+                                                           Settings.full_life, 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, true));
             }
             if (e.Button == MouseButtons.Right)
             {
                 GraphicalHelirin gh = new GraphicalHelirin((int)((e.X - computed_bmp_start_x) / computed_scale + computed_start_pixel.x),
-                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0);
+                                                           (int)((e.Y - computed_bmp_start_y) / computed_scale + computed_start_pixel.y), 0, /* TODO */ false, 0,
+                                                           Settings.full_life, 0);
                 p.SetHelirinState(Physics.FromGraphicalHelirin(gh, false));
             }
         }
@@ -470,7 +476,7 @@ namespace KuruBot
                     }
                 }
             }
-                
+
             if (helirin != null)
             {
                 GraphicalHelirin h = helirin.Value;
@@ -480,20 +486,29 @@ namespace KuruBot
                 int offset_x = h.pixelX - helirin_radius;
                 int offset_y = h.pixelY - helirin_radius;
                 int size = helirin_radius * 2;
-                g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
+                g.DrawEllipse(myPen, real_start_x + offset_x * scale, real_start_y + offset_y * scale, size * scale, size * scale);
 
                 offset_x = h.pixelX - 2;
                 offset_y = h.pixelY - 2;
                 size = 4;
-                g.DrawEllipse(myPen, real_start_x + offset_x*scale, real_start_y + offset_y*scale, size*scale, size*scale);
+                g.DrawEllipse(myPen, real_start_x + offset_x * scale, real_start_y + offset_y * scale, size * scale, size * scale);
 
                 Size o = new Size(real_start_x, real_start_y);
                 Point p1 = new Point((int)(h.pixelX + Math.Sin(h.angle) * helirin_radius), (int)(h.pixelY - Math.Cos(h.angle) * helirin_radius));
                 Point p2 = new Point((int)(h.pixelX - Math.Sin(h.angle) * helirin_radius), (int)(h.pixelY + Math.Cos(h.angle) * helirin_radius));
                 p1 = new Point((int)(p1.X * scale), (int)(p1.Y * scale));
                 p2 = new Point((int)(p2.X * scale), (int)(p2.Y * scale));
-                g.DrawLine(myPen, Point.Add(p1,o), Point.Add(p2,o));
+                g.DrawLine(myPen, Point.Add(p1, o), Point.Add(p2, o));
             }
+
+            // Settings
+            Font f = new Font(DefaultFont.FontFamily, 8f);
+            g.DrawString("Bonus required: " + Settings.bonus_required, f, new SolidBrush(Color.Blue), new PointF(0, 0));
+            g.DrawString("Moving objects: " + Settings.enable_moving_objects, f, new SolidBrush(Color.Blue), new PointF(0, 16));
+            if (Settings.invul_frames < 0)
+                g.DrawString("Life/invul: Disabled", f, new SolidBrush(Color.Blue), new PointF(0, 32));
+            else if (helirin != null)
+                g.DrawString("Life/invul: " + helirin.Value.life + "/" + helirin.Value.invul, f, new SolidBrush(Color.Blue), new PointF(0, 32));
         }
     }
 }

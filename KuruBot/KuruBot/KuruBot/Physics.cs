@@ -142,7 +142,7 @@ namespace KuruBot
             float angle = rot_to_angle_approx(h.rot);
             int xpix = pos_to_px(h.xpos);
             int ypix = pos_to_px(h.ypos);
-            return new MapControl.GraphicalHelirin(xpix, ypix, angle, h.HasBonus(), h.frameNumber);
+            return new MapControl.GraphicalHelirin(xpix, ypix, angle, h.HasBonus(), h.frameNumber, h.life, h.invul);
         }
 
         public static HelirinState FromGraphicalHelirin(MapControl.GraphicalHelirin h, bool clockwise)
@@ -151,7 +151,7 @@ namespace KuruBot
             int xpos = px_to_pos_approx((short)h.pixelX);
             int ypos = px_to_pos_approx((short)h.pixelY);
             short srate = clockwise ? default_srate : (short)(-default_srate);
-            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, Settings.full_life, 0, h.hasBonus, (ushort)h.frameNumber, false);
+            return new HelirinState(xpos, ypos, 0, 0, rot, srate, srate, (byte)h.life, (sbyte)h.invul, h.hasBonus, (ushort)h.frameNumber, false);
         }
 
         Map map = null;
