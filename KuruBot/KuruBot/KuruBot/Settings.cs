@@ -38,9 +38,9 @@ namespace KuruBot
         public static int healzone_pos_reduction = 16 - 6;
         public static int healzone_bump_reduction = 16 - 6;
         public static int additional_reduction_in_wall = 6; // 64
-        public static float additional_reduction_dist_multiplier = 1f / 8f; // 1/8 shift/pixel
+        public static float additional_reduction_dist_multiplier = 1f / 4f; // 1/4 shift/pixel
         public static int max_additional_reduction = 6; // 64
-        public static float healzone_additional_reduction_dist_multiplier = 1f / 8f;
+        public static float healzone_additional_reduction_dist_multiplier = 1f / 4f;
         public static int healzone_max_additional_reduction = 6;
 
         public static ushort rot_precision = (ushort)Physics.default_srate;
