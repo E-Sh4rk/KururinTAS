@@ -35,20 +35,13 @@ namespace KuruBot
 
         public static int pos_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px
         public static int bump_reduction = 16 - 6; // 0x10000 / 64 : 1/64 px/frame
-        public static int healzone_pos_reduction = 16 - 6;
-        public static int healzone_bump_reduction = 16 - 6;
         public static int additional_reduction_in_wall = 6; // 64
         public static float additional_reduction_dist_multiplier = 1f / 4f; // 1/4 shift/pixel
         public static int max_additional_reduction = 6; // 64
-        public static float healzone_additional_reduction_dist_multiplier = 1f / 4f;
-        public static int healzone_max_additional_reduction = 6;
 
         public static ushort rot_precision = (ushort)Physics.default_srate;
         public static ushort rot_rate_precision = (ushort)Physics.default_srate;
-        public static ushort healzone_rot_precision = (ushort)Physics.default_srate;
-        public static ushort healzone_rot_rate_precision = (ushort)Physics.default_srate;
         public static ushort frame_nb_precision = 0xFFFF;
-        public static ushort healzone_frame_nb_precision = 0xFFFF;
         public static ushort invul_precision = 1;
 
         public static float cost_multiplier = 1;
@@ -126,19 +119,12 @@ namespace KuruBot
 
                 pos_reduction = parseInt(data, "Solver", "pos_reduction", pos_reduction);
                 bump_reduction = parseInt(data, "Solver", "bump_reduction", bump_reduction);
-                healzone_pos_reduction = parseInt(data, "Solver", "healzone_pos_reduction", healzone_pos_reduction);
-                healzone_bump_reduction = parseInt(data, "Solver", "healzone_bump_reduction", healzone_bump_reduction);
                 additional_reduction_in_wall = parseInt(data, "Solver", "additional_reduction_in_wall", additional_reduction_in_wall);
                 additional_reduction_dist_multiplier = parseFloat(data, "Solver", "additional_reduction_dist_multiplier", additional_reduction_dist_multiplier);
                 max_additional_reduction = parseInt(data, "Solver", "max_additional_reduction", max_additional_reduction);
-                healzone_additional_reduction_dist_multiplier = parseFloat(data, "Solver", "healzone_additional_reduction_dist_multiplier", healzone_additional_reduction_dist_multiplier);
-                healzone_max_additional_reduction = parseInt(data, "Solver", "healzone_max_additional_reduction", healzone_max_additional_reduction);
                 rot_precision = (ushort)parseInt(data, "Solver", "rot_precision", rot_precision);
                 rot_rate_precision = (ushort)parseInt(data, "Solver", "rot_rate_precision", rot_rate_precision);
-                healzone_rot_precision = (ushort)parseInt(data, "Solver", "healzone_rot_precision", healzone_rot_precision);
-                healzone_rot_rate_precision = (ushort)parseInt(data, "Solver", "healzone_rot_rate_precision", healzone_rot_rate_precision);
                 frame_nb_precision = (ushort)parseInt(data, "Solver", "frame_nb_precision", frame_nb_precision);
-                healzone_frame_nb_precision = (ushort)parseInt(data, "Solver", "healzone_frame_nb_precision", healzone_frame_nb_precision);
                 invul_precision = (ushort)parseInt(data, "Solver", "invul_precision", invul_precision);
                 cost_multiplier = parseFloat(data, "Solver", "cost_multiplier", cost_multiplier);
                 allowed_moves = parseString(data, "Solver", "allowed_moves", allowed_moves);
@@ -197,19 +183,12 @@ namespace KuruBot
 
                 data["Solver"]["pos_reduction"] = ToString(pos_reduction);
                 data["Solver"]["bump_reduction"] = ToString(bump_reduction);
-                data["Solver"]["healzone_pos_reduction"] = ToString(healzone_pos_reduction);
-                data["Solver"]["healzone_bump_reduction"] = ToString(healzone_bump_reduction);
                 data["Solver"]["additional_reduction_in_wall"] = ToString(additional_reduction_in_wall);
                 data["Solver"]["additional_reduction_dist_multiplier"] = ToString(additional_reduction_dist_multiplier);
                 data["Solver"]["max_additional_reduction"] = ToString(max_additional_reduction);
-                data["Solver"]["healzone_additional_reduction_dist_multiplier"] = ToString(healzone_additional_reduction_dist_multiplier);
-                data["Solver"]["healzone_max_additional_reduction"] = ToString(healzone_max_additional_reduction);
                 data["Solver"]["rot_precision"] = ToString(rot_precision);
                 data["Solver"]["rot_rate_precision"] = ToString(rot_rate_precision);
-                data["Solver"]["healzone_rot_precision"] = ToString(healzone_rot_precision);
-                data["Solver"]["healzone_rot_rate_precision"] = ToString(healzone_rot_rate_precision);
                 data["Solver"]["frame_nb_precision"] = ToString(frame_nb_precision);
-                data["Solver"]["healzone_frame_nb_precision"] = ToString(healzone_frame_nb_precision);
                 data["Solver"]["invul_precision"] = ToString(invul_precision);
                 data["Solver"]["cost_multiplier"] = ToString(cost_multiplier);
                 data["Solver"]["allowed_moves"] = ToString(allowed_moves);

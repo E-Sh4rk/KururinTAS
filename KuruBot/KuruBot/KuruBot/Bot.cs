@@ -78,24 +78,9 @@ namespace KuruBot
 
             int pos_reduction = Settings.pos_reduction;
             int bump_reduction = Settings.bump_reduction;
-            ushort rot_precision = Settings.rot_precision;
-            ushort rot_rate_precision = Settings.rot_rate_precision;
-            ushort frame_nb_precision = Settings.frame_nb_precision;
-            float additional_reduction_dist_multiplier = Settings.additional_reduction_dist_multiplier;
-            int max_additional_reduction = Settings.max_additional_reduction;
-            if (f.IsHealZone(px, py))
-            {
-                pos_reduction = Settings.healzone_pos_reduction;
-                bump_reduction = Settings.healzone_bump_reduction;
-                rot_precision = Settings.healzone_rot_precision;
-                rot_rate_precision = Settings.healzone_rot_rate_precision;
-                frame_nb_precision = Settings.healzone_frame_nb_precision;
-                additional_reduction_dist_multiplier = Settings.healzone_additional_reduction_dist_multiplier;
-                max_additional_reduction = Settings.healzone_max_additional_reduction;
-            }
 
-            float wall_dist = f.DistToWall(px, py) * additional_reduction_dist_multiplier;
-            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, max_additional_reduction);
+            float wall_dist = f.DistToWall(px, py) * Settings.additional_reduction_dist_multiplier;
+            int add_red = wall_dist == 0 ? Settings.additional_reduction_in_wall : Math.Min((int)wall_dist, Settings.max_additional_reduction);
             pos_reduction += add_red;
             bump_reduction += add_red;
 
@@ -103,15 +88,15 @@ namespace KuruBot
             st.ypos = (st.ypos >> pos_reduction) << pos_reduction;
             st.xb   = (st.xb >> bump_reduction) << bump_reduction;
             st.yb   = (st.yb >> bump_reduction) << bump_reduction;
-            st.rot  = (short)((int)Math.Round((float)st.rot / rot_precision) * rot_precision);
-            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / rot_rate_precision) * rot_rate_precision);
+            st.rot  = (short)((int)Math.Round((float)st.rot / Settings.rot_precision) * Settings.rot_precision);
+            st.rot_rate = (short)((int)Math.Round((float)st.rot_rate / Settings.rot_rate_precision) * Settings.rot_rate_precision);
 
             if (!Settings.bonus_required)
                 st.gs &= 0xFF ^ HelirinState.BONUS_FLAG;
             if (!Settings.reexplore_state_if_timer_started)
                 st.gs &= 0xFF ^ HelirinState.TIMER_FLAG;
 
-            st.frameNumber = (ushort)((st.frameNumber / frame_nb_precision) * frame_nb_precision);
+            st.frameNumber = (ushort)((st.frameNumber / Settings.frame_nb_precision) * Settings.frame_nb_precision);
             st.invul = (sbyte)(((st.invul-1) / Settings.invul_precision + 1) * Settings.invul_precision);
 
             if (!Settings.reexplore_state_if_different_last_input)
