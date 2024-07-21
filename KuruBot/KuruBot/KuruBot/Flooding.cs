@@ -317,11 +317,12 @@ namespace KuruBot
             if (m.HasBonus != Map.BonusType.None && Settings.bonus_required)
             {
                 bonusCM = ComputeCostMap(no_wall_clip, true);
-                float max = 0;
+                float max = float.PositiveInfinity;
                 Rectangle r = m.GetBonusPxRect().Value;
                 for (int y = r.Top; y < r.Bottom; y++)
                     for (int x = r.Left; x < r.Right; x++)
-                        max = Math.Max(max, targetCM.CostAtPx((short)x, (short)y, 0));
+                        max = Math.Min(max, targetCM.CostAtPx((short)x, (short)y, 0));
+                // Note: the bonus is not necessarily taken from the center of the helirin... the cost may be overestimated
                 bonusCM.GlobalMalus += max + Settings.back_before_bonus_malus;
             }
             return new ExtendedCostMap(targetCM, bonusCM);
