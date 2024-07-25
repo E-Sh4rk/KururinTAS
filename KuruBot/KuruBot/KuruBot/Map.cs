@@ -103,6 +103,7 @@ namespace KuruBot
                     if (t.HasValue)
                     {
                         int id = x + y * Width;
+                        Spring spr = new Spring(t.Value, id);
                         for (int y2 = 0; y2 < spring_size; y2++)
                         {
                             for (int x2 = 0; x2 < spring_size; x2++)
@@ -112,7 +113,7 @@ namespace KuruBot
                                 Spring[] cur = physical_spring_map[py, px];
                                 Spring[] res = new Spring[cur.Length + 1];
                                 Array.Copy(cur, res, cur.Length);
-                                res[cur.Length] = new Spring(t.Value, id);
+                                res[cur.Length] = spr;
                                 physical_spring_map[py, px] = res;
                             }
                         }
@@ -212,7 +213,16 @@ namespace KuruBot
             }
             public SpringType type;
             public int unique_id;
+            public class ByID : IComparer<Spring>
+            {
+                public int Compare(Spring a, Spring b)
+                {
+                    return a.unique_id.CompareTo(b.unique_id);
+                }
+            }
+            public static ByID Comparator = new ByID();
         }
+
         public SpringType? IsTileASpring(ushort tile)
         {
             tile = (ushort)((uint)tile & 0xFFF);

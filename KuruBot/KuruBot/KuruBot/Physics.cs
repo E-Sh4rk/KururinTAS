@@ -296,7 +296,8 @@ namespace KuruBot
             }
 
             // At this point, we backup the rotation data (will be needed later)
-            short rot_rate_bkp = st.rot_rate; // No need to backup st.rot because it will not change anymore
+            int rot_dir = Math.Sign(st.rot_rate);
+            int rot_sdir = Math.Sign(st.rot_srate);
             // We also precompute all the helirin physical points and the collision mask
             // TODO: Optionally, use memoisation to avoid recomputing collision mask each time
             short[] pxs = new short[helirin_points.Length];
@@ -316,73 +317,73 @@ namespace KuruBot
             }
 
             // 5. Action of springs & bonus
-            HashSet<int> spring_already_visited = new HashSet<int>();
+            SortedSet<Map.Spring> springs_visited = new SortedSet<Map.Spring>(Map.Spring.Comparator);
             bool invert_rotation = false;
             bool update_rot_rate = false;
-            foreach (int i in helirin_points_order_for_springs) // Order is important for spring actions.
+            foreach (int i in helirin_points_order_for_springs) // Order is important for spring actions
             {
                 if (i >= helirin_points.Length) continue;
                 int radius = helirin_points[i];
                 short px = pxs[i];
                 short py = pys[i];
-
-                // Action of springs
+                // Action of springs on rotation
                 Map.Spring[] springs = map.IsPixelInSpring(px, py);
                 foreach (Map.Spring spr in springs)
                 {
-                    if (!spring_already_visited.Contains(spr.unique_id))
+                    if (!springs_visited.Contains(spr))
                     {
-                        spring_already_visited.Add(spr.unique_id);
-
+                        springs_visited.Add(spr);
                         if (radius != 0)
                         {
                             update_rot_rate = true;
-                            // Invert rotation if at least one spring is in the right direction
-                            if (!invert_rotation)
-                            {
-                                short spring_angle = AngleOfSpring(spr.type);
-                                short helirin_angle = radius > 0 ? st.rot : (short)(st.rot + (0x10000 / 2));
-                                short helirin_normal_angle = (short)(helirin_angle + Math.Sign(st.rot_srate) * (0x10000 / 4));
-                                short diff = (short)(spring_angle - helirin_normal_angle);
-                                if (Math.Abs((int)diff) > 0x10000 / 4)
-                                    invert_rotation = true;
-                            }
+                            // Invert rotation if (at least one) spring is in the right direction
+                            short spring_angle = AngleOfSpring(spr.type);
+                            short helirin_angle = radius > 0 ? st.rot : (short)(st.rot + (0x10000 / 2));
+                            short helirin_normal_angle = (short)(helirin_angle + rot_sdir * (0x10000 / 4));
+                            short diff = (short)(spring_angle - helirin_normal_angle);
+                            if (Math.Abs((int)diff) > 0x10000 / 4)
+                                invert_rotation = true;
                         }
-
-                        // Position bump
-                        if (spr.type == Map.SpringType.Up)
-                        {
-                            st.xb = 0;
-                            st.yb = -bump_speed_spring;
-                        }
-                        if (spr.type == Map.SpringType.Down)
-                        {
-                            st.xb = 0;
-                            st.yb = bump_speed_spring;
-                        }
-                        if (spr.type == Map.SpringType.Left)
-                        {
-                            st.xb = -bump_speed_spring;
-                            st.yb = 0;
-                        }
-                        if (spr.type == Map.SpringType.Right)
-                        {
-                            st.xb = bump_speed_spring;
-                            st.yb = 0;
-                        }
-                        st.xpos += st.xb;
-                        st.ypos += st.yb;
                     }
                 }
                 // Action of bonus
                 if (map.IsPixelInBonus(px, py) != Map.BonusType.None)
                     st.gs |= HelirinState.BONUS_FLAG;
             }
+            // Action of springs on position bump
+            foreach (Map.Spring spr in springs_visited) // Order is important for spring actions
+            {
+                if (spr.type == Map.SpringType.Up)
+                {
+                    st.xb = 0;
+                    st.yb = -bump_speed_spring;
+                }
+                if (spr.type == Map.SpringType.Down)
+                {
+                    st.xb = 0;
+                    st.yb = bump_speed_spring;
+                }
+                if (spr.type == Map.SpringType.Left)
+                {
+                    st.xb = -bump_speed_spring;
+                    st.yb = 0;
+                }
+                if (spr.type == Map.SpringType.Right)
+                {
+                    st.xb = bump_speed_spring;
+                    st.yb = 0;
+                }
+                st.xpos += st.xb;
+                st.ypos += st.yb;
+            }
             if (invert_rotation)
+            {
                 st.rot_srate = (short)(-st.rot_srate);
+                rot_sdir = -rot_sdir;
+            }
             if (update_rot_rate)
             {
-                st.rot_rate = (short)(Math.Sign(st.rot_srate) * rot_bump_rate_spring);
+                st.rot_rate = (short)(rot_sdir * rot_bump_rate_spring);
                 if (st.rot_rate == 0)
                     st.rot_rate = -rot_bump_rate_spring;
             }
@@ -471,7 +472,7 @@ namespace KuruBot
                         st.xb = math.sin(auto_bump_speed, st.rot);
                         st.yb = -math.cos(auto_bump_speed, st.rot);
                     }
-                    st.rot_rate = (short)(-Math.Sign(rot_rate_bkp) * rot_bump_rate);
+                    st.rot_rate = (short)(-rot_dir * rot_bump_rate);
                     if (st.rot_rate == 0)
                         st.rot_rate = rot_bump_rate;
                     if (up_side != down_side)
